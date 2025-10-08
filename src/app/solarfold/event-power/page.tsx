@@ -66,7 +66,11 @@ export default function SolarFoldEventPowerPage() {
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">Mobil‑Grid® Solar Container</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/mobil-grid" className="hover:text-brand-primary transition-colors">
+                  Mobil‑Grid® Solar Container
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>Rapid to set up; use multiple for main + side stages.</li>
                 <li>Power vendor alleys, back‑of‑house and lighting rigs.</li>
@@ -75,7 +79,11 @@ export default function SolarFoldEventPowerPage() {
               </ul>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">Solar Hybrid Box®</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/solar-hybrid-box" className="hover:text-brand-primary transition-colors">
+                  Solar Hybrid Box®
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>Battery buffer for peaks and night shows.</li>
                 <li>Smart control of PV + genset for assured supply.</li>
@@ -84,7 +92,11 @@ export default function SolarFoldEventPowerPage() {
               </ul>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">SolarFold (Mobil‑Grid® 500+)</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/solarfold" className="hover:text-brand-primary transition-colors">
+                  SolarFold (Mobil‑Grid® 500+)
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>High daytime PV to offset rigging and sound loads.</li>
                 <li>Redeploy quickly between venues/festivals.</li>

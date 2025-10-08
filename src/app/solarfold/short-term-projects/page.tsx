@@ -65,7 +65,11 @@ export default function SolarFoldShortTermProjectsPage() {
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">SolarFold (Mobil‑Grid® 500+)</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/solarfold" className="hover:text-brand-primary transition-colors">
+                  SolarFold (Mobil‑Grid® 500+)
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>Deploys within hours; motorized fold option.</li>
                 <li>Shift power assets as priorities change.</li>
@@ -74,7 +78,11 @@ export default function SolarFoldShortTermProjectsPage() {
               </ul>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">Mobil‑Grid® Solar Container</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/mobil-grid" className="hover:text-brand-primary transition-colors">
+                  Mobil‑Grid® Solar Container
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>Pre‑wired PV for 6–24 month windows.</li>
                 <li>Minimal ground works; operate on rough pads.</li>
@@ -83,7 +91,11 @@ export default function SolarFoldShortTermProjectsPage() {
               </ul>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">Solar Hybrid Box®</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/solar-hybrid-box" className="hover:text-brand-primary transition-colors">
+                  Solar Hybrid Box®
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>Hybrid conversion + storage with remote supervision.</li>
                 <li>Manages genset use; extends fuel and runtime.</li>

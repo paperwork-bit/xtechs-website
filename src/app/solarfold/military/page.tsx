@@ -1,8 +1,5 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 export default function SolarFoldMilitaryPage() {
   return (
@@ -16,30 +13,13 @@ export default function SolarFoldMilitaryPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-white bg-opacity-40 flex items-center justify-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-center text-gray-900 px-6"
-          >
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-4xl md:text-6xl font-bold mb-4"
-            >
-              Military & Peacekeeping
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-xl md:text-2xl max-w-4xl mx-auto"
-            >
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+          <div className="text-center text-white px-6">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">Military & Peacekeeping</h1>
+            <p className="text-xl md:text-2xl max-w-4xl mx-auto">
               Power that moves with the force, sets up fast and runs quietly
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -91,7 +71,11 @@ export default function SolarFoldMilitaryPage() {
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">SolarFold (Mobil‑Grid® 500+)</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/solarfold" className="hover:text-brand-primary transition-colors">
+                  SolarFold (Mobil‑Grid® 500+)
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>Establishes a 130 kWp array within hours; redeployable between theatres.</li>
                 <li>Silent, low‑heat signature power improves force protection.</li>
@@ -100,7 +84,11 @@ export default function SolarFoldMilitaryPage() {
               </ul>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">Mobil‑Grid® Solar Container</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/mobil-grid" className="hover:text-brand-primary transition-colors">
+                  Mobil‑Grid® Solar Container
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>ISO/CSC unit with pre‑wired PV and insulated technical room.</li>
                 <li>Link containers to scale for camps, radar and telecoms sites.</li>
@@ -109,7 +97,11 @@ export default function SolarFoldMilitaryPage() {
               </ul>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h3 className="font-semibold">Solar Hybrid Box®</h3>
+              <h3 className="font-semibold">
+                <Link href="/solarfold/solar-hybrid-box" className="hover:text-brand-primary transition-colors">
+                  Solar Hybrid Box®
+                </Link>
+              </h3>
               <ul className="mt-3 text-sm text-gray-700 space-y-2 list-disc pl-5">
                 <li>Hybrid conversion + storage core with remote supervision.</li>
                 <li>Integrates PV, batteries, grid/shore and diesel backup automatically.</li>
