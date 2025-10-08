@@ -15,50 +15,50 @@ const services: ServiceCard[] = [
   {
     title: "Residential Solar",
     image:
-      "https://source.unsplash.com/featured/512x512?solar,house,roof",
+      "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=512&h=512&fit=crop&crop=center",
     overlayImage:
-      "https://source.unsplash.com/featured/512x512?photovoltaic,rooftop",
-    href: "/solar/residential", // PV&Battery for Family
+      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    href: "/pv-battery/residential", // PV&Battery Residential
   },
   {
     title: "Commercial Solar",
     image:
-      "https://source.unsplash.com/featured/512x512?solar,commercial,panels",
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=512&h=512&fit=crop&crop=center",
     overlayImage:
-      "https://source.unsplash.com/featured/512x512?solar,warehouse,rooftop",
-    href: "/solar/business", // Business
+      "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=512&h=512&fit=crop&crop=center",
+    href: "/pv-battery/business", // PV&Battery Business
   },
   {
     title: "SolarFold",
     image:
-      "https://source.unsplash.com/featured/512x512?portable,solar,generator",
+      "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=512&h=512&fit=crop&crop=center",
     overlayImage:
-      "https://source.unsplash.com/featured/512x512?foldable,solar,offgrid",
-    href: "/solarfold", // SolarFold
+      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    href: "/solarfold", // SolarFold Landing Page
   },
   {
     title: "Off-grid Systems",
     image:
-      "https://source.unsplash.com/featured/512x512?offgrid,solar,cabin",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=512&h=512&fit=crop&crop=center",
     overlayImage:
-      "https://source.unsplash.com/featured/512x512?inverter,battery,offgrid",
-    href: "/solar/off-grid", // PV&Battery off-grid
+      "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=512&h=512&fit=crop&crop=center",
+    href: "/pv-battery/off-grid", // PV&Battery Off-grid
   },
   {
     title: "Solar Batteries",
     image:
-      "https://source.unsplash.com/featured/512x512?lithium,battery,energy",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=512&h=512&fit=crop&crop=center",
     overlayImage:
-      "https://source.unsplash.com/featured/512x512?battery,storage,ess",
-    href: "/solar/residential", // PV&Battery for Family
+      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    href: "/pv-battery/residential", // PV&Battery Residential (includes batteries)
   },
   {
     title: "EV Chargers",
     image:
-      "https://source.unsplash.com/featured/512x512?ev,charger,charging",
+      "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=512&h=512&fit=crop&crop=center",
     overlayImage:
-      "https://source.unsplash.com/featured/512x512?electric,vehicle,charger",
-    href: "/solar/residential", // PV&Battery for Family
+      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    href: "/pv-battery/residential", // PV&Battery Residential (includes EV chargers)
   },
 ];
 
