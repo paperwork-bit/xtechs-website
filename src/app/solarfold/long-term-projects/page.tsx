@@ -65,9 +65,12 @@ export default function SolarFoldLongTermProjectsPage() {
             <p className="text-gray-600 mb-8 max-w-4xl mx-auto">xTechs and <span className="font-semibold">EcoSun Innovations</span> deliver durable, low‑OPEX plants that scale with your base camp or site facility.</p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm group hover:shadow-lg transition-all duration-300">
               <h3 className="font-semibold">
-                <Link href="/solarfold/mobil-grid" className="hover:text-brand-primary transition-colors">
+                <Link 
+                  href="/solarfold/mobil-grid" 
+                  className="inline-block hover:text-brand-primary transition-all duration-300 hover:scale-105 active:scale-95 transform"
+                >
                   Mobil‑Grid® Solar Container
                 </Link>
               </h3>
@@ -78,9 +81,12 @@ export default function SolarFoldLongTermProjectsPage() {
                 <li>Supports production, accommodation and services.</li>
               </ul>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm group hover:shadow-lg transition-all duration-300">
               <h3 className="font-semibold">
-                <Link href="/solarfold/solar-hybrid-box" className="hover:text-brand-primary transition-colors">
+                <Link 
+                  href="/solarfold/solar-hybrid-box" 
+                  className="inline-block hover:text-brand-primary transition-all duration-300 hover:scale-105 active:scale-95 transform"
+                >
                   Solar Hybrid Box®
                 </Link>
               </h3>
@@ -91,9 +97,12 @@ export default function SolarFoldLongTermProjectsPage() {
                 <li>Integrates grid and diesel with PV for resilience.</li>
               </ul>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm group hover:shadow-lg transition-all duration-300">
               <h3 className="font-semibold">
-                <Link href="/solarfold/solarfold" className="hover:text-brand-primary transition-colors">
+                <Link 
+                  href="/solarfold/solarfold" 
+                  className="inline-block hover:text-brand-primary transition-all duration-300 hover:scale-105 active:scale-95 transform"
+                >
                   SolarFold (Mobil‑Grid® 500+)
                 </Link>
               </h3>

@@ -64,9 +64,12 @@ export default function SolarFoldShortTermProjectsPage() {
             <p className="text-gray-600 mb-8 max-w-4xl mx-auto">With <span className="font-semibold">EcoSun Innovations</span>, we deliver rapid power with easy redeployment and hybrid autonomy to match mission timelines.</p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm group hover:shadow-lg transition-all duration-300">
               <h3 className="font-semibold">
-                <Link href="/solarfold/solarfold" className="hover:text-brand-primary transition-colors">
+                <Link 
+                  href="/solarfold/solarfold" 
+                  className="inline-block hover:text-brand-primary transition-all duration-300 hover:scale-105 active:scale-95 transform"
+                >
                   SolarFold (Mobil‑Grid® 500+)
                 </Link>
               </h3>
@@ -77,9 +80,12 @@ export default function SolarFoldShortTermProjectsPage() {
                 <li>Pairs with Hybrid Box for night coverage.</li>
               </ul>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm group hover:shadow-lg transition-all duration-300">
               <h3 className="font-semibold">
-                <Link href="/solarfold/mobil-grid" className="hover:text-brand-primary transition-colors">
+                <Link 
+                  href="/solarfold/mobil-grid" 
+                  className="inline-block hover:text-brand-primary transition-all duration-300 hover:scale-105 active:scale-95 transform"
+                >
                   Mobil‑Grid® Solar Container
                 </Link>
               </h3>
@@ -90,9 +96,12 @@ export default function SolarFoldShortTermProjectsPage() {
                 <li>Supports lighting, telecoms and water systems.</li>
               </ul>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm group hover:shadow-lg transition-all duration-300">
               <h3 className="font-semibold">
-                <Link href="/solarfold/solar-hybrid-box" className="hover:text-brand-primary transition-colors">
+                <Link 
+                  href="/solarfold/solar-hybrid-box" 
+                  className="inline-block hover:text-brand-primary transition-all duration-300 hover:scale-105 active:scale-95 transform"
+                >
                   Solar Hybrid Box®
                 </Link>
               </h3>
