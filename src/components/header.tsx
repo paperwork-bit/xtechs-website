@@ -74,7 +74,7 @@ export function Header() {
       href: "/x-classes",
     },
     {
-      name: "Amber Electric",
+      name: "Amber VPP",
       href: "/amber-electric",
     },
     {
@@ -181,11 +181,15 @@ export function Header() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              Get a quote
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/contact">
+                Get a quote
+              </Link>
             </Button>
-            <Button size="sm">
-              Request call back
+            <Button size="sm" asChild>
+              <Link href="/contact">
+                Request call back
+              </Link>
             </Button>
           </div>
 
@@ -233,11 +237,15 @@ export function Header() {
                 </div>
               ))}
               <div className="pt-4 space-y-2">
-                <Button variant="outline" size="sm" className="w-full">
-                  Get a quote
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <Link href="/contact">
+                    Get a quote
+                  </Link>
                 </Button>
-                <Button size="sm" className="w-full">
-                  Request call back
+                <Button size="sm" className="w-full" asChild>
+                  <Link href="/contact">
+                    Request call back
+                  </Link>
                 </Button>
               </div>
             </nav>
