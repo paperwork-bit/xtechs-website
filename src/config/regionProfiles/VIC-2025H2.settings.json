@@ -1,0 +1,33 @@
+{
+  "region": "VIC-2025H2",
+  "vdoAnchors": { 
+    "flatKwh_mid": 0.30, 
+    "flatKwh_lo": 0.25, 
+    "flatKwh_hi": 0.35, 
+    "dailySupply": 1.10 
+  },
+  "fitRange": { 
+    "min": 0.02, 
+    "mid": 0.04, 
+    "max": 0.07, 
+    "note": "Retailer-set FiT from 1 Jul 2025" 
+  },
+  "exportCaps": { 
+    "1p": { "inverterKW": 10, "exportKW": 5 }, 
+    "3p": { "inverterKW": 30, "exportKW": 15 } 
+  },
+  "usageDefaults": { 
+    "res_kWh_day_lo": 14, 
+    "res_kWh_day_hi": 22, 
+    "res_kWh_day_mid": 18 
+  },
+  "battery": { 
+    "rtes_mid": 0.93, 
+    "rtes_range": [0.90, 0.95] 
+  },
+  "retailerListVIC": [
+    "AGL", "Origin Energy", "EnergyAustralia", "Red Energy", "Powershop",
+    "Simply Energy", "Momentum Energy", "Alinta Energy", "Tango Energy", "Other"
+  ],
+  "retailerNotes": "Retailer name is used for display/context only; pricing still uses static defaults unless an admin overrides."
+}

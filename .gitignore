@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase
+.firebase/
+.firebaserc
+
+# Large cache files
+*.pack
+*.node
+**/cache/**
+**/node_modules/**
+
+# Log files
+*.log
+dev-server.log
+dev.err
+dev.log

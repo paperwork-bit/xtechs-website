@@ -1,0 +1,34 @@
+{
+  "services": [
+    {
+      "title": "Residential Solar",
+      "image": "",
+      "overlayImage": ""
+    },
+    {
+      "title": "Commercial Solar",
+      "image": "",
+      "overlayImage": ""
+    },
+    {
+      "title": "SolarFold",
+      "image": "",
+      "overlayImage": ""
+    },
+    {
+      "title": "Off-grid Systems",
+      "image": "",
+      "overlayImage": ""
+    },
+    {
+      "title": "Solar Batteries",
+      "image": "",
+      "overlayImage": ""
+    },
+    {
+      "title": "EV Chargers",
+      "image": "",
+      "overlayImage": ""
+    }
+  ]
+}
