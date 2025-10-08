@@ -14,50 +14,38 @@ type ServiceCard = {
 const services: ServiceCard[] = [
   {
     title: "Residential Solar",
-    image:
-      "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=512&h=512&fit=crop&crop=center",
-    overlayImage:
-      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    image: "/services/residential-1.jpg",
+    overlayImage: "/services/residential-2.jpg",
     href: "/pv-battery/residential", // PV&Battery Residential
   },
   {
     title: "Commercial Solar",
-    image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=512&h=512&fit=crop&crop=center",
-    overlayImage:
-      "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=512&h=512&fit=crop&crop=center",
+    image: "/services/commercial-1.jpg",
+    overlayImage: "/services/commercial-2.jpg",
     href: "/pv-battery/business", // PV&Battery Business
   },
   {
     title: "SolarFold",
-    image:
-      "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=512&h=512&fit=crop&crop=center",
-    overlayImage:
-      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    image: "/services/solarfold-1.jpg",
+    overlayImage: "/services/solarfold-2.jpg",
     href: "/solarfold", // SolarFold Landing Page
   },
   {
     title: "Off-grid Systems",
-    image:
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=512&h=512&fit=crop&crop=center",
-    overlayImage:
-      "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=512&h=512&fit=crop&crop=center",
+    image: "/services/offgrid-1.jpg",
+    overlayImage: "/services/offgrid-2.jpg",
     href: "/pv-battery/off-grid", // PV&Battery Off-grid
   },
   {
     title: "Solar Batteries",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=512&h=512&fit=crop&crop=center",
-    overlayImage:
-      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    image: "/services/batteries-1.jpg",
+    overlayImage: "/services/batteries-2.jpg",
     href: "/pv-battery/residential", // PV&Battery Residential (includes batteries)
   },
   {
     title: "EV Chargers",
-    image:
-      "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=512&h=512&fit=crop&crop=center",
-    overlayImage:
-      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=512&h=512&fit=crop&crop=center",
+    image: "/services/ev-chargers-1.jpg",
+    overlayImage: "/services/ev-chargers-2.jpg",
     href: "/pv-battery/residential", // PV&Battery Residential (includes EV chargers)
   },
 ];
