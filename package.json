@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "analyze": "tsx scripts/report-bundle.ts",
-    "find-dead-exports": "tsx scripts/find-dead-exports.ts"
+    "find-dead-exports": "tsx scripts/find-dead-exports.ts",
+    "deploy:cloudflare": "npm run build && find .next -name '*.map' -delete && wrangler pages deploy .next --project-name=xtechs-website --commit-dirty=true",
+    "cf:deploy": "npm run build && find .next -name '*.map' -delete && wrangler pages deploy .next --project-name=xtechs-website --commit-dirty=true"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -23,6 +25,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "critters": "^0.0.23",
+    "firebase": "^12.5.0",
+    "firebase-admin": "^13.5.0",
     "framer-motion": "^12.23.15",
     "google-auth-library": "^10.3.1",
     "google-spreadsheet": "^5.0.2",
@@ -34,6 +38,7 @@
     "next-mdx-remote": "^5.0.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-google-recaptcha": "^3.0.0",
     "react-hook-form": "^7.62.0",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.9"
@@ -51,6 +56,7 @@
     "tsx": "^4.19.2",
     "tw-animate-css": "^1.3.8",
     "typescript": "^5",
-    "webpack-bundle-analyzer": "^4.10.1"
+    "webpack-bundle-analyzer": "^4.10.1",
+    "wrangler": "^4.50.0"
   }
 }
