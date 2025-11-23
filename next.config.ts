@@ -98,10 +98,7 @@ const nextConfig: NextConfig = {
     // For server-side builds, absolutely no source maps
     if (isServer && !dev) {
       config.devtool = false;
-      // Also disable in output if present
-      if (config.output) {
-        config.output.sourceMapFilename = false;
-      }
+      // Don't set sourceMapFilename - just let devtool = false handle it
     }
 
     // Bundle analyzer
