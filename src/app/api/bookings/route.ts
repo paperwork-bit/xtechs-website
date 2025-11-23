@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addBookingToSheet, getBookingsForDate, type BookingData } from '@/lib/googleAppsScript';
 
+export const runtime = 'edge';
+
 function timeToMinutes(t: string): number {
   const [hh, mm] = t.split(':').map(Number);
   return hh * 60 + mm;

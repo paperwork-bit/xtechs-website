@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addLeadToSheet, type LeadData } from '@/lib/googleAppsScript';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {

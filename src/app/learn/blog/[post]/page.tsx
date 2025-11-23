@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 export default function BlogPostPage({ params }: { params: { post: string } }) {
   return (
     <div className="min-h-screen">

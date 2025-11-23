@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 export default function CoursePage({ params }: { params: { course: string } }) {
   return (
     <div className="min-h-screen">

@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 export default function SupportArticlePage({ params }: { params: { article: string } }) {
   return (
     <div className="min-h-screen">
