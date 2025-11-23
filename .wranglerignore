@@ -1,0 +1,10 @@
+# Cloudflare Pages ignore file
+# Exclude Firebase Functions directory from deployment
+functions/
+functions/**
+firebase.json
+.firebaserc
+.firebase/
+*.log
+dev*.log
+

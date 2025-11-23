@@ -21,6 +21,7 @@ import Image from "next/image";
 import { BuildersServicesSection } from "./BuildersServicesSection";
 import { ProcessSteps } from "@/components/ui/process-steps";
 import { trackCalendlyBooking } from "@/lib/analytics";
+import { CTASection } from "@/components/ui/cta-section";
 
 const benefits = [
   {
@@ -70,76 +71,85 @@ export function BuildersClient() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative py-8 lg:py-12 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-gray-50" />
-        
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            variants={shouldAnimate ? containerVariants : undefined}
-            initial={shouldAnimate ? "hidden" : false}
-            animate={shouldAnimate ? "visible" : undefined}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <motion.div variants={shouldAnimate ? itemVariants : undefined} className="mb-3">
-              <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50">
-                For Builders
+    <motion.div
+      className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
+      variants={shouldAnimate ? containerVariants : undefined}
+      initial={shouldAnimate ? "hidden" : "visible"}
+      animate="visible"
+    >
+      {/* Hero Section (mirrors Battery style) */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div variants={itemVariants}>
+              <Badge className="mb-4 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                Builder Solutions
               </Badge>
+
+              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                Builder
+                <br />
+                <AnimatedUnderline className="text-blue-600 dark:text-blue-400">
+                  Packages
+                </AnimatedUnderline>
+              </h1>
+
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                Seamless solar and battery integration during construction. We align pre‑wire,
+                rough‑in and final fit‑off to your programme so handover is clean, compliant and
+                client‑ready.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white" asChild>
+                  <Link href="/contact">
+                    Book Site Assessment
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link 
+                    href="https://calendly.com/inquiries-xtechsrenewables/30min" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={() => trackCalendlyBooking('builders-hero', 'builder-consultation')}
+                  >
+                    Book Consultation
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
+                </Button>
+              </div>
             </motion.div>
 
-            <motion.h1
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-2xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight"
-              style={{ textWrap: "nowrap" }}
-            >
-              <AnimatedUnderline
-                trigger="hover"
-                from="center"
-                thickness="0.2em"
-                offset="0.14em"
-                colorClass="text-gray-900"
-              >
-                Seamless integration during construction
-              </AnimatedUnderline>
-            </motion.h1>
-
-            <motion.p
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-base text-gray-600 mb-6 max-w-xl mx-auto leading-relaxed"
-            >
-              We coordinate pre-wire, rough-in and final fit-off to match your build stages so handover is clean, compliant and client-ready.
-            </motion.p>
-
-            <motion.div
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="flex flex-col sm:flex-row gap-3 justify-center"
-            >
-              <Button asChild className="bg-orange-600 hover:bg-orange-700">
-                <Link href="/contact">
-                  Book Site Assessment
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link 
-                  href="https://calendly.com/inquiries-xtechsrenewables/30min" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={() => trackCalendlyBooking('builders-hero', 'builder-consultation')}
-                >
-                  Book Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="tel:+61400000000">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Call Now
-                </Link>
-              </Button>
+            <motion.div variants={itemVariants} className="relative">
+              <div className="relative z-10">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8">
+                  <h3 className="text-2xl font-bold text-center mb-4">Builder Integration</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Pre‑wire and rough‑in</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Approvals, export limits & metering</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Staging & scheduling with trades</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Compliance & homeowner handover</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-green-500 rounded-full opacity-20"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-500 rounded-full opacity-20"></div>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -194,47 +204,19 @@ export function BuildersClient() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-8 lg:py-12 bg-orange-600">
-        <div className="container mx-auto px-4">
-          <motion.div
-            variants={shouldAnimate ? containerVariants : undefined}
-            initial={shouldAnimate ? "hidden" : false}
-            whileInView={shouldAnimate ? "visible" : undefined}
-            viewport={shouldAnimate ? { once: true, margin: "-100px" } : undefined}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <motion.h2
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-2xl lg:text-3xl font-bold text-white mb-4"
-            >
-              Ready to Integrate Solar into Your Builds?
-            </motion.h2>
-            <motion.p
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-orange-100 mb-6 max-w-2xl mx-auto"
-            >
-              Send plans and a lot schedule and we'll return a repeatable spec, programme and pricing model tailored to your builds.
-            </motion.p>
-            <motion.div
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="flex flex-col sm:flex-row gap-3 justify-center"
-            >
-              <Button asChild size="lg" className="bg-white text-orange-600 hover:bg-gray-100">
-                <Link href="/contact">
-                  Get Your Builder Package
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600">
-                <Link href="tel:+61400000000">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Call Our Experts
-                </Link>
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
+      <CTASection
+        title="Ready to Integrate Solar into Your Builds?"
+        description="Send plans and a lot schedule and we'll return a repeatable spec, programme and pricing model tailored to your builds."
+        primaryButtonText="Get Your Builder Package"
+        primaryButtonHref="/contact"
+        secondaryButtonText="Book Consultation"
+        secondaryButtonHref="https://calendly.com/inquiries-xtechsrenewables/30min"
+        backgroundColor="bg-orange-600"
+        textColor="text-orange-100"
+        buttonColor="text-orange-600"
+        phoneNumber="1300 983 247"
+        onCalendlyClick={() => trackCalendlyBooking('builders-cta', 'builders-consultation')}
+      />
+    </motion.div>
   );
 }

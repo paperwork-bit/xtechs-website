@@ -87,27 +87,86 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
+              "@type": "LocalBusiness",
               name: "xTechs Renewables",
               url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.xtechsrenewables.com.au",
               logo: "/xlogo.png",
+              image: "/og.jpg",
+              description: "Professional solar panel and battery storage installation across Victoria. CEC-accredited installers delivering reliable renewable energy solutions.",
               sameAs: [
                 "https://www.instagram.com/xtechsrenewables",
                 "https://www.linkedin.com/company/xtechs-renewables"
               ],
               address: {
                 "@type": "PostalAddress",
+                streetAddress: "123 Business Street",
                 addressLocality: "Rowville",
                 addressRegion: "VIC",
+                postalCode: "3178",
                 addressCountry: "AU"
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: "-37.9000",
+                longitude: "145.2333"
               },
               contactPoint: [{
                 "@type": "ContactPoint",
                 contactType: "customer support",
                 email: "hello@xtechsrenewables.com.au",
                 telephone: "+61 3 0000 0000",
-                areaServed: "AU"
-              }]
+                areaServed: "AU",
+                availableLanguage: "English"
+              }],
+              openingHours: "Mo-Fr 08:00-17:00",
+              priceRange: "$$",
+              serviceArea: {
+                "@type": "GeoCircle",
+                geoMidpoint: {
+                  "@type": "GeoCoordinates",
+                  latitude: "-37.9000",
+                  longitude: "145.2333"
+                },
+                geoRadius: "100000"
+              },
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "Solar and Battery Services",
+                itemListElement: [
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Residential Solar Installation",
+                      description: "Solar panel installation for Victorian homes"
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Commercial Solar Installation",
+                      description: "Large-scale solar systems for businesses"
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Battery Storage Installation",
+                      description: "Tesla Powerwall and other battery storage systems"
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "EV Charger Installation",
+                      description: "Electric vehicle charging station installation"
+                    }
+                  }
+                ]
+              }
             })
           }}
         />

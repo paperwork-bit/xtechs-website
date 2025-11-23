@@ -105,6 +105,7 @@ export function Header() {
                 height={40}
                 className="h-8 w-auto"
                 priority
+                unoptimized
               />
             </Link>
             <div className="hidden md:flex items-center space-x-4">
@@ -130,6 +131,7 @@ export function Header() {
               height={40}
               className="h-8 w-auto"
               priority
+              unoptimized
             />
           </Link>
 

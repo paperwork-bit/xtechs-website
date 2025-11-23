@@ -2,9 +2,14 @@ import { Metadata } from "next";
 import { EVChargersClient } from "@/components/ev-chargers/EVChargersClient";
 
 export const metadata: Metadata = {
-  title: "EV Charger Installation | xTechs Renewables",
-  description: "Professional EV charger installation for homes and businesses. Level 2 AC chargers, DC fast chargers, and smart charging solutions with solar integration.",
-  keywords: "EV charger installation, electric vehicle charging, home EV charger, commercial EV charging, smart charging, solar EV charging, Level 2 charger, DC fast charger",
+  title: "EV Charger Installation | Victoria Australia",
+  description: "Professional EV charger installation for Victorian homes and businesses. Level 2 AC chargers, DC fast chargers, and smart charging solutions with solar integration. CEC-accredited installers.",
+  keywords: "EV charger installation Victoria, electric vehicle charging Melbourne, home EV charger, commercial EV charging, smart charging, solar EV charging, Level 2 charger, DC fast charger, EV installation Rowville",
+  openGraph: {
+    title: "EV Charger Installation Services for Victoria",
+    description: "Professional EV charger installation for homes and businesses across Victoria. Smart charging solutions with solar integration.",
+    type: "website",
+  },
 };
 
 const jsonLd = {

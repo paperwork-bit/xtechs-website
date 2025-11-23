@@ -39,20 +39,19 @@ const footerConfig = {
         {
           title: "Solutions",
           links: [
-            { label: "PV & Battery (Residential)", href: "/pv-battery" },
+            { label: "Solar & Battery", href: "/solar" },
             { label: "Battery Storage", href: "/battery" },
-            { label: "For Builders", href: "/builders" },
-            { label: "Off-Grid", href: "/off-grid" },
+            { label: "For Builders", href: "/solar/builders" },
+            { label: "Off-Grid", href: "/solar/off-grid" },
             { label: "EV Chargers", href: "/ev-chargers" },
-            { label: "Electrical & Home Automation", href: "/electrical" },
           ],
         },
-    {
+        {
       title: "Resources",
       links: [
-        { label: "X-Classes (Coming Soon)", href: "/x-classes" },
+        { label: "X-Classes", href: "/x-classes/industry-updates" },
         { label: "Help / Support", href: "/support" },
-        { label: "X-Vrything", href: "/x-vrthing" },
+        { label: "X-vrthing Platform", href: "/x-vrthing" },
       ],
     },
     {
@@ -137,12 +136,16 @@ export default function Footer() {
                   <p>{footerConfig.contact.address}</p>
                 </div>
                 <div className="space-y-2">
-                  <Link href="https://calendly.com/inquiries-xtechsrenewables/30min" target="_blank" rel="noopener noreferrer">
-                    <Button className="w-full">Book Consultation</Button>
-                  </Link>
-                  <Link href="/contact">
-                    <Button variant="outline" className="w-full">Contact Us</Button>
-                  </Link>
+                  <Button className="w-full" asChild>
+                    <Link href="https://calendly.com/inquiries-xtechsrenewables/30min" target="_blank" rel="noopener noreferrer">
+                      Book Consultation
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/contact">
+                      Contact Us
+                    </Link>
+                  </Button>
                 </div>
 
                 <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
@@ -167,7 +170,6 @@ export default function Footer() {
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/cookies">Cookies</Link>
-            <Link href="/sitemap.xml">Sitemap</Link>
           </div>
         </div>
       </div>

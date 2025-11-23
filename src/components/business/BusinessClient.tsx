@@ -21,6 +21,7 @@ import Image from "next/image";
 import { BusinessServicesSection } from "./BusinessServicesSection";
 import { ProcessSteps } from "@/components/ui/process-steps";
 import { trackCalendlyBooking } from "@/lib/analytics";
+import { CTASection } from "@/components/ui/cta-section";
 
 const benefits = [
   {
@@ -194,58 +195,19 @@ export function BusinessClient() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-8 lg:py-12 bg-blue-600">
-        <div className="container mx-auto px-4">
-          <motion.div
-            variants={shouldAnimate ? containerVariants : undefined}
-            initial={shouldAnimate ? "hidden" : false}
-            whileInView={shouldAnimate ? "visible" : undefined}
-            viewport={shouldAnimate ? { once: true, margin: "-100px" } : undefined}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <motion.h2
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-2xl lg:text-3xl font-bold text-white mb-4"
-            >
-              Ready to Transform Your Business Energy?
-            </motion.h2>
-            <motion.p
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-blue-100 mb-6 max-w-2xl mx-auto"
-            >
-              Join hundreds of businesses already saving on energy costs with our professional solar and battery solutions.
-            </motion.p>
-            <motion.div
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="flex flex-col sm:flex-row gap-3 justify-center"
-            >
-              <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-                <Link href="/contact">
-                  Book Site Assessment
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                <Link 
-                  href="https://calendly.com/inquiries-xtechsrenewables/30min" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={() => trackCalendlyBooking('business-cta', 'commercial-consultation')}
-                >
-                  Book Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                <Link href="tel:+61400000000">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Call Our Experts
-                </Link>
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
+      <CTASection
+        title="Ready to Transform Your Business Energy?"
+        description="Join hundreds of businesses already saving on energy costs with our professional solar and battery solutions."
+        primaryButtonText="Book Site Assessment"
+        primaryButtonHref="/contact"
+        secondaryButtonText="Book Consultation"
+        secondaryButtonHref="https://calendly.com/inquiries-xtechsrenewables/30min"
+        backgroundColor="bg-blue-600"
+        textColor="text-blue-100"
+        buttonColor="text-blue-600"
+        phoneNumber="1300 983 247"
+        onCalendlyClick={() => trackCalendlyBooking('business-cta', 'commercial-consultation')}
+      />
     </div>
   );
 }

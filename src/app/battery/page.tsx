@@ -38,12 +38,55 @@ const jsonLd = {
   }
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How long will my battery last during a blackout?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Battery backup duration depends on capacity and usage. A Tesla Powerwall 3 can power essential loads for 12-24 hours, while larger systems can provide 2-3 days of backup power."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I add a battery to my existing solar system?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, most solar systems can be retrofitted with battery storage. We assess your current setup and recommend compatible battery solutions for optimal performance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between AC and DC coupled batteries?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AC coupled batteries work with any inverter, while DC coupled batteries are more efficient but require compatible inverters. We recommend the best option based on your system."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much maintenance do batteries require?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Modern lithium batteries require minimal maintenance. We provide monitoring systems and annual health checks to ensure optimal performance and longevity."
+      }
+    }
+  ]
+};
+
 export default function BatteryPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <BatteryClient />
     </>

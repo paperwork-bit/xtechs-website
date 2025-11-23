@@ -1,0 +1,11 @@
+# Cloudflare Pages Configuration for xTechs Website
+# This file is used for manual deployments via Wrangler CLI
+# For automatic Git deployments, configure in Cloudflare Pages dashboard
+
+name = "xtechs-website"
+compatibility_date = "2024-11-13"
+pages_build_output_dir = ".next"
+
+# Note: Custom domain (xtechsrenewables.com.au) should be configured
+# in Cloudflare Pages dashboard under "Custom domains" section
+

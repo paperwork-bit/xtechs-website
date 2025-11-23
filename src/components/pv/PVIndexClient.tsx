@@ -48,7 +48,7 @@ export function PVIndexClient() {
                 brands={["Tesla PW3", "Sungrow", "Sigenergy"]}
                 ctaHref="/pv-battery/residential"
                 ctaLabel="Explore Residential"
-                imageSrc="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop&crop=center"
+                imageSrc="/services/residential-hero.jpg"
                 imageAlt="Modern residential home with solar panels on roof"
                 priority={true}
               />
@@ -73,7 +73,7 @@ export function PVIndexClient() {
                 brands={["Sungrow C&I", "GoodWe", "Sigenergy"]}
                 ctaHref="/pv-battery/business"
                 ctaLabel="Explore Business"
-                imageSrc="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop&crop=center"
+                imageSrc="/services/commercial-hero.jpg"
                 imageAlt="Commercial building with solar panel installation"
               />
             </div>
@@ -107,8 +107,9 @@ export function PVIndexClient() {
                 brands={["Sigenergy", "Victron", "Sungrow hybrid"]}
                 ctaHref="/pv-battery/off-grid"
                 ctaLabel="Explore Off-Grid"
-                imageSrc="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=800&h=600&fit=crop&crop=center"
+                imageSrc="/services/offgrid-hero.jpg"
                 imageAlt="Remote off-grid solar installation in natural setting"
+                imagePosition="object-bottom"
               />
 
               {/* Builders Solar & Battery */}
@@ -131,8 +132,9 @@ export function PVIndexClient() {
                 brands={["Tesla PW3", "Sungrow", "GoodWe"]}
                 ctaHref="/pv-battery/builders"
                 ctaLabel="Explore Builders"
-                imageSrc="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=600&fit=crop&crop=center"
+                imageSrc="/services/builders-hero.jpg"
                 imageAlt="Construction site with solar panel installation in progress"
+                imagePosition="object-bottom"
               />
             </div>
           </div>

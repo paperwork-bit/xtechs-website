@@ -14,7 +14,6 @@ import {
   Plus,
   Users
 } from "lucide-react";
-import Image from "next/image";
 
 export function OffGridServicesSection() {
   const isMounted = useIsMounted();
@@ -36,366 +35,133 @@ export function OffGridServicesSection() {
     visible: { opacity: 1, y: 0 }
   };
 
+  // Card data (no images)
+  const cards = [
+    {
+      icon: MapPin,
+      title: "Site & load assessment",
+      points: [
+        "Model actual consumption and local solar yield",
+        "Size array and storage for practical autonomy",
+        "Account for daily spikes and seasonal swings",
+      ],
+      hint: "Comprehensive analysis for optimal system sizing",
+    },
+    {
+      icon: Settings,
+      title: "System architecture & design",
+      points: [
+        "Specify proven DC- or AC-coupled hybrids",
+        "Right inverter power and MPPT capacity",
+        "Proper protections for smooth operation",
+      ],
+      hint: "Proven hybrid system architecture",
+    },
+    {
+      icon: Zap,
+      title: "Generator integration & fuel strategy",
+      points: [
+        "Correctly sized generator integration",
+        "Smart start windows and charge thresholds",
+        "Minimise fuel use while protecting battery health",
+      ],
+      hint: "Smart generator integration for fuel efficiency",
+    },
+    {
+      icon: Monitor,
+      title: "Controls, monitoring & alerts",
+      points: [
+        "Live visibility of production and usage",
+        "State of charge monitoring and alerts",
+        "Remote support when you need help",
+      ],
+      hint: "Live monitoring with remote support",
+    },
+    {
+      icon: Wrench,
+      title: "Installation, commissioning & handover",
+      points: [
+        "Hardware installed to spec with firmware updates",
+        "Settings commissioned to your design",
+        "Complete handover pack with diagrams and guidance",
+      ],
+      hint: "Complete installation with comprehensive handover",
+    },
+    {
+      icon: Battery,
+      title: "Storage choices that fit",
+      points: [
+        "Batteries sized to cycle efficiently",
+        "Realistic depth-of-discharge considerations",
+        "Climate-appropriate enclosures and thermal management",
+      ],
+      hint: "Climate-appropriate battery solutions",
+    },
+    {
+      icon: Plus,
+      title: "Expansion & future-proofing",
+      points: [
+        "Room to grow with extra PV strings",
+        "Additional battery cabinets or higher inverter capacity",
+        "Scalable design for new appliances or site changes",
+      ],
+      hint: "Scalable design for future growth",
+    },
+    {
+      icon: Users,
+      title: "Operations & support",
+      points: [
+        "Scheduled check-ins and performance reviews",
+        "Tuning for seasons or load changes",
+        "Ongoing support for reliable operation",
+      ],
+      hint: "Ongoing support for reliable operation",
+    },
+  ];
+
   return (
-    <section className="py-12 lg:py-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+    <section className="py-20 bg-gray-50 dark:bg-gray-800">
+      <div className="max-w-7xl mx-auto px-6">
         <motion.div
           variants={shouldAnimate ? containerVariants : undefined}
           initial={shouldAnimate ? "hidden" : false}
           whileInView={shouldAnimate ? "visible" : undefined}
           viewport={shouldAnimate ? { once: true, margin: "-100px" } : undefined}
-          className="text-center mb-12"
         >
-          <motion.h2
-            variants={shouldAnimate ? itemVariants : undefined}
-            className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
-          >
-            Off-grid services
-          </motion.h2>
-          <motion.p
-            variants={shouldAnimate ? itemVariants : undefined}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-          >
-            Everything you need for reliable off-grid power—from design to ongoing support in remote locations.
-          </motion.p>
-        </motion.div>
-
-        {/* Services Grid - Alternating Layout */}
-        <motion.div
-          variants={shouldAnimate ? containerVariants : undefined}
-          initial={shouldAnimate ? "hidden" : false}
-          whileInView={shouldAnimate ? "visible" : undefined}
-          viewport={shouldAnimate ? { once: true, margin: "-100px" } : undefined}
-          className="space-y-12 lg:space-y-16"
-        >
-          {/* Site & Load Assessment - Image Left */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-1">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&h=400&fit=crop"
-                    alt="Remote off-grid solar installation site assessment"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-2 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <MapPin className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Site & load assessment
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  We model your actual consumption and local solar yield, then size array and storage for practical autonomy while accounting for daily spikes and seasonal swings.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Comprehensive analysis for optimal system sizing
-                </p>
-              </div>
-            </div>
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Off-Grid Services
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Everything you need for reliable off-grid power—from design to ongoing support in remote locations.
+            </p>
           </motion.div>
 
-          {/* System Architecture & Design - Image Right */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-1 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Settings className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    System architecture & design
-                  </h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {cards.map((c, i) => (
+              <motion.div
+                key={c.title}
+                variants={itemVariants}
+                className="rounded-2xl border bg-white dark:bg-gray-900 p-8 shadow-sm"
+              >
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center mb-4">
+                  <c.icon className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  We specify proven DC- or AC-coupled hybrids with the right inverter power, MPPT capacity and protections so essentials run smoothly and heavy loads are planned, not guessed.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Proven hybrid system architecture
-                </p>
-              </div>
-            </div>
-
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-2">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop"
-                    alt="Off-grid system architecture and design"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Generator Integration & Fuel Strategy - Image Left */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-1">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=600&h=400&fit=crop"
-                    alt="Generator integration for off-grid systems"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-2 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Zap className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Generator integration & fuel strategy
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  We integrate a correctly sized generator with smart start windows and charge thresholds to minimise fuel use while protecting battery health.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Smart generator integration for fuel efficiency
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Controls, Monitoring & Alerts - Image Right */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-1 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Monitor className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Controls, monitoring & alerts
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  You get live visibility of production, usage and state of charge, with alerts for low SOC or extended genset runtime and remote support when you need help.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Live monitoring with remote support
-                </p>
-              </div>
-            </div>
-
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-2">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop"
-                    alt="Off-grid system monitoring and controls"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Installation, Commissioning & Handover - Image Left */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-1">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&h=400&fit=crop"
-                    alt="Off-grid system installation and commissioning"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-2 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Wrench className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Installation, commissioning & handover
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  Hardware is installed to spec, firmware updated, and settings commissioned to your design. Your handover pack includes diagrams, settings and safety guidance.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Complete installation with comprehensive handover
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Storage Choices That Fit - Image Right */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-1 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Battery className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Storage choices that fit
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  Batteries are sized to cycle efficiently, with realistic depth-of-discharge and temperature considerations, plus enclosures or thermal management where the climate demands it.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Climate-appropriate battery solutions
-                </p>
-              </div>
-            </div>
-
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-2">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop"
-                    alt="Off-grid battery storage solutions"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Expansion & Future-Proofing - Image Left */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-1">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop"
-                    alt="Expandable off-grid solar system"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-2 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Plus className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Expansion & future-proofing
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  We leave room to grow—extra PV strings, additional battery cabinets or higher inverter capacity—so new appliances or site changes are an upgrade, not a rebuild.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Scalable design for future growth
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Operations & Support - Image Right */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-1 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Users className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Operations & support
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  We provide scheduled check-ins, performance reviews and tuning for seasons or load changes so the system stays dependable.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Ongoing support for reliable operation
-                </p>
-              </div>
-            </div>
-
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-2">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop"
-                    alt="Off-grid system operations and support"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  {c.title}
+                </h3>
+                <ul className="space-y-2 mb-3">
+                  {c.points.map((p) => (
+                    <li key={p} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-gray-500 dark:text-gray-400 italic">{c.hint}</p>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

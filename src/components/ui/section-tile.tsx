@@ -23,6 +23,7 @@ export interface SectionTileProps {
   imageSrc: string;
   imageAlt: string;
   priority?: boolean;
+  imagePosition?: string;
 }
 
 const tileVariants = {
@@ -100,6 +101,7 @@ export function SectionTile({
   imageSrc,
   imageAlt,
   priority = false,
+  imagePosition = "object-center",
 }: SectionTileProps) {
   const isImageLeft = orientation === "image-left";
   const prefersReducedMotion = useReducedMotion();
@@ -129,7 +131,7 @@ export function SectionTile({
             src={imageSrc}
             alt={imageAlt}
             fill
-            className="object-cover"
+            className={`object-cover ${imagePosition}`}
             priority={priority}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
           />

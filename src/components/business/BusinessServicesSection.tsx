@@ -76,7 +76,7 @@ export function BusinessServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop"
+                    src="/services/commercial-solar.jpg"
                     alt="Commercial solar installation on business building"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -135,7 +135,7 @@ export function BusinessServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop"
+                    src="/services/commercial-battery.jpg"
                     alt="Commercial battery storage system"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -158,7 +158,7 @@ export function BusinessServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=600&h=400&fit=crop"
+                    src="/services/commercial-ev-charger.jpg"
                     alt="Commercial EV charger installation"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -217,7 +217,7 @@ export function BusinessServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&h=400&fit=crop"
+                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop"
                     alt="Commercial electrical work and switchboard"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"

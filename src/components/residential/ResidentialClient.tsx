@@ -21,6 +21,7 @@ import Image from "next/image";
 import { ServicesSection } from "./ServicesSection";
 import { ProcessSteps } from "@/components/ui/process-steps";
 import { trackCalendlyBooking } from "@/lib/analytics";
+import { CTASection } from "@/components/ui/cta-section";
 
 
 
@@ -238,52 +239,18 @@ export function ResidentialClient() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-8 lg:py-12 bg-blue-600">
-        <div className="container mx-auto px-4">
-          <motion.div
-            variants={shouldAnimate ? containerVariants : undefined}
-            initial={shouldAnimate ? "hidden" : false}
-            whileInView={shouldAnimate ? "visible" : undefined}
-            viewport={shouldAnimate ? { once: true, margin: "-100px" } : undefined}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <motion.h2
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-2xl lg:text-3xl font-bold text-white mb-3"
-            >
-              Ready to Transform Your Home?
-            </motion.h2>
-            <motion.p
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="text-base text-blue-100 mb-6 max-w-2xl mx-auto"
-            >
-              Get a free consultation and quote for your residential energy solution. No obligation, just expert advice.
-            </motion.p>
-            <motion.div
-              variants={shouldAnimate ? itemVariants : undefined}
-              className="flex flex-col sm:flex-row gap-3 justify-center"
-            >
-              <Button asChild variant="secondary">
-                <Link href="/contact">
-                  Book Site Assessment
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                <Link 
-                  href="https://calendly.com/inquiries-xtechsrenewables/30min" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={() => trackCalendlyBooking('residential-bottom-cta', 'residential-consultation')}
-                >
-                  Book Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
+      <CTASection
+        title="Ready to Transform Your Home?"
+        description="Get a free consultation and quote for your residential energy solution. No obligation, just expert advice."
+        primaryButtonText="Book Site Assessment"
+        primaryButtonHref="/contact"
+        secondaryButtonText="Book Consultation"
+        secondaryButtonHref="https://calendly.com/inquiries-xtechsrenewables/30min"
+        backgroundColor="bg-blue-600"
+        textColor="text-blue-100"
+        buttonColor="text-blue-600"
+        onCalendlyClick={() => trackCalendlyBooking('residential-bottom-cta', 'residential-consultation')}
+      />
     </div>
   );
 }

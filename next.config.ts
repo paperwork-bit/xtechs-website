@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Disable source maps for production to reduce build size (required for Cloudflare Pages 25MB limit)
+  productionBrowserSourceMaps: false,
+  
   // Optimize images
   images: {
     formats: ['image/webp', 'image/avif'],
@@ -36,7 +39,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   
   // Custom webpack config
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // Add alias for post-calculator modules to ensure code splitting
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -44,6 +47,11 @@ const nextConfig: NextConfig = {
       '@consent': path.resolve(__dirname, 'src/components/consent'),
       '@lead': path.resolve(__dirname, 'src/components/lead'),
     };
+
+    // Disable source maps in production for Cloudflare Pages compatibility (25MB file limit)
+    if (!dev) {
+      config.devtool = false;
+    }
 
     // Bundle analyzer
     if (process.env.ANALYZE === 'true') {

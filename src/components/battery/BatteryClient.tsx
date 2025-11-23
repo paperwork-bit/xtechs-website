@@ -25,6 +25,8 @@ import Image from "next/image";
 import { BatteryServicesSection } from "./BatteryServicesSection";
 import { ProcessSteps } from "@/components/ui/process-steps";
 import { trackCalendlyBooking } from "@/lib/analytics";
+import { CTASection } from "@/components/ui/cta-section";
+import { FAQSection, batteryFAQs } from "@/components/ui/faq-section";
 
 const benefits = [
   {
@@ -233,46 +235,27 @@ export function BatteryClient() {
       {/* Services Section */}
       <BatteryServicesSection />
 
+      {/* FAQ Section */}
+      <FAQSection 
+        faqs={batteryFAQs}
+        title="Battery Storage FAQs"
+        description="Common questions about battery storage systems and installation"
+      />
+
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-blue-600">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <motion.div variants={itemVariants}>
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-              Ready to Store Your Solar Energy?
-            </h2>
-            <p className="text-xl text-green-100 mb-8">
-              Get a free consultation and quote for professional battery storage installation. 
-              Maximize your solar investment and ensure backup power for your home.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="bg-white text-green-600 hover:bg-gray-100" asChild>
-                <Link href="/contact">
-                  Book Site Assessment
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-green-600" asChild>
-                <Link 
-                  href="https://calendly.com/inquiries-xtechsrenewables/30min" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={() => trackCalendlyBooking('battery-cta', 'battery-consultation')}
-                >
-                  Book Consultation
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-green-600">
-                <Phone className="mr-2 w-5 h-5" />
-                Call 1300 983 247
-              </Button>
-            </div>
-            <p className="text-sm text-green-100 mt-4">
-              Site inspection fees apply. We'll provide a detailed quote after assessing your property.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <CTASection
+        title="Ready to Store Your Solar Energy?"
+        description="Get a free consultation and quote for professional battery storage installation. Maximize your solar investment and ensure backup power for your home."
+        primaryButtonText="Book Site Assessment"
+        primaryButtonHref="/contact"
+        secondaryButtonText="Book Consultation"
+        secondaryButtonHref="https://calendly.com/inquiries-xtechsrenewables/30min"
+        backgroundColor="bg-gradient-to-r from-green-600 to-blue-600"
+        textColor="text-green-100"
+        buttonColor="text-green-600"
+        disclaimer="Site inspection fees apply. We'll provide a detailed quote after assessing your property."
+        onCalendlyClick={() => trackCalendlyBooking('battery-cta', 'battery-consultation')}
+      />
     </motion.div>
   );
 }

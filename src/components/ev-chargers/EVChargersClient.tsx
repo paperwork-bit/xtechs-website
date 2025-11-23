@@ -23,6 +23,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { EVChargersServicesSection } from "./EVChargersServicesSection";
 import { ProcessSteps } from "@/components/ui/process-steps";
+import { trackCalendlyBooking } from "@/lib/analytics";
+import { CTASection } from "@/components/ui/cta-section";
 
 const benefits = [
   {
@@ -232,45 +234,20 @@ export function EVChargersClient() {
       <EVChargersServicesSection />
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <motion.div variants={itemVariants}>
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-              Ready to Charge Your EV with Clean Energy?
-            </h2>
-            <p className="text-xl text-blue-100 mb-8">
-              Get a free consultation and quote for professional EV charger installation. 
-              Start charging your electric vehicle with solar power today.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100" asChild>
-                <Link href="/contact">
-                  Book Site Assessment
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600" asChild>
-                <Link 
-                  href="https://calendly.com/inquiries-xtechsrenewables/30min" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={() => trackCalendlyBooking('ev-chargers-cta', 'ev-charger-consultation')}
-                >
-                  Book Consultation
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                <Phone className="mr-2 w-5 h-5" />
-                Call 1300 983 247
-              </Button>
-            </div>
-            <p className="text-sm text-blue-100 mt-4">
-              Site inspection fees apply. We'll provide a detailed quote after assessing your property.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <CTASection
+        title="Ready to Charge Your EV with Clean Energy?"
+        description="Get a free consultation and quote for professional EV charger installation. Start charging your electric vehicle with solar power today."
+        primaryButtonText="Book Site Assessment"
+        primaryButtonHref="/contact"
+        secondaryButtonText="Book Consultation"
+        secondaryButtonHref="https://calendly.com/inquiries-xtechsrenewables/30min"
+        backgroundColor="bg-gradient-to-r from-blue-600 to-green-600"
+        textColor="text-blue-100"
+        buttonColor="text-blue-600"
+        phoneNumber="1300 983 247"
+        disclaimer="Site inspection fees apply. We'll provide a detailed quote after assessing your property."
+        onCalendlyClick={() => trackCalendlyBooking('ev-chargers-cta', 'ev-charger-consultation')}
+      />
     </motion.div>
   );
 }

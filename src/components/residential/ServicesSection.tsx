@@ -8,8 +8,7 @@ import {
   Sun, 
   Battery, 
   Zap, 
-  Wrench, 
-  Home 
+  Wrench
 } from "lucide-react";
 import Image from "next/image";
 
@@ -77,7 +76,7 @@ export function ServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop"
+                    src="/services/residential-solar.jpg"
                     alt="Solar panels on residential roof"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -136,7 +135,7 @@ export function ServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop"
+                    src="/services/residential-battery.jpg"
                     alt="Home battery storage system"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -159,7 +158,7 @@ export function ServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=600&h=400&fit=crop"
+                    src="/services/residential-ev-charger.jpg"
                     alt="EV charger installation"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -218,7 +217,7 @@ export function ServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&h=400&fit=crop"
+                    src="/services/residential-electrical.jpg"
                     alt="Electrical work and switchboard"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -230,46 +229,6 @@ export function ServicesSection() {
             </div>
           </motion.div>
 
-          {/* Home Automation - Image Left */}
-          <motion.div
-            variants={shouldAnimate ? itemVariants : undefined}
-            transition={shouldAnimate ? { duration: 0.6, ease: "easeOut" } : undefined}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
-          >
-            {/* Image Section */}
-            <div className="lg:col-span-5 lg:order-1">
-              <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
-                  <Image
-                    src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop"
-                    alt="Smart home automation system"
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                </div>
-              </div>
-            </div>
-
-            {/* Content Section */}
-            <div className="lg:col-span-7 lg:order-2 p-6 sm:p-8">
-              <div className="max-w-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Home className="h-5 w-5 text-blue-600 flex-shrink-0" />
-                  <h3 className="text-xl font-semibold text-gray-900" style={{ textWrap: "balance" }}>
-                    Home automation
-                  </h3>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  We set up practical, reliable automations—lighting scenes, schedules and energy-aware controls that work with your solar, battery and EV charger. Networking is designed for stable Wi-Fi and wired backbones where useful, with local control options to keep things responsive.
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic">
-                  Energy-aware controls & local automation
-                </p>
-              </div>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </section>

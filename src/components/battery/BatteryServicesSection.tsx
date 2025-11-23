@@ -170,9 +170,7 @@ export function BatteryServicesSection() {
                   ))}
                 </ul>
 
-                <Button className="w-full" variant="outline">
-                  Learn More
-                </Button>
+                {/* Removed Learn More button as requested */}
               </motion.div>
             ))}
           </div>
@@ -211,9 +209,7 @@ export function BatteryServicesSection() {
                     ))}
                   </ul>
 
-                  <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                    {type.price}
-                  </div>
+                  {/* Price removed as requested */}
                 </motion.div>
               ))}
             </div>
