@@ -51,9 +51,17 @@ const nextConfig: NextConfig = {
     };
 
     // Disable source maps in production for Cloudflare Pages compatibility (25MB file limit)
-    // Simple approach: just set devtool to false - this is the safest way
     if (!dev) {
+      // Set devtool to false to disable source maps
       config.devtool = false;
+      
+      // Ensure sourceMapFilename is not set to an invalid value
+      // If output exists and sourceMapFilename is set to false/undefined, remove it
+      if (config.output) {
+        if (config.output.sourceMapFilename === false || config.output.sourceMapFilename === undefined) {
+          delete config.output.sourceMapFilename;
+        }
+      }
     }
 
     // Bundle analyzer
