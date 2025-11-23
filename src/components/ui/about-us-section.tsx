@@ -183,7 +183,7 @@ export default function AboutUsSection() {
                     aria-label="Preview full team photo"
                   >
                     <img
-                      src="/uploads/team.jpg"
+                      src="/team.png"
                       alt="xTechs Renewables team of accredited installers and electricians"
                       className="absolute inset-0 w-full h-full object-cover"
                     />
@@ -276,7 +276,7 @@ export default function AboutUsSection() {
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
             <img
-              src="/uploads/team.jpg"
+              src="/team.png"
               alt="xTechs Renewables team of accredited installers and electricians"
               className="w-full h-full object-contain rounded-lg shadow-2xl bg-slate-100"
             />
