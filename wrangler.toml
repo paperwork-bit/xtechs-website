@@ -6,6 +6,17 @@ name = "xtechs-website"
 compatibility_date = "2024-11-13"
 compatibility_flags = ["nodejs_compat"]
 
+# D1 Database Binding
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "xtechs-website-db"
+database_id = "4097a40a-a415-4643-8c67-be6d1a395171"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "xtechs-website-db"
+database_id = "4097a40a-a415-4643-8c67-be6d1a395171"
+
 # Note: Custom domain (xtechsrenewables.com.au) should be configured
 # in Cloudflare Pages dashboard under "Custom domains" section
 
