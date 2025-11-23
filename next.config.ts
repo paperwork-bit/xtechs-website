@@ -50,10 +50,15 @@ const nextConfig: NextConfig = {
       '@lead': path.resolve(__dirname, 'src/components/lead'),
     };
 
-    // Note: Source maps are disabled via Next.js config options above:
-    // - productionBrowserSourceMaps: false
-    // - serverSourceMaps: false
-    // We don't modify webpack devtool here to avoid conflicts
+    // PERMANENT FIX: Ensure sourceMapFilename is always a valid string or undefined
+    // This prevents Webpack validation errors when Next.js or plugins set it incorrectly
+    if (config.output) {
+      // If sourceMapFilename exists and is not a string, fix it
+      if (config.output.sourceMapFilename !== undefined && typeof config.output.sourceMapFilename !== 'string') {
+        // Delete it if it's invalid (webpack will use default)
+        delete config.output.sourceMapFilename;
+      }
+    }
 
     // Bundle analyzer
     if (process.env.ANALYZE === 'true') {
