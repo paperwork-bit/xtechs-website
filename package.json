@@ -6,14 +6,15 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "build:clean": "next build && npm run clean:sourcemaps",
+    "build:cloudflare": "next build && npm run clean:sourcemaps && npx @cloudflare/next-on-pages@1",
     "build:analyze": "ANALYZE=true next build",
     "clean:sourcemaps": "find .next -name '*.map' -type f -delete && find .next/server -name '*.map' -type f -delete && find .next/server/chunks -name '*.map' -type f -delete 2>/dev/null || true",
     "start": "next start",
     "lint": "eslint",
     "analyze": "tsx scripts/report-bundle.ts",
     "find-dead-exports": "tsx scripts/find-dead-exports.ts",
-    "deploy:cloudflare": "npm run build:clean && wrangler pages deploy .next --project-name=xtechs-website --commit-dirty=true",
-    "cf:deploy": "npm run build:clean && wrangler pages deploy .next --project-name=xtechs-website --commit-dirty=true"
+    "deploy:cloudflare": "npm run build:cloudflare && wrangler pages deploy .vercel/output/static --project-name=xtechs-website --commit-dirty=true",
+    "cf:deploy": "npm run build:cloudflare && wrangler pages deploy .vercel/output/static --project-name=xtechs-website --commit-dirty=true"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
