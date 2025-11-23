@@ -50,55 +50,10 @@ const nextConfig: NextConfig = {
       '@lead': path.resolve(__dirname, 'src/components/lead'),
     };
 
-    // AGGRESSIVELY disable source maps in production for Cloudflare Pages compatibility (25MB file limit)
-    // This applies to both client and server builds
+    // Disable source maps in production for Cloudflare Pages compatibility (25MB file limit)
+    // Simple approach: just set devtool to false - this is the safest way
     if (!dev) {
-      // Force disable all source map generation
       config.devtool = false;
-      
-      // Remove any source map plugins
-      config.plugins = config.plugins.filter(
-        (plugin: any) => !plugin?.constructor?.name?.includes('SourceMap')
-      );
-      
-      // Disable source map generation in optimization
-      config.optimization = {
-        ...config.optimization,
-        minimize: true,
-      };
-      
-      // For all modules, disable source maps
-      if (config.module) {
-        config.module.rules = config.module.rules.map((rule: any) => {
-          if (rule && typeof rule === 'object' && !Array.isArray(rule)) {
-            return {
-              ...rule,
-              use: Array.isArray(rule.use)
-                ? rule.use.map((loader: any) => {
-                    if (loader && typeof loader === 'object' && loader.options) {
-                      return {
-                        ...loader,
-                        options: {
-                          ...loader.options,
-                          sourceMap: false,
-                          sourcemap: false,
-                        },
-                      };
-                    }
-                    return loader;
-                  })
-                : rule.use,
-            };
-          }
-          return rule;
-        });
-      }
-    }
-    
-    // For server-side builds, absolutely no source maps
-    if (isServer && !dev) {
-      config.devtool = false;
-      // Don't set sourceMapFilename - just let devtool = false handle it
     }
 
     // Bundle analyzer
