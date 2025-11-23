@@ -50,25 +50,36 @@ const nextConfig: NextConfig = {
       '@lead': path.resolve(__dirname, 'src/components/lead'),
     };
 
-    // PERMANENT FIX: Ensure sourceMapFilename is ALWAYS valid
-    // Initialize output if it doesn't exist
-    if (!config.output) {
-      config.output = {};
-    }
-    
-    // If sourceMapFilename exists and is not a valid string, remove it
-    // This must happen BEFORE webpack validates the config
-    if ('sourceMapFilename' in config.output) {
-      if (typeof config.output.sourceMapFilename !== 'string') {
-        delete config.output.sourceMapFilename;
+    // PERMANENT FIX: Use webpack plugin to fix sourceMapFilename AFTER all config merges
+    // This runs after Next.js and all plugins have modified the config
+    if (!dev) {
+      // Create a plugin that validates and fixes sourceMapFilename
+      const FixSourceMapFilenamePlugin = class {
+        apply(compiler: any) {
+          compiler.hooks.afterEnvironment.tap('FixSourceMapFilenamePlugin', () => {
+            const output = compiler.options.output;
+            if (output && output.sourceMapFilename !== undefined) {
+              if (typeof output.sourceMapFilename !== 'string') {
+                // Delete invalid value - webpack will use safe default
+                delete output.sourceMapFilename;
+              }
+            }
+          });
+        }
+      };
+      
+      // Add the plugin to fix sourceMapFilename
+      if (!config.plugins) {
+        config.plugins = [];
       }
-    }
-    
-    // Also ensure it's not set to false/undefined/null by explicitly checking
-    // and removing if invalid (webpack requires string or undefined, not false/null)
-    const sourceMapFilename = config.output.sourceMapFilename;
-    if (sourceMapFilename !== undefined && sourceMapFilename !== null && typeof sourceMapFilename !== 'string') {
-      delete config.output.sourceMapFilename;
+      config.plugins.push(new FixSourceMapFilenamePlugin());
+      
+      // Also fix it immediately in case the plugin doesn't run
+      if (config.output) {
+        if (config.output.sourceMapFilename !== undefined && typeof config.output.sourceMapFilename !== 'string') {
+          delete config.output.sourceMapFilename;
+        }
+      }
     }
 
     // Bundle analyzer
