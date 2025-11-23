@@ -76,7 +76,7 @@ export default function Footer() {
             <Image
               src={footerConfig.brand.darkLogo}
               alt={`${footerConfig.brand.name} logo`}
-              width={80}
+              width={100}
               height={20}
               className="h-5 w-auto hidden dark:block"
               priority
@@ -84,7 +84,7 @@ export default function Footer() {
             <Image
               src={footerConfig.brand.lightLogo}
               alt={`${footerConfig.brand.name} logo`}
-              width={80}
+              width={100}
               height={20}
               className="h-5 w-auto block dark:hidden"
               priority
