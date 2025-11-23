@@ -1,161 +1,144 @@
-# Fix: Custom Domain Not Working
+# Fix: Domain Showing "Hello world" Instead of Website
 
 ## 🔍 The Problem
 
-You're seeing a 404 error on `https://xtechsrenewables.com.au/` because the custom domain hasn't been connected to your Cloudflare Pages deployment yet.
+The domain `https://xtechsrenewables.com.au` is showing "Hello world" instead of your Next.js website. This means:
+- ❌ The domain is NOT pointing to Cloudflare Pages
+- ❌ DNS might be pointing to a different server/placeholder
+- ❌ The custom domain might not be configured correctly
 
 ---
 
-## ✅ Step-by-Step Fix
+## ✅ Step 1: Check Cloudflare Pages Site URL
 
-### Step 1: Check Your Cloudflare Pages URL
+First, let's verify your Cloudflare Pages site is actually working:
 
-First, let's verify your site is working on Cloudflare Pages:
+1. Go to **Cloudflare Dashboard** → **Pages** → **xtechs-website**
+2. Go to **Deployments** tab
+3. Find your latest **successful deployment**
+4. **Click on it** to see the deployment details
+5. **Copy the deployment URL** (e.g., `https://xxxxx.xtechs-website.pages.dev`)
 
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Click **Pages** in left sidebar
-3. Click on **xtechs-website** project
-4. Click on **Deployments** tab (at the top)
-5. Find your latest successful deployment
-6. Click on it to see the deployment details
-7. **Copy the URL** - it should look like:
-   - `https://xxxxx.xtechs-website.pages.dev`
-   - Or `https://xtechs-website.pages.dev`
-
-8. **Try visiting that URL** - if it works, your site is deployed correctly! ✅
+**Try visiting that URL** - does it show your actual website? ✅
 
 ---
 
-### Step 2: Add Custom Domain in Cloudflare Pages
+## ✅ Step 2: Check Custom Domain Configuration
 
-Now let's connect your custom domain:
+### Verify Domain is Added in Cloudflare Pages:
 
-1. In the Cloudflare Pages dashboard, stay on your **xtechs-website** project
-2. Click on **Custom domains** tab (at the top, next to Deployments)
-3. Click the **"+ Add a custom domain"** or **"Set up a custom domain"** button
-4. Enter: `xtechsrenewables.com.au`
-5. Click **Continue** or **Add domain**
+1. Go to **Pages** → **xtechs-website** → **Custom domains** tab
+2. Check if `xtechsrenewables.com.au` is listed there
+3. What status does it show?
+   - Active ✅
+   - Pending ⏳
+   - Not configured ❌
 
----
+### If Domain is NOT Listed:
 
-### Step 3: Configure DNS
-
-Now we need to set up DNS records. Choose the option that matches your situation:
-
-#### Option A: Domain is Already on Cloudflare (Easiest)
-
-If `xtechsrenewables.com.au` is already in your Cloudflare account:
-
-1. Cloudflare will automatically configure DNS records for you
-2. Go to **DNS** → **Records** in Cloudflare
-3. You should see a new **CNAME** record created automatically:
-   - **Name:** `@` or `xtechsrenewables.com.au`
-   - **Target:** `xtechs-website.pages.dev`
-   - **Proxy status:** Proxied (orange cloud) ✓
-4. Wait 5-15 minutes for DNS to propagate
-
-#### Option B: Domain is NOT on Cloudflare
-
-If your domain is managed by another DNS provider:
-
-1. After adding the domain in Cloudflare Pages, it will show you the DNS records needed
-2. Go to your domain registrar or DNS provider (where you manage `xtechsrenewables.com.au`)
-3. Add these DNS records:
-
-   **Record 1 - Root Domain:**
-   - **Type:** CNAME
-   - **Name:** `@` (or leave blank, or use root domain name)
-   - **Target:** `xtechs-website.pages.dev`
-   - **TTL:** 3600 (or default)
-
-   **Record 2 - WWW Subdomain:**
-   - **Type:** CNAME
-   - **Name:** `www`
-   - **Target:** `xtechs-website.pages.dev`
-   - **TTL:** 3600
-
-4. Save the records
-5. Wait 15 minutes to 48 hours for DNS propagation (usually 15-30 minutes)
+1. Click **"Set up a custom domain"**
+2. Enter: `xtechsrenewables.com.au`
+3. Click **Continue**
+4. Follow the DNS configuration steps
 
 ---
 
-### Step 4: Wait for SSL Certificate
+## ✅ Step 3: Check DNS Configuration
 
-1. Cloudflare will automatically issue an SSL certificate
-2. This usually takes **5-15 minutes** after DNS is configured
-3. Check SSL status in:
-   - Cloudflare Dashboard → **Pages** → **xtechs-website** → **Custom domains**
-   - Look for SSL certificate status (should show "Active" or "Valid")
+The "Hello world" page suggests DNS is pointing to the wrong place.
+
+### If Domain is Managed by Cloudflare:
+
+1. Go to **Cloudflare Dashboard** → **DNS** → **Records**
+2. Select the domain: `xtechsrenewables.com.au`
+3. Look for DNS records:
+   - Should see a **CNAME** pointing to `xtechs-website.pages.dev`
+   - Or an **A** record pointing to Cloudflare Pages
+
+4. **If you see different records** (pointing elsewhere), delete them or update them
+
+### If Domain is Managed Elsewhere:
+
+1. Go to your DNS provider (where you manage `xtechsrenewables.com.au`)
+2. Check current DNS records:
+   - There might be an **A** record pointing to a server showing "Hello world"
+   - Or a **CNAME** pointing to the wrong location
+
+3. **Update DNS records:**
+   - **Delete** any conflicting records
+   - **Add CNAME:**
+     - Type: CNAME
+     - Name: `@` (or root domain)
+     - Target: `xtechs-website.pages.dev`
+     - TTL: 3600
 
 ---
 
-### Step 5: Test Your Site
+## ✅ Step 4: Verify Cloudflare Pages Project Name
 
-1. Wait at least **15-30 minutes** after adding DNS records
-2. Try visiting:
-   - `https://xtechsrenewables.com.au`
-   - `https://www.xtechsrenewables.com.au`
+Let's confirm the exact project name Cloudflare is using:
 
-3. If it still doesn't work:
-   - Check DNS propagation: https://dnschecker.org/
-   - Enter: `xtechsrenewables.com.au`
-   - Make sure DNS has propagated globally
+1. Go to **Pages** → **xtechs-website** → **Settings** → **General**
+2. Check the **Project name**
+3. The CNAME target should be: `{project-name}.pages.dev`
+   - So it should be: `xtechs-website.pages.dev`
+
+---
+
+## 🔧 Quick Fix Steps
+
+### Option A: Domain Already on Cloudflare
+
+1. **Pages** → **xtechs-website** → **Custom domains**
+2. If domain is listed: Click on it → **Check DNS** → Make sure it points correctly
+3. If domain is NOT listed: **Add it** following Step 2 above
+
+### Option B: Domain NOT on Cloudflare
+
+1. **Get the correct CNAME target:**
+   - Go to **Pages** → **xtechs-website** → **Custom domains**
+   - When you add the domain, Cloudflare will show you the exact target
+
+2. **Update DNS at your provider:**
+   - Delete any old records pointing to "Hello world" server
+   - Add CNAME pointing to the target Cloudflare provides
 
 ---
 
 ## 🆘 Troubleshooting
 
-### Still seeing 404?
+### Still Showing "Hello world"?
 
-1. **Check if domain is added:**
-   - Go to **Custom domains** tab in Cloudflare Pages
-   - Make sure `xtechsrenewables.com.au` is listed there
-   - It should show as "Active" or "Valid"
+1. **Check DNS propagation:**
+   - Visit: https://dnschecker.org/
+   - Enter: `xtechsrenewables.com.au`
+   - Check what IP/server it's pointing to
+   - It should point to Cloudflare Pages, not a "Hello world" server
 
-2. **Verify DNS records:**
-   - Check your DNS provider or Cloudflare DNS
-   - Make sure CNAME points to `xtechs-website.pages.dev`
-   - The record should be proxied (orange cloud) if on Cloudflare
+2. **Clear browser cache:**
+   - Try incognito/private mode
+   - Clear DNS cache: `sudo dscacheutil -flushcache` (Mac)
 
 3. **Wait longer:**
    - DNS changes can take up to 48 hours
-   - SSL certificates take 5-15 minutes
-   - Be patient and wait a bit longer
-
-4. **Clear browser cache:**
-   - Try in incognito/private mode
-   - Clear browser cache and cookies
-
-5. **Check deployment status:**
-   - Make sure you have a successful deployment
-   - Go to **Deployments** tab and verify latest deployment shows "Success"
+   - But usually 15-30 minutes
 
 ---
 
-## 📋 Quick Checklist
+## 📋 What to Check NOW
 
-- [ ] Cloudflare Pages site works at `.pages.dev` URL
-- [ ] Custom domain added in **Custom domains** tab
-- [ ] DNS records configured correctly
-- [ ] DNS has propagated (check with dnschecker.org)
-- [ ] SSL certificate is active (check in Custom domains tab)
-- [ ] Waited at least 15-30 minutes after DNS changes
+1. **What does your Cloudflare Pages URL show?**
+   - Visit the `.pages.dev` URL from your deployment
+   - Does it show your actual website? (Not "Hello world")
 
----
+2. **Is the custom domain added in Cloudflare Pages?**
+   - Check Custom domains tab
+   - Is `xtechsrenewables.com.au` listed there?
 
-## 💡 Important Notes
-
-1. **The Cloudflare Pages URL will always work** - use that for testing while setting up the custom domain
-2. **DNS propagation takes time** - don't panic if it doesn't work immediately
-3. **You need to explicitly add the domain** in Cloudflare Pages - just having DNS records isn't enough
+3. **What DNS records exist for the domain?**
+   - Check in Cloudflare DNS (if domain is on Cloudflare)
+   - Or check your DNS provider
 
 ---
 
-## 🎯 What to Do Right Now
-
-1. **First:** Check if your Cloudflare Pages URL works (from Step 1)
-2. **Then:** Add the custom domain in the **Custom domains** tab
-3. **Finally:** Configure DNS and wait for propagation
-
-Once all steps are complete, your site will be live at `https://xtechsrenewables.com.au`! 🎉
-
+**Please check these and let me know what you find!**

@@ -1,10 +1,28 @@
 # Cloudflare Pages ignore file
 # Exclude Firebase Functions directory from deployment
+
+# Firebase Functions (not needed for Cloudflare Pages)
 functions/
 functions/**
+/functions
+/functions/**
+
+# Firebase config files
 firebase.json
 .firebaserc
 .firebase/
+
+# Log files
 *.log
 dev*.log
+dev-server.log
+dev.err
+dev.local.log
+
+# Build artifacts
+.next/cache
+.next/analyze
+
+# Node modules (shouldn't be in output, but just in case)
+node_modules/
 
