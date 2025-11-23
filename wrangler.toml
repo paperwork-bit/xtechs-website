@@ -4,7 +4,7 @@
 
 name = "xtechs-website"
 compatibility_date = "2024-11-13"
-# pages_build_output_dir removed - configured in Cloudflare Pages dashboard instead
+compatibility_flags = ["nodejs_compat"]
 
 # Note: Custom domain (xtechsrenewables.com.au) should be configured
 # in Cloudflare Pages dashboard under "Custom domains" section

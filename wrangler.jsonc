@@ -1,6 +1,7 @@
 {
   "name": "xtechs-website",
   "compatibility_date": "2025-11-22",
-  "pages_build_output_dir": ".vercel/output/static"
+  "pages_build_output_dir": ".vercel/output/static",
+  "compatibility_flags": ["nodejs_compat"]
 }
 
