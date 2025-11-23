@@ -6,15 +6,21 @@ name = "xtechs-website"
 compatibility_date = "2024-11-13"
 compatibility_flags = ["nodejs_compat"]
 
-# D1 Database Binding
+# D1 Database Configuration (for wrangler CLI commands)
+[[d1_databases]]
+binding = "DB"
+database_name = "xtechs-website"
+database_id = "4097a40a-a415-4643-8c67-be6d1a395171"
+
+# D1 Database Binding for Pages Environments
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "xtechs-website-db"
+database_name = "xtechs-website"
 database_id = "4097a40a-a415-4643-8c67-be6d1a395171"
 
 [[env.preview.d1_databases]]
 binding = "DB"
-database_name = "xtechs-website-db"
+database_name = "xtechs-website"
 database_id = "4097a40a-a415-4643-8c67-be6d1a395171"
 
 # Note: Custom domain (xtechsrenewables.com.au) should be configured
