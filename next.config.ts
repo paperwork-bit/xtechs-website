@@ -50,14 +50,25 @@ const nextConfig: NextConfig = {
       '@lead': path.resolve(__dirname, 'src/components/lead'),
     };
 
-    // PERMANENT FIX: Ensure sourceMapFilename is always a valid string or undefined
-    // This prevents Webpack validation errors when Next.js or plugins set it incorrectly
-    if (config.output) {
-      // If sourceMapFilename exists and is not a string, fix it
-      if (config.output.sourceMapFilename !== undefined && typeof config.output.sourceMapFilename !== 'string') {
-        // Delete it if it's invalid (webpack will use default)
+    // PERMANENT FIX: Ensure sourceMapFilename is ALWAYS valid
+    // Initialize output if it doesn't exist
+    if (!config.output) {
+      config.output = {};
+    }
+    
+    // If sourceMapFilename exists and is not a valid string, remove it
+    // This must happen BEFORE webpack validates the config
+    if ('sourceMapFilename' in config.output) {
+      if (typeof config.output.sourceMapFilename !== 'string') {
         delete config.output.sourceMapFilename;
       }
+    }
+    
+    // Also ensure it's not set to false/undefined/null by explicitly checking
+    // and removing if invalid (webpack requires string or undefined, not false/null)
+    const sourceMapFilename = config.output.sourceMapFilename;
+    if (sourceMapFilename !== undefined && sourceMapFilename !== null && typeof sourceMapFilename !== 'string') {
+      delete config.output.sourceMapFilename;
     }
 
     // Bundle analyzer
