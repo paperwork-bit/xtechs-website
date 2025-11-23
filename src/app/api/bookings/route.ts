@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addBookingToSheet, getBookingsForDate, type BookingData } from '@/lib/googleAppsScript';
 
-export const runtime = 'edge';
+// Note: googleAppsScript may require Node.js runtime
+// Cloudflare Pages may not support this route - consider refactoring
+export const runtime = 'nodejs';
 
 function timeToMinutes(t: string): number {
   const [hh, mm] = t.split(':').map(Number);

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 
-export const runtime = 'edge';
+// Note: firebase-admin requires Node.js runtime, not Edge
+// Cloudflare Pages may not support this route - consider refactoring to use client SDK
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {

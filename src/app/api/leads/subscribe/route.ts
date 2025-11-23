@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addLeadToSheet, type LeadData } from '@/lib/googleAppsScript';
 
-export const runtime = 'edge';
+// Note: googleAppsScript may require Node.js runtime
+// Cloudflare Pages may not support this route - consider refactoring
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateAndUploadPDF } from '@/lib/googleDrive';
 
-export const runtime = 'edge';
+// Note: googleDrive may require Node.js runtime
+// Cloudflare Pages may not support this route - consider refactoring
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
