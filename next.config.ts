@@ -50,20 +50,58 @@ const nextConfig: NextConfig = {
       '@lead': path.resolve(__dirname, 'src/components/lead'),
     };
 
-    // Disable source maps in production for Cloudflare Pages compatibility (25MB file limit)
+    // AGGRESSIVELY disable source maps in production for Cloudflare Pages compatibility (25MB file limit)
     // This applies to both client and server builds
     if (!dev) {
+      // Force disable all source map generation
       config.devtool = false;
-      // Explicitly disable source map generation for all chunks
+      
+      // Remove any source map plugins
+      config.plugins = config.plugins.filter(
+        (plugin: any) => !plugin?.constructor?.name?.includes('SourceMap')
+      );
+      
+      // Disable source map generation in optimization
       config.optimization = {
         ...config.optimization,
         minimize: true,
       };
+      
+      // For all modules, disable source maps
+      if (config.module) {
+        config.module.rules = config.module.rules.map((rule: any) => {
+          if (rule && typeof rule === 'object' && !Array.isArray(rule)) {
+            return {
+              ...rule,
+              use: Array.isArray(rule.use)
+                ? rule.use.map((loader: any) => {
+                    if (loader && typeof loader === 'object' && loader.options) {
+                      return {
+                        ...loader,
+                        options: {
+                          ...loader.options,
+                          sourceMap: false,
+                          sourcemap: false,
+                        },
+                      };
+                    }
+                    return loader;
+                  })
+                : rule.use,
+            };
+          }
+          return rule;
+        });
+      }
     }
     
-    // For server-side builds, also disable source maps
+    // For server-side builds, absolutely no source maps
     if (isServer && !dev) {
       config.devtool = false;
+      // Also disable in output if present
+      if (config.output) {
+        config.output.sourceMapFilename = false;
+      }
     }
 
     // Bundle analyzer
