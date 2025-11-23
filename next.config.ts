@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
   },
   // Disable source maps for production to reduce build size (required for Cloudflare Pages 25MB limit)
   productionBrowserSourceMaps: false,
+  // Disable server-side source maps as well
+  serverSourceMaps: false,
   
   // Optimize images
   images: {
@@ -49,7 +51,18 @@ const nextConfig: NextConfig = {
     };
 
     // Disable source maps in production for Cloudflare Pages compatibility (25MB file limit)
+    // This applies to both client and server builds
     if (!dev) {
+      config.devtool = false;
+      // Explicitly disable source map generation for all chunks
+      config.optimization = {
+        ...config.optimization,
+        minimize: true,
+      };
+    }
+    
+    // For server-side builds, also disable source maps
+    if (isServer && !dev) {
       config.devtool = false;
     }
 

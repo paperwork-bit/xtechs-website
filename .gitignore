@@ -43,6 +43,9 @@ next-env.d.ts
 # Firebase
 .firebase/
 .firebaserc
+# Firebase Functions (not needed for Cloudflare Pages)
+/functions
+/functions/**
 
 # Large cache files
 *.pack
