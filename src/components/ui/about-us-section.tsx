@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
 import {
   Home,
   Building2,
@@ -183,14 +182,19 @@ export default function AboutUsSection() {
                     onClick={() => setShowFullPhoto(true)}
                     aria-label="Preview full team photo"
                   >
-                    <Image
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                       src="/uploads/team.png"
                       alt="xTechs Renewables team of accredited installers and electricians"
-                      fill
-                      className="object-cover"
-                      priority
-                      unoptimized
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="eager"
+                      onError={(e) => {
+                        // Fallback to Team.jpg if team.png fails
+                        const target = e.target as HTMLImageElement;
+                        if (target.src !== '/uploads/Team.jpg') {
+                          target.src = '/uploads/Team.jpg';
+                        }
+                      }}
                     />
                     <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200" aria-hidden="true">
                       <div className="absolute inset-0 bg-black/10" />
@@ -280,16 +284,19 @@ export default function AboutUsSection() {
             animate={{ scale: 1, y: 0, opacity: 1 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative w-full h-full min-h-[400px]">
-              <Image
-                src="/uploads/team.png"
-                alt="xTechs Renewables team of accredited installers and electricians"
-                fill
-                className="object-contain rounded-lg shadow-2xl bg-slate-100"
-                unoptimized
-                sizes="90vw"
-              />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/uploads/team.png"
+              alt="xTechs Renewables team of accredited installers and electricians"
+              className="w-full h-full object-contain rounded-lg shadow-2xl bg-slate-100"
+              onError={(e) => {
+                // Fallback to Team.jpg if team.png fails
+                const target = e.target as HTMLImageElement;
+                if (target.src !== '/uploads/Team.jpg') {
+                  target.src = '/uploads/Team.jpg';
+                }
+              }}
+            />
             <button
               className="absolute top-3 right-3 text-xs px-2 py-1 rounded bg-white/90 text-slate-800 shadow z-10"
               onClick={(e) => { e.stopPropagation(); setShowFullPhoto(false) }}
