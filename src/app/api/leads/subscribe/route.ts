@@ -1,25 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { 
+  verifyCaptcha, 
+  getClientIP, 
+  getCORSHeaders, 
+  isValidEmail, 
+  sanitizeName,
+  sanitizeMessage 
+} from "@/lib/security";
 
 export const runtime = 'edge';
 
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCORSHeaders(origin),
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const origin = request.headers.get("origin");
+    const corsHeaders = getCORSHeaders(origin);
     const body = await request.json();
     
     // Validate required fields
     if (!body.email || !body.consentMarketing) {
       return NextResponse.json(
         { error: 'Email and marketing consent are required' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // Verify CAPTCHA if provided
+    if (body.captchaToken && !(await verifyCaptcha(body.captchaToken))) {
+      return NextResponse.json(
+        { error: 'CAPTCHA verification failed' },
+        { status: 400, headers: corsHeaders }
       );
     }
 
     // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(body.email)) {
+    if (!isValidEmail(body.email)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -27,12 +52,21 @@ export async function POST(request: NextRequest) {
     const db = (process.env.DB as any) || (globalThis as any).DB;
     
     if (!db) {
-      return NextResponse.json({ error: 'Database not available' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Service temporarily unavailable' }, 
+        { status: 500, headers: corsHeaders }
+      );
     }
+
+    // Sanitize inputs
+    const sanitizedName = body.firstName ? sanitizeName(body.firstName) : null;
+    const sanitizedLastName = body.lastName ? sanitizeName(body.lastName) : null;
+    const sanitizedPostcode = body.postcode ? sanitizeMessage(body.postcode, 10) : null;
+    const sanitizedSuburb = body.suburb ? sanitizeMessage(body.suburb, 100) : null;
 
     // Generate unique ID for lead
     const leadId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const ip = request.headers.get("x-forwarded-for") || request.headers.get("cf-connecting-ip") || "unknown";
+    const ip = getClientIP(request);
 
     // Prepare lead data - store calculator results as JSON string
     const calculatorResultsJson = body.calculatorResults ? JSON.stringify(body.calculatorResults) : null;
@@ -58,7 +92,9 @@ export async function POST(request: NextRequest) {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       leadId,
-      body.firstName && body.lastName ? `${body.firstName} ${body.lastName}`.trim() : body.email.split('@')[0],
+      sanitizedName && sanitizedLastName 
+        ? `${sanitizedName} ${sanitizedLastName}`.trim() 
+        : body.email.split('@')[0],
       String(body.email).trim().toLowerCase(),
       body.phone || null,
       JSON.stringify(leadData), // Store additional data as JSON in message field
@@ -71,7 +107,10 @@ export async function POST(request: NextRequest) {
 
     if (!result.success) {
       console.error('D1 insert error:', result.error);
-      return NextResponse.json({ error: "Failed to save lead" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to save lead" }, 
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     // Send email via external service (if configured)
@@ -104,17 +143,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      leadId,
-      message: 'Lead captured successfully',
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        leadId,
+        message: 'Lead captured successfully',
+      },
+      { status: 200, headers: corsHeaders }
+    );
 
   } catch (error: any) {
     console.error('Lead capture error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500, headers: getCORSHeaders(request.headers.get("origin")) }
     );
   }
 }

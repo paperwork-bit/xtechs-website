@@ -1,4 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { 
+  verifyCaptcha, 
+  getClientIP, 
+  getCORSHeaders, 
+  isValidEmail, 
+  isValidPhone,
+  isValidDate,
+  isValidTime,
+  sanitizeName,
+  sanitizeMessage 
+} from "@/lib/security";
 
 export const runtime = 'edge';
 
@@ -8,21 +19,45 @@ function timeToMinutes(t: string): number {
   return hh * 60 + mm;
 }
 
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCORSHeaders(origin),
+  });
+}
+
 // Return booked slots for a date
 export async function GET(request: NextRequest) {
   try {
+    const origin = request.headers.get("origin");
+    const corsHeaders = getCORSHeaders(origin);
     const { searchParams } = new URL(request.url);
     const date = searchParams.get('date');
     
     if (!date) {
-      return NextResponse.json({ error: 'Missing date' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing date' }, 
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // Validate date format
+    if (!isValidDate(date)) {
+      return NextResponse.json(
+        { error: 'Invalid date format' }, 
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     // @ts-ignore - DB binding is injected by Cloudflare Pages runtime
     const db = (process.env.DB as any) || (globalThis as any).DB;
     
     if (!db) {
-      return NextResponse.json({ error: 'Database not available' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Service temporarily unavailable' }, 
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     // Get all bookings for the specified date
@@ -32,38 +67,31 @@ export async function GET(request: NextRequest) {
 
     const times = result.results?.map((booking: any) => booking.selected_time) || [];
     
-    return NextResponse.json({ date, times });
+    return NextResponse.json(
+      { date, times }, 
+      { headers: corsHeaders }
+    );
   } catch (e: any) {
     console.error('Get bookings error:', e);
-    return NextResponse.json({ error: 'Failed to fetch availability' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch availability' }, 
+      { status: 500, headers: getCORSHeaders(request.headers.get("origin")) }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const origin = request.headers.get("origin");
+    const corsHeaders = getCORSHeaders(origin);
     const bookingData = await request.json();
     
-    // Verify CAPTCHA token if provided
-    if (bookingData.captchaToken) {
-      try {
-        const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-        if (secretKey) {
-          const captchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `secret=${secretKey}&response=${bookingData.captchaToken}`
-          });
-          const captchaResult = await captchaResponse.json();
-          if (!captchaResult.success) {
-            return NextResponse.json({ 
-              error: "CAPTCHA verification failed" 
-            }, { status: 400 });
-          }
-        }
-      } catch (captchaError) {
-        console.warn('CAPTCHA verification error:', captchaError);
-        // Continue without server-side verification if it fails
-      }
+    // Verify CAPTCHA token (required for bookings)
+    if (!bookingData.captchaToken || !(await verifyCaptcha(bookingData.captchaToken))) {
+      return NextResponse.json(
+        { error: "CAPTCHA verification failed" }, 
+        { status: 400, headers: corsHeaders }
+      );
     }
     
     // Validate required fields
@@ -72,16 +100,60 @@ export async function POST(request: NextRequest) {
       if (!bookingData[field]) {
         return NextResponse.json(
           { error: `Missing required field: ${field}` },
-          { status: 400 }
+          { status: 400, headers: corsHeaders }
         );
       }
     }
+
+    // Validate and sanitize inputs
+    const sanitizedFirstName = sanitizeName(bookingData.firstName);
+    const sanitizedLastName = sanitizeName(bookingData.lastName);
+    if (!sanitizedFirstName || !sanitizedLastName) {
+      return NextResponse.json(
+        { error: 'Invalid name format' },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    if (!isValidEmail(bookingData.email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    if (!isValidPhone(bookingData.phone)) {
+      return NextResponse.json(
+        { error: 'Invalid phone format' },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    if (!isValidDate(bookingData.selectedDate)) {
+      return NextResponse.json(
+        { error: 'Invalid date format' },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    if (!isValidTime(bookingData.selectedTime)) {
+      return NextResponse.json(
+        { error: 'Invalid time format' },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    const sanitizedAddress = sanitizeMessage(bookingData.address, 500);
+    const sanitizedNotes = bookingData.notes ? sanitizeMessage(bookingData.notes, 1000) : '';
 
     // @ts-ignore - DB binding is injected by Cloudflare Pages runtime
     const db = (process.env.DB as any) || (globalThis as any).DB;
     
     if (!db) {
-      return NextResponse.json({ error: 'Database not available' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Service temporarily unavailable' }, 
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     // Check for time conflicts (90-minute rule)
@@ -112,32 +184,38 @@ export async function POST(request: NextRequest) {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       bookingId,
-      bookingData.firstName,
-      bookingData.lastName,
-      bookingData.email,
-      bookingData.phone,
-      bookingData.address,
+      sanitizedFirstName,
+      sanitizedLastName,
+      bookingData.email.trim().toLowerCase(),
+      bookingData.phone.trim(),
+      sanitizedAddress,
       bookingData.serviceType,
       bookingData.selectedDate,
       bookingData.selectedTime,
       bookingData.type || null,
-      bookingData.notes || '',
+      sanitizedNotes,
       'new',
       Math.floor(Date.now() / 1000) // Unix timestamp
     ).run();
 
     if (!result.success) {
       console.error('D1 insert error:', result.error);
-      return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to create booking' }, 
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     return NextResponse.json(
       { success: true, message: 'Booking created successfully', bookingId },
-      { status: 201 }
+      { status: 201, headers: corsHeaders }
     );
 
   } catch (error: any) {
     console.error('Booking error:', error);
-    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create booking' }, 
+      { status: 500, headers: getCORSHeaders(request.headers.get("origin")) }
+    );
   }
 }

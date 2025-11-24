@@ -54,13 +54,30 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const origin = request.headers.get("origin");
+    const corsHeaders = getCORSHeaders(origin);
+    
+    // Check for authentication token (basic protection)
+    const authHeader = request.headers.get("authorization");
+    const expectedToken = process.env.ADMIN_API_TOKEN;
+    
+    if (!expectedToken || authHeader !== `Bearer ${expectedToken}`) {
+      return NextResponse.json(
+        { error: "Unauthorized" }, 
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     const contentType = request.headers.get("content-type") || "";
     
     // @ts-ignore - DB binding is injected by Cloudflare Pages runtime
     const db = (process.env.DB as any) || (globalThis as any).DB;
     
     if (!db) {
-      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Service temporarily unavailable" }, 
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     if (contentType.includes("application/json")) {
@@ -106,18 +123,25 @@ export async function POST(request: NextRequest) {
         'SELECT * FROM services WHERE display_order = ?'
       ).bind(displayOrder).first();
 
-      return NextResponse.json({ ok: true, service: updatedService });
+      return NextResponse.json(
+        { ok: true, service: updatedService },
+        { headers: corsHeaders }
+      );
     }
 
     // Multipart form-data for file uploads (not fully supported in Edge runtime)
     // This would need to be handled differently - files should be uploaded to R2
-    return NextResponse.json({ 
-      error: "File uploads require R2 storage. JSON updates are supported." 
-    }, { status: 501 });
+    return NextResponse.json(
+      { error: "File uploads require R2 storage. JSON updates are supported." }, 
+      { status: 501, headers: corsHeaders }
+    );
 
   } catch (error: any) {
     console.error('Update service error:', error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500, headers: getCORSHeaders(request.headers.get("origin")) }
+    );
   }
 }
 
