@@ -41,17 +41,28 @@ export async function POST(req: Request) {
         if (file) {
           try {
             const arrayBuffer = await file.arrayBuffer();
-            const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+            // Convert ArrayBuffer to base64 (handles large files efficiently)
+            const bytes = new Uint8Array(arrayBuffer);
+            let binary = '';
+            const len = bytes.byteLength;
+            for (let j = 0; j < len; j++) {
+              binary += String.fromCharCode(bytes[j]);
+            }
+            const base64 = btoa(binary);
+            
             attachments.push({
               filename: file.name,
               content: base64,
             });
+            console.log(`File ${i} processed: ${file.name}, size: ${file.size} bytes`);
           } catch (error) {
-            console.error(`Error processing file ${i}:`, error);
+            console.error(`Error processing file ${i} (${file.name}):`, error);
           }
         }
       }
     }
+    
+    console.log(`Total attachments extracted: ${attachments.length}`);
     
     // Validate required fields
     if (!firstName || !lastName || !email || !subject || !message) {

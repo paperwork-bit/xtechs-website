@@ -38,12 +38,20 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
 
     // Add attachments if provided
     if (options.attachments && options.attachments.length > 0) {
-      emailPayload.attachments = options.attachments.map(att => ({
-        filename: att.filename,
-        content: typeof att.content === 'string' 
+      emailPayload.attachments = options.attachments.map(att => {
+        // Content should already be base64 string from the API route
+        const content = typeof att.content === 'string' 
           ? att.content 
-          : btoa(String.fromCharCode(...new Uint8Array(att.content as ArrayBuffer))),
-      }));
+          : btoa(String.fromCharCode(...new Uint8Array(att.content as ArrayBuffer)));
+        
+        console.log(`Attaching file: ${att.filename}, content length: ${content.length}`);
+        
+        return {
+          filename: att.filename,
+          content: content,
+        };
+      });
+      console.log(`Total attachments to send: ${emailPayload.attachments.length}`);
     }
 
     const response = await fetch('https://api.resend.com/emails', {
@@ -55,11 +63,22 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
       body: JSON.stringify(emailPayload),
     });
 
+    const responseData = await response.json().catch(() => ({}));
+    
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-      console.error('Resend API error:', error);
+      console.error('Resend API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: responseData,
+        attachmentsCount: emailPayload.attachments?.length || 0,
+      });
       return false;
     }
+
+    console.log('Email sent successfully:', {
+      id: responseData.id,
+      attachmentsCount: emailPayload.attachments?.length || 0,
+    });
 
     return true;
   } catch (error) {
