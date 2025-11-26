@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, Phone, Mail, CheckCircle } from "lucide-react";
+import { Calendar, Clock, MapPin, Phone, Mail } from "lucide-react";
 import { Captcha } from "@/components/ui/captcha";
 
 interface TimeSlot {
@@ -63,7 +63,6 @@ export function BookingCalendar() {
     captchaToken: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // Booked times fetched from server for selected date
   const [bookedTimes, setBookedTimes] = useState<string[]>([]);
@@ -185,6 +184,12 @@ export function BookingCalendar() {
 
   const PAYMENT_URL = "https://book.stripe.com/9B6bIU8ILesR8r94xZ8Ra01";
 
+  const redirectToPayment = () => {
+    if (typeof window !== "undefined") {
+      window.location.assign(PAYMENT_URL);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -233,64 +238,32 @@ export function BookingCalendar() {
         });
 
         // Redirect customer to Stripe payment page for site visit fee
-        window.location.assign(PAYMENT_URL);
+        redirectToPayment();
         return;
       } else {
-        // Fallback: just log the booking
-        console.log('Booking submitted:', {
-          ...formData,
-          selectedDate,
-          selectedTime,
-          type: 'site-assessment'
+        const errorData = await response.json().catch(() => null);
+        console.error('Booking API returned an error:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorData
         });
-        setIsSubmitted(true);
+        alert(
+          `We were unable to confirm the booking automatically (${
+            errorData?.error || response.statusText || "Unknown error"
+          }). You'll now be redirected to the payment page and our team will follow up.`
+        );
+        redirectToPayment();
+        return;
       }
     } catch (error) {
       console.error('Booking error:', error);
       alert('Failed to book appointment. Please try again or call us directly.');
+      redirectToPayment();
+      return;
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  if (isSubmitted) {
-    return (
-      <Card className="max-w-2xl mx-auto">
-        <CardContent className="p-8 text-center">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Appointment Booked!</h3>
-          <p className="text-gray-600 mb-4">
-            Your site assessment has been scheduled for {selectedDate} at {selectedTime}.
-          </p>
-          <p className="text-sm text-gray-500">
-            We'll send you a confirmation email shortly and our team will contact you to confirm the appointment.
-          </p>
-          <Button 
-            onClick={() => {
-              setIsSubmitted(false);
-              setSelectedDate("");
-              setSelectedTime("");
-              setFormData({
-                firstName: "",
-                lastName: "",
-                email: "",
-                phone: "",
-                address: "",
-                serviceType: "",
-                notes: "",
-                selectedDate: "",
-                selectedTime: "",
-                captchaToken: ""
-              });
-            }}
-            className="mt-4"
-          >
-            Book Another Appointment
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <div className="max-w-6xl mx-auto p-6">
