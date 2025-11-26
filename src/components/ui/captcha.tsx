@@ -108,17 +108,6 @@ export function Captcha({
             size: size
           })
           widgetIdRef.current = widgetId
-          
-          // Reset widget on mount to prevent auto-verification
-          // User must explicitly interact with the widget
-          setTimeout(() => {
-            if (widgetIdRef.current && window.turnstile) {
-              window.turnstile.reset(widgetIdRef.current)
-              // Clear any auto-verified token
-              onVerify(null)
-              setHasInteracted(false)
-            }
-          }, 500)
         }
       } catch (err) {
         console.error('Error rendering Turnstile:', err)

@@ -48,6 +48,7 @@ export const Contact2 = ({
   const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle")
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null)
   const [captchaToken, setCaptchaToken] = React.useState<string | null>(null)
+  const [showCaptcha, setShowCaptcha] = React.useState(false)
 
   const {
     register,
@@ -69,6 +70,25 @@ export const Contact2 = ({
       captchaToken: "",
     },
   })
+
+  // Watch form fields to show CAPTCHA only after user starts filling
+  const firstName = watch("firstName")
+  const lastName = watch("lastName")
+  const email = watch("email")
+  const message = watch("message")
+
+  // Show CAPTCHA only after user has filled at least some required fields
+  React.useEffect(() => {
+    const hasStartedFilling = 
+      (firstName && firstName.trim().length > 0) ||
+      (lastName && lastName.trim().length > 0) ||
+      (email && email.trim().length > 0) ||
+      (message && message.trim().length > 5)
+    
+    if (hasStartedFilling && !showCaptcha) {
+      setShowCaptcha(true)
+    }
+  }, [firstName, lastName, email, message, showCaptcha])
 
   const [selectedFiles, setSelectedFiles] = React.useState<File[]>([])
   const files = watch("files")
@@ -303,21 +323,30 @@ export const Contact2 = ({
                 </div>
               </div>
 
-              {/* CAPTCHA */}
-              <div className="grid w-full gap-1.5">
-                <Label>Security Verification</Label>
-                <Captcha
-                  onVerify={handleCaptchaVerify}
-                  onExpire={() => setCaptchaToken(null)}
-                  onError={() => setCaptchaToken(null)}
-                  theme="light"
-                  size="normal"
-                  className="flex justify-center"
-                />
-                {errors.captchaToken && (
-                  <p className="text-[13px] text-destructive">{errors.captchaToken.message}</p>
-                )}
-              </div>
+              {/* CAPTCHA - Only show after user starts filling form */}
+              {showCaptcha ? (
+                <div className="grid w-full gap-1.5">
+                  <Label>Security Verification</Label>
+                  <Captcha
+                    onVerify={handleCaptchaVerify}
+                    onExpire={() => setCaptchaToken(null)}
+                    onError={() => setCaptchaToken(null)}
+                    theme="light"
+                    size="normal"
+                    className="flex justify-center"
+                  />
+                  {errors.captchaToken && (
+                    <p className="text-[13px] text-destructive">{errors.captchaToken.message}</p>
+                  )}
+                </div>
+              ) : (
+                <div className="grid w-full gap-1.5">
+                  <Label>Security Verification</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Please fill in the form fields above to enable security verification.
+                  </p>
+                </div>
+              )}
 
               {/* Honeypot (hidden) */}
               <div className="hidden">
