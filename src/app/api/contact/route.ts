@@ -7,6 +7,7 @@ import {
   sanitizeName,
   sanitizeMessage 
 } from "@/lib/security";
+import { sendContactNotification } from "@/lib/email";
 
 export const runtime = 'edge';
 
@@ -119,6 +120,21 @@ export async function POST(req: Request) {
         { ok: false, error: "Failed to save message" },
         { status: 500, headers: corsHeaders }
       );
+    }
+
+    // Send email notification (don't fail if email fails)
+    try {
+      await sendContactNotification({
+        firstName,
+        lastName,
+        email: sanitizedEmail,
+        subject: sanitizedSubject || subject,
+        message: sanitizedMessage || fullMessage,
+        fileCount,
+      });
+    } catch (emailError) {
+      console.error('Failed to send contact notification email:', emailError);
+      // Continue even if email fails - message is saved
     }
 
     return NextResponse.json(
