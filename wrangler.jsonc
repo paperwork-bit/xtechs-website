@@ -2,6 +2,15 @@
   "name": "xtechs-website",
   "compatibility_date": "2025-11-22",
   "pages_build_output_dir": ".vercel/output/static",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
+  
+  // D1 Database Binding Configuration
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "xtechs-website",
+      "database_id": "4097a40a-a415-4643-8c67-be6d1a395171"
+    }
+  ]
 }
 
