@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 type Step = { id: string; label: string };
 
@@ -20,13 +20,22 @@ export function Stepper({
   const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches;
   const dir = orientation === "auto" ? (isMobile ? "horizontal" : "vertical") : orientation;
   const listRef = useRef<HTMLDivElement>(null);
+  const hasMounted = useRef(false);
 
   useEffect(() => {
     // ensure active pill stays in view on mobile
-    if (dir === "horizontal") {
-      const el = listRef.current?.querySelector<HTMLButtonElement>(`[data-id="${activeId}"]`);
-      el?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    if (dir !== "horizontal") {
+      hasMounted.current = false;
+      return;
     }
+
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
+    const el = listRef.current?.querySelector<HTMLButtonElement>(`[data-id="${activeId}"]`);
+    el?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   }, [activeId, dir]);
 
   const base =
