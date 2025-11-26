@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     }
 
     // Verify CAPTCHA if provided
-    if (captchaToken && !(await verifyCaptcha(captchaToken))) {
+    if (captchaToken && !(await verifyCaptcha(captchaToken, req))) {
       return NextResponse.json(
         { error: "CAPTCHA verification failed" }, 
         { status: 400, headers: corsHeaders }

@@ -1,16 +1,33 @@
 "use client"
 
-import React, { useRef, useEffect, useState } from 'react'
-import ReCAPTCHA from 'react-google-recaptcha'
+import React, { useEffect, useRef, useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 
 interface CaptchaProps {
   onVerify: (token: string | null) => void
   onExpire?: () => void
   onError?: () => void
-  theme?: 'light' | 'dark'
-  size?: 'compact' | 'normal'
+  theme?: 'light' | 'dark' | 'auto'
+  size?: 'normal' | 'compact'
   className?: string
+}
+
+// Declare Turnstile types
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (container: HTMLElement, options: {
+        sitekey: string
+        callback?: (token: string) => void
+        'error-callback'?: () => void
+        'expired-callback'?: () => void
+        theme?: 'light' | 'dark' | 'auto'
+        size?: 'normal' | 'compact'
+      }) => string
+      reset: (widgetId?: string) => void
+      remove: (widgetId?: string) => void
+    }
+  }
 }
 
 export function Captcha({
@@ -21,74 +38,113 @@ export function Captcha({
   size = 'normal',
   className = ''
 }: CaptchaProps) {
-  const recaptchaRef = useRef<ReCAPTCHA>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const widgetIdRef = useRef<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Get reCAPTCHA site key from environment variables
-  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' // Test key
+  // Get Turnstile site key from environment variables
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
 
   useEffect(() => {
-    // Check if reCAPTCHA is loaded
-    if (typeof window !== 'undefined' && window.grecaptcha) {
+    // Check if Turnstile is already loaded
+    if (typeof window !== 'undefined' && window.turnstile) {
       setIsLoaded(true)
-    } else {
-      // Load reCAPTCHA script if not already loaded
-      const script = document.createElement('script')
-      script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`
-      script.async = true
-      script.defer = true
-      script.onload = () => setIsLoaded(true)
-      script.onerror = () => setError('Failed to load reCAPTCHA')
-      document.head.appendChild(script)
+      return
     }
-  }, [siteKey])
 
-  const handleVerify = (token: string | null) => {
-    if (token) {
+    // Load Turnstile script if not already loaded
+    const script = document.createElement('script')
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'
+    script.async = true
+    script.defer = true
+    script.onload = () => {
+      setIsLoaded(true)
       setError(null)
-      onVerify(token)
-    } else {
-      setError('Please complete the CAPTCHA verification')
-      onVerify(null)
     }
-  }
+    script.onerror = () => {
+      setError('Failed to load Turnstile')
+      setIsLoaded(false)
+    }
+    document.head.appendChild(script)
 
-  const handleExpire = () => {
-    setError('CAPTCHA expired. Please try again.')
-    onExpire?.()
-  }
+    return () => {
+      // Cleanup: remove script if component unmounts
+      const existingScript = document.querySelector('script[src="https://challenges.cloudflare.com/turnstile/v0/api.js"]')
+      if (existingScript) {
+        // Don't remove script as it might be used by other components
+      }
+    }
+  }, [])
 
-  const handleError = () => {
-    setError('CAPTCHA verification failed. Please try again.')
-    onError?.()
-  }
+  useEffect(() => {
+    // Render Turnstile widget when loaded and container is ready
+    if (isLoaded && containerRef.current && siteKey && !widgetIdRef.current) {
+      try {
+        if (window.turnstile) {
+          const widgetId = window.turnstile.render(containerRef.current, {
+            sitekey: siteKey,
+            callback: (token: string) => {
+              setError(null)
+              onVerify(token)
+            },
+            'error-callback': () => {
+              setError('Turnstile verification failed. Please try again.')
+              onVerify(null)
+              onError?.()
+            },
+            'expired-callback': () => {
+              setError('Turnstile expired. Please verify again.')
+              onVerify(null)
+              onExpire?.()
+            },
+            theme: theme,
+            size: size
+          })
+          widgetIdRef.current = widgetId
+        }
+      } catch (err) {
+        console.error('Error rendering Turnstile:', err)
+        setError('Failed to initialize Turnstile')
+      }
+    }
+  }, [isLoaded, siteKey, theme, size, onVerify, onExpire, onError])
 
-  const reset = () => {
-    recaptchaRef.current?.reset()
-    setError(null)
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (widgetIdRef.current && window.turnstile) {
+        try {
+          window.turnstile.remove(widgetIdRef.current)
+        } catch (err) {
+          console.error('Error removing Turnstile widget:', err)
+        }
+        widgetIdRef.current = null
+      }
+    }
+  }, [])
+
+  if (!siteKey) {
+    return (
+      <div className={`p-4 text-center text-sm text-yellow-600 ${className}`}>
+        <AlertCircle className="h-4 w-4 inline mr-1" />
+        Turnstile site key not configured. Please set NEXT_PUBLIC_TURNSTILE_SITE_KEY.
+      </div>
+    )
   }
 
   if (!isLoaded) {
     return (
       <div className={`flex items-center justify-center p-4 ${className}`}>
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        <span className="ml-2 text-sm text-gray-600">Loading CAPTCHA...</span>
+        <span className="ml-2 text-sm text-gray-600">Loading security verification...</span>
       </div>
     )
   }
 
   return (
     <div className={className}>
-      <ReCAPTCHA
-        ref={recaptchaRef}
-        sitekey={siteKey}
-        onChange={handleVerify}
-        onExpired={handleExpire}
-        onErrored={handleError}
-        theme={theme}
-        size={size}
-      />
+      <div ref={containerRef} className="cf-turnstile" />
       {error && (
         <div className="flex items-center mt-2 text-sm text-red-600">
           <AlertCircle className="h-4 w-4 mr-1" />
@@ -100,7 +156,12 @@ export function Captcha({
 }
 
 // Export reset function for external use
-export const resetCaptcha = (ref: React.RefObject<ReCAPTCHA>) => {
-  ref.current?.reset()
+export const resetCaptcha = (widgetId: string | null) => {
+  if (widgetId && typeof window !== 'undefined' && window.turnstile) {
+    try {
+      window.turnstile.reset(widgetId)
+    } catch (err) {
+      console.error('Error resetting Turnstile:', err)
+    }
+  }
 }
-

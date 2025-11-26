@@ -71,28 +71,38 @@ export function isValidTime(time: string): boolean {
 }
 
 /**
- * Verify reCAPTCHA token
+ * Verify Cloudflare Turnstile token
  */
-export async function verifyCaptcha(token: string | null | undefined): Promise<boolean> {
+export async function verifyCaptcha(token: string | null | undefined, request?: Request): Promise<boolean> {
   if (!token) return false;
   
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  const secretKey = process.env.TURNSTILE_SECRET_KEY;
   if (!secretKey) {
-    console.warn('RECAPTCHA_SECRET_KEY not configured');
+    console.warn('TURNSTILE_SECRET_KEY not configured');
     return false; // Fail closed if not configured
   }
 
   try {
-    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+    // Get client IP for verification (optional but recommended)
+    const clientIP = request ? getClientIP(request) : null;
+    
+    const formData = new URLSearchParams();
+    formData.append('secret', secretKey);
+    formData.append('response', token);
+    if (clientIP && clientIP !== 'unknown') {
+      formData.append('remoteip', clientIP);
+    }
+
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `secret=${encodeURIComponent(secretKey)}&response=${encodeURIComponent(token)}`
+      body: formData.toString()
     });
 
     const result = await response.json();
     return result.success === true;
   } catch (error) {
-    console.error('CAPTCHA verification error:', error);
+    console.error('Turnstile verification error:', error);
     return false; // Fail closed on error
   }
 }

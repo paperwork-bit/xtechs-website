@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     const bookingData = await request.json();
     
     // Verify CAPTCHA token (required for bookings)
-    if (!bookingData.captchaToken || !(await verifyCaptcha(bookingData.captchaToken))) {
+    if (!bookingData.captchaToken || !(await verifyCaptcha(bookingData.captchaToken, request))) {
       return NextResponse.json(
         { error: "CAPTCHA verification failed" }, 
         { status: 400, headers: corsHeaders }

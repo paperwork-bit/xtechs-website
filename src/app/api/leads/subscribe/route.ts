@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify CAPTCHA if provided
-    if (body.captchaToken && !(await verifyCaptcha(body.captchaToken))) {
+    if (body.captchaToken && !(await verifyCaptcha(body.captchaToken, request))) {
       return NextResponse.json(
         { error: 'CAPTCHA verification failed' },
         { status: 400, headers: corsHeaders }
