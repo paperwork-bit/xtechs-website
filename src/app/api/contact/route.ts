@@ -155,7 +155,8 @@ export async function POST(req: Request) {
 
     // Send email notification (don't fail if email fails)
     try {
-      await sendContactNotification({
+      console.log(`Sending email with ${attachments.length} attachment(s)`);
+      const emailSent = await sendContactNotification({
         firstName,
         lastName,
         email: sanitizedEmail,
@@ -164,6 +165,11 @@ export async function POST(req: Request) {
         fileCount,
         attachments: attachments.length > 0 ? attachments : undefined,
       });
+      if (emailSent) {
+        console.log('Email notification sent successfully');
+      } else {
+        console.warn('Email notification failed to send');
+      }
     } catch (emailError) {
       console.error('Failed to send contact notification email:', emailError);
       // Continue even if email fails - message is saved
