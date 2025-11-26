@@ -188,6 +188,10 @@ export default function AboutUsSection() {
                       alt="xTechs Renewables team of accredited installers and electricians"
                       className="absolute inset-0 w-full h-full object-cover"
                       loading="eager"
+                      width={1920}
+                      height={1080}
+                      decoding="async"
+                      fetchpriority="high"
                       onError={(e) => {
                         // Fallback to Team.jpg if team.png fails
                         const target = e.target as HTMLImageElement;
@@ -289,6 +293,10 @@ export default function AboutUsSection() {
               src="/uploads/team.png"
               alt="xTechs Renewables team of accredited installers and electricians"
               className="w-full h-full object-contain rounded-lg shadow-2xl bg-slate-100"
+              width={1920}
+              height={1080}
+              loading="lazy"
+              decoding="async"
               onError={(e) => {
                 // Fallback to Team.jpg if team.png fails
                 const target = e.target as HTMLImageElement;

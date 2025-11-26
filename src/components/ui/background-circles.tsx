@@ -105,6 +105,11 @@ export function BackgroundCircles({ className, variant = "sun", fadeOnScroll = t
             src="/xlogo.png" 
             alt="xTechs Logo" 
             className="w-64 h-64 md:w-80 md:h-80 object-contain"
+            width={320}
+            height={320}
+            decoding="async"
+            fetchpriority="high"
+            loading="eager"
           />
         </motion.div>
       </div>
