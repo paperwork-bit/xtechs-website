@@ -143,8 +143,27 @@ export const Contact2 = ({
       })
 
       if (!res.ok) {
-        const text = await res.text().catch(() => "")
-        throw new Error(text || `Request failed with status ${res.status}`)
+        let errorMessage = `Request failed with status ${res.status}`;
+        try {
+          const data = await res.json().catch(() => null);
+          if (data?.error) {
+            errorMessage = data.error;
+          } else {
+            const text = await res.text().catch(() => "");
+            if (text) {
+              // Try to parse JSON from text
+              try {
+                const jsonError = JSON.parse(text);
+                errorMessage = jsonError.error || jsonError.message || errorMessage;
+              } catch {
+                errorMessage = text || errorMessage;
+              }
+            }
+          }
+        } catch {
+          // Fallback to status message
+        }
+        throw new Error(errorMessage);
       }
 
       setStatus("success")

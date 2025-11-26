@@ -35,7 +35,7 @@ export default function ContactPage() {
             <Contact2 
               title="Contact Us"
               description="Have questions about our services? Send us a message and we'll get back to you as soon as possible."
-              submitUrl={process.env.NEXT_PUBLIC_LEADS_ENDPOINT || "/api/contact"}
+              submitUrl="/api/contact"
             />
           </TabsContent>
         </Tabs>
