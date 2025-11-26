@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     console.log(`File count from form: ${fileCount}`);
     
     // Extract file attachments - check all possible file keys
-    const attachments: Array<{ filename: string; content: string }> = [];
+    const attachments: Array<{ filename: string; content: string; contentType?: string }> = [];
     
     // First, try the numbered format (file_0, file_1, etc.)
     if (fileCount > 0) {
@@ -57,8 +57,9 @@ export async function POST(req: Request) {
             attachments.push({
               filename: file.name,
               content: base64,
+              contentType: file.type || undefined,
             });
-            console.log(`File ${i} processed successfully: ${file.name}, base64 length: ${base64.length}`);
+            console.log(`File ${i} processed successfully: ${file.name}, base64 length: ${base64.length}, type: ${file.type}`);
           } catch (error) {
             console.error(`Error processing file ${i} (${file.name}):`, error);
           }
@@ -84,6 +85,7 @@ export async function POST(req: Request) {
           attachments.push({
             filename: value.name,
             content: base64,
+            contentType: value.type || undefined,
           });
         } catch (error) {
           console.error(`Error processing file ${key}:`, error);

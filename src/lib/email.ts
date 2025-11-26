@@ -12,6 +12,7 @@ interface SendEmailOptions {
   attachments?: Array<{
     filename: string;
     content: string | ArrayBuffer; // base64 encoded or ArrayBuffer
+    contentType?: string;
   }>;
 }
 
@@ -49,6 +50,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
         return {
           filename: att.filename,
           content: content,
+          contentType: att.contentType,
         };
       });
       console.log(`Total attachments to send: ${emailPayload.attachments.length}`);
@@ -199,6 +201,7 @@ export async function sendContactNotification(contactData: {
   attachments?: Array<{
     filename: string;
     content: string | ArrayBuffer;
+    contentType?: string;
   }>;
 }): Promise<boolean> {
   const html = `
