@@ -32,14 +32,18 @@ export async function POST(req: Request) {
     const message = formData.get("message") as string;
     const captchaToken = formData.get("captchaToken") as string;
     const fileCount = parseInt((formData.get("fileCount") as string) || "0") || 0;
+    console.log(`File count from form: ${fileCount}`);
     
-    // Extract file attachments
+    // Extract file attachments - check all possible file keys
     const attachments: Array<{ filename: string; content: string }> = [];
+    
+    // First, try the numbered format (file_0, file_1, etc.)
     if (fileCount > 0) {
       for (let i = 0; i < fileCount; i++) {
         const file = formData.get(`file_${i}`) as File | null;
-        if (file) {
+        if (file && file instanceof File) {
           try {
+            console.log(`Processing file ${i}: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
             const arrayBuffer = await file.arrayBuffer();
             // Convert ArrayBuffer to base64 (handles large files efficiently)
             const bytes = new Uint8Array(arrayBuffer);
@@ -54,10 +58,35 @@ export async function POST(req: Request) {
               filename: file.name,
               content: base64,
             });
-            console.log(`File ${i} processed: ${file.name}, size: ${file.size} bytes`);
+            console.log(`File ${i} processed successfully: ${file.name}, base64 length: ${base64.length}`);
           } catch (error) {
             console.error(`Error processing file ${i} (${file.name}):`, error);
           }
+        } else {
+          console.warn(`File ${i} not found or not a File object`);
+        }
+      }
+    }
+    
+    // Also check for files with other possible names
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File && !key.startsWith('file_')) {
+        console.log(`Found additional file with key: ${key}, name: ${value.name}`);
+        try {
+          const arrayBuffer = await value.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuffer);
+          let binary = '';
+          const len = bytes.byteLength;
+          for (let j = 0; j < len; j++) {
+            binary += String.fromCharCode(bytes[j]);
+          }
+          const base64 = btoa(binary);
+          attachments.push({
+            filename: value.name,
+            content: base64,
+          });
+        } catch (error) {
+          console.error(`Error processing file ${key}:`, error);
         }
       }
     }
