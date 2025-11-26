@@ -9,6 +9,10 @@ interface SendEmailOptions {
   subject: string;
   html: string;
   text?: string;
+  attachments?: Array<{
+    filename: string;
+    content: string | ArrayBuffer; // base64 encoded or ArrayBuffer
+  }>;
 }
 
 /**
@@ -24,19 +28,31 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   }
 
   try {
+    const emailPayload: any = {
+      from: FROM_EMAIL,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      text: options.text || options.html.replace(/<[^>]*>/g, ''),
+    };
+
+    // Add attachments if provided
+    if (options.attachments && options.attachments.length > 0) {
+      emailPayload.attachments = options.attachments.map(att => ({
+        filename: att.filename,
+        content: typeof att.content === 'string' 
+          ? att.content 
+          : btoa(String.fromCharCode(...new Uint8Array(att.content as ArrayBuffer))),
+      }));
+    }
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-        text: options.text || options.html.replace(/<[^>]*>/g, ''),
-      }),
+      body: JSON.stringify(emailPayload),
     });
 
     if (!response.ok) {
@@ -161,6 +177,10 @@ export async function sendContactNotification(contactData: {
   subject: string;
   message: string;
   fileCount?: number;
+  attachments?: Array<{
+    filename: string;
+    content: string | ArrayBuffer;
+  }>;
 }): Promise<boolean> {
   const html = `
     <!DOCTYPE html>
@@ -201,10 +221,14 @@ export async function sendContactNotification(contactData: {
             <div class="field-value">${contactData.subject}</div>
           </div>
           
-          ${contactData.fileCount && contactData.fileCount > 0 ? `
+          ${contactData.attachments && contactData.attachments.length > 0 ? `
           <div class="field">
-            <div class="field-label">Attachments:</div>
-            <div class="field-value">${contactData.fileCount} file(s) attached</div>
+            <div class="field-label">Attachments (${contactData.attachments.length} file(s)):</div>
+            <div class="field-value">
+              <ul style="margin: 5px 0; padding-left: 20px;">
+                ${contactData.attachments.map(att => `<li>${att.filename}</li>`).join('')}
+              </ul>
+            </div>
           </div>
           ` : ''}
           
@@ -228,6 +252,7 @@ export async function sendContactNotification(contactData: {
     to: ADMIN_EMAIL,
     subject: `Contact Form: ${contactData.subject}`,
     html,
+    attachments: contactData.attachments,
   });
 }
 

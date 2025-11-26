@@ -33,6 +33,26 @@ export async function POST(req: Request) {
     const captchaToken = formData.get("captchaToken") as string;
     const fileCount = parseInt((formData.get("fileCount") as string) || "0") || 0;
     
+    // Extract file attachments
+    const attachments: Array<{ filename: string; content: string }> = [];
+    if (fileCount > 0) {
+      for (let i = 0; i < fileCount; i++) {
+        const file = formData.get(`file_${i}`) as File | null;
+        if (file) {
+          try {
+            const arrayBuffer = await file.arrayBuffer();
+            const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+            attachments.push({
+              filename: file.name,
+              content: base64,
+            });
+          } catch (error) {
+            console.error(`Error processing file ${i}:`, error);
+          }
+        }
+      }
+    }
+    
     // Validate required fields
     if (!firstName || !lastName || !email || !subject || !message) {
       return NextResponse.json({ 
@@ -131,6 +151,7 @@ export async function POST(req: Request) {
         subject: sanitizedSubject || subject,
         message: sanitizedMessage || fullMessage,
         fileCount,
+        attachments: attachments.length > 0 ? attachments : undefined,
       });
     } catch (emailError) {
       console.error('Failed to send contact notification email:', emailError);
