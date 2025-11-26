@@ -183,6 +183,8 @@ export function BookingCalendar() {
     setFormData(prev => ({ ...prev, captchaToken: token || "" }));
   };
 
+  const PAYMENT_URL = "https://book.stripe.com/9B6bIU8ILesR8r94xZ8Ra01";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -209,13 +211,13 @@ export function BookingCalendar() {
       });
 
       if (response.ok) {
-        setIsSubmitted(true);
         // Persist booked slot locally to simulate backend availability
         if (selectedDate && selectedTime) {
           saveBookedTime(selectedDate, selectedTime);
         }
-        // Send email notification
-        await fetch('/api/notify-booking', {
+
+        // Fire-and-forget booking notification so it doesn't block redirect
+        fetch('/api/notify-booking', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -226,7 +228,13 @@ export function BookingCalendar() {
             selectedTime,
             type: 'site-assessment'
           }),
+        }).catch((notifyErr) => {
+          console.warn('notify-booking request failed:', notifyErr);
         });
+
+        // Redirect customer to Stripe payment page for site visit fee
+        window.location.assign(PAYMENT_URL);
+        return;
       } else {
         // Fallback: just log the booking
         console.log('Booking submitted:', {
