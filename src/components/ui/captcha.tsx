@@ -42,6 +42,7 @@ export function Captcha({
   const widgetIdRef = useRef<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [hasInteracted, setHasInteracted] = useState(false)
 
   // Get Turnstile site key from environment variables
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
@@ -85,16 +86,21 @@ export function Captcha({
           const widgetId = window.turnstile.render(containerRef.current, {
             sitekey: siteKey,
             callback: (token: string) => {
-              setError(null)
-              onVerify(token)
+              if (token) {
+                setError(null)
+                setHasInteracted(true)
+                onVerify(token)
+              }
             },
             'error-callback': () => {
               setError('Turnstile verification failed. Please try again.')
+              setHasInteracted(false)
               onVerify(null)
               onError?.()
             },
             'expired-callback': () => {
               setError('Turnstile expired. Please verify again.')
+              setHasInteracted(false)
               onVerify(null)
               onExpire?.()
             },
@@ -102,6 +108,17 @@ export function Captcha({
             size: size
           })
           widgetIdRef.current = widgetId
+          
+          // Reset widget on mount to prevent auto-verification
+          // User must explicitly interact with the widget
+          setTimeout(() => {
+            if (widgetIdRef.current && window.turnstile) {
+              window.turnstile.reset(widgetIdRef.current)
+              // Clear any auto-verified token
+              onVerify(null)
+              setHasInteracted(false)
+            }
+          }, 500)
         }
       } catch (err) {
         console.error('Error rendering Turnstile:', err)
