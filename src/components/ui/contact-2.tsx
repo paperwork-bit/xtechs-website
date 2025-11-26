@@ -72,23 +72,23 @@ export const Contact2 = ({
   })
 
   // Watch form fields to show CAPTCHA only after user starts filling
-  const firstName = watch("firstName")
-  const lastName = watch("lastName")
-  const email = watch("email")
-  const message = watch("message")
+  const watchedFirstName = watch("firstName")
+  const watchedLastName = watch("lastName")
+  const watchedEmail = watch("email")
+  const watchedMessage = watch("message")
 
   // Show CAPTCHA only after user has filled at least some required fields
   React.useEffect(() => {
     const hasStartedFilling = 
-      (firstName && firstName.trim().length > 0) ||
-      (lastName && lastName.trim().length > 0) ||
-      (email && email.trim().length > 0) ||
-      (message && message.trim().length > 5)
+      (watchedFirstName && watchedFirstName.trim().length > 0) ||
+      (watchedLastName && watchedLastName.trim().length > 0) ||
+      (watchedEmail && watchedEmail.trim().length > 0) ||
+      (watchedMessage && watchedMessage.trim().length > 5)
     
     if (hasStartedFilling && !showCaptcha) {
       setShowCaptcha(true)
     }
-  }, [firstName, lastName, email, message, showCaptcha])
+  }, [watchedFirstName, watchedLastName, watchedEmail, watchedMessage, showCaptcha])
 
   const [selectedFiles, setSelectedFiles] = React.useState<File[]>([])
   const files = watch("files")
