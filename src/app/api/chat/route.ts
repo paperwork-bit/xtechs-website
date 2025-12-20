@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateResponse } from '@/lib/chatbot/chatbot';
+import { generateOpenAIResponse } from '@/lib/chatbot/openai';
 import type { ChatMessage } from '@/lib/chatbot/chatbot';
 import type { CustomerInfo } from '@/lib/chatbot/customer-info';
 import { getKnowledgeBaseFromR2 } from '@/lib/r2/knowledge-base';
-import { knowledgeBase as localKnowledgeBase } from '@/lib/chatbot/knowledge-base';
+import { knowledgeBase as localKnowledgeBase, getContextForQuery } from '@/lib/chatbot/knowledge-base';
 
 export const runtime = 'edge';
 
@@ -50,13 +50,30 @@ export async function POST(request: NextRequest) {
       // Continue with local knowledge base
     }
 
-    // Generate response with knowledge base and customer info
-    const response = generateResponse(
-      message, 
-      history, 
-      parsedCustomerInfo,
-      knowledgeBase
-    );
+    // Get relevant context from knowledge base for the user's query
+    const knowledgeBaseContext = getContextForQuery(message);
+
+    // Generate response using OpenAI
+    let response: string;
+    try {
+      response = await generateOpenAIResponse(
+        message,
+        history,
+        parsedCustomerInfo,
+        knowledgeBaseContext
+      );
+    } catch (error: any) {
+      console.error('OpenAI error:', error);
+      
+      // Fallback to a helpful message if OpenAI fails
+      if (error.message?.includes('API key')) {
+        response = "I'm having trouble connecting right now. Please call us directly on 1300 983 247 for immediate assistance.";
+      } else if (error.message?.includes('rate limit')) {
+        response = "I'm receiving a lot of messages right now. Please try again in a moment, or call us on 1300 983 247.";
+      } else {
+        response = "I'm having a bit of trouble right now. Could you try rephrasing your question, or would you prefer to speak with our team directly? You can call us on 1300 983 247.";
+      }
+    }
 
     return NextResponse.json({
       response,
