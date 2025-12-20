@@ -13,10 +13,29 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+/**
+ * Get time-based greeting for Victoria, Australia
+ */
+function getTimeBasedGreeting(): string {
+  const now = new Date();
+  const victoriaTime = new Date(now.toLocaleString("en-US", { timeZone: "Australia/Melbourne" }));
+  const hour = victoriaTime.getHours();
+  
+  if (hour >= 5 && hour < 12) {
+    return "Good morning";
+  } else if (hour >= 12 && hour < 17) {
+    return "Good afternoon";
+  } else if (hour >= 17 && hour < 21) {
+    return "Good evening";
+  } else {
+    return "G'day";
+  }
+}
+
 const GREETINGS = [
-  "G'day! Welcome to xTechs Renewables. I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?",
-  "Hello! Thanks for visiting xTechs Renewables. I'm your friendly assistant here to answer questions about our clean energy services across Victoria. What would you like to know?",
-  "Hi there! Great to have you here. I'm here to help you learn about our solar panels, batteries, EV chargers, and more. What can I help you with today?",
+  () => `${getTimeBasedGreeting()}! Welcome to xTechs Renewables. I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`,
+  () => `${getTimeBasedGreeting()}! Thanks for visiting xTechs Renewables. I'm your friendly assistant here to answer questions about our clean energy services across Victoria. What would you like to know?`,
+  () => `${getTimeBasedGreeting()}! Great to have you here. I'm here to help you learn about our solar panels, batteries, EV chargers, and more. What can I help you with today?`,
 ];
 
 const FALLBACK_RESPONSES = [
@@ -43,9 +62,11 @@ export function generateResponse(
   if (isGreeting(lowerMessage)) {
     if (customerInfo) {
       const name = customerInfo.fullName.split(' ')[0]; // First name
-      return `G'day ${name}! Thanks for providing your details. I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`;
+      const timeGreeting = getTimeBasedGreeting();
+      return `${timeGreeting} ${name}! Thanks for providing your details. I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`;
     }
-    return GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+    const greetingFunc = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+    return typeof greetingFunc === 'function' ? greetingFunc() : greetingFunc;
   }
   
   // Handle goodbye
@@ -224,6 +245,7 @@ function craftResponse(
  * Get a random greeting for initial chat
  */
 export function getInitialGreeting(): string {
-  return GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+  const greetingFunc = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+  return typeof greetingFunc === 'function' ? greetingFunc() : greetingFunc;
 }
 

@@ -9,16 +9,45 @@ import { MessageCircle, X, Send, Minimize2, Maximize2 } from "lucide-react";
 import { getInitialGreeting } from "@/lib/chatbot/chatbot";
 import type { ChatMessage } from "@/lib/chatbot/chatbot";
 import type { CustomerInfo } from "@/lib/chatbot/customer-info";
-import { CustomerForm } from "./customer-form";
 import { WelcomePrompt } from "./welcome-prompt";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Get time-based greeting for Victoria, Australia
+function getTimeBasedGreeting(customerInfo: CustomerInfo | null): string {
+  // Get current time in Victoria, Australia (AEST/AEDT)
+  const now = new Date();
+  const victoriaTime = new Date(now.toLocaleString("en-US", { timeZone: "Australia/Melbourne" }));
+  const hour = victoriaTime.getHours();
+  
+  let timeGreeting = "";
+  if (hour >= 5 && hour < 12) {
+    timeGreeting = "Good morning";
+  } else if (hour >= 12 && hour < 17) {
+    timeGreeting = "Good afternoon";
+  } else if (hour >= 17 && hour < 21) {
+    timeGreeting = "Good evening";
+  } else {
+    timeGreeting = "G'day";
+  }
+  
+  if (customerInfo) {
+    const name = customerInfo.fullName.split(' ')[0];
+    return `${timeGreeting} ${name}! I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`;
+  } else {
+    const greetings = [
+      `${timeGreeting}! Welcome to xTechs Renewables. I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`,
+      `${timeGreeting}! Thanks for visiting xTechs Renewables. I'm your friendly assistant here to answer questions about our clean energy services across Victoria. What would you like to know?`,
+      `${timeGreeting}! Great to have you here. I'm here to help you learn about our solar panels, batteries, EV chargers, and more. What can I help you with today?`,
+    ];
+    return greetings[Math.floor(Math.random() * greetings.length)];
+  }
+}
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showWelcomePrompt, setShowWelcomePrompt] = useState(false);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
-  const [showCustomerForm, setShowCustomerForm] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +66,7 @@ export function Chatbot() {
     }
   }, []);
 
-  // Reset form when chat opens
+  // Reset when chat opens
   useEffect(() => {
     if (isOpen) {
       // Check if customer info exists in session storage
@@ -46,26 +75,21 @@ export function Chatbot() {
         try {
           const parsed = JSON.parse(storedInfo);
           setCustomerInfo(parsed);
-          setShowCustomerForm(false);
         } catch (e) {
-          // Invalid stored data, show form
-          setShowCustomerForm(true);
+          // Invalid stored data, ignore
         }
-      } else {
-        setShowCustomerForm(true);
       }
     } else {
       // Reset when closed
-      setShowCustomerForm(true);
       setMessages([]);
     }
   }, [isOpen]);
 
-  // Initialize with greeting after customer info is collected
+  // Initialize with greeting when chat opens
   useEffect(() => {
-    if (isOpen && !showCustomerForm && messages.length === 0 && customerInfo) {
-      const name = customerInfo.fullName.split(' ')[0];
-      const greeting = `G'day ${name}! Thanks for providing your details. I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`;
+    if (isOpen && messages.length === 0) {
+      // Get time-based greeting for Victoria, Australia
+      const greeting = getTimeBasedGreeting(customerInfo);
       setMessages([
         {
           role: "assistant",
@@ -74,7 +98,7 @@ export function Chatbot() {
         },
       ]);
     }
-  }, [isOpen, showCustomerForm, customerInfo, messages.length]);
+  }, [isOpen, messages.length, customerInfo]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -97,25 +121,6 @@ export function Chatbot() {
     setShowWelcomePrompt(false);
   };
 
-  const handleCustomerSubmit = (info: CustomerInfo) => {
-    setCustomerInfo(info);
-    setShowCustomerForm(false);
-    // Store in session storage
-    sessionStorage.setItem('chatbot-customer-info', JSON.stringify(info));
-  };
-
-  const handleCustomerSkip = () => {
-    setShowCustomerForm(false);
-    // Initialize with regular greeting
-    const greeting = getInitialGreeting();
-    setMessages([
-      {
-        role: "assistant",
-        content: greeting,
-        timestamp: new Date(),
-      },
-    ]);
-  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -127,19 +132,31 @@ export function Chatbot() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input.trim();
     setInput("");
     setIsLoading(true);
 
+    // Check if user is providing customer info naturally
+    const updatedCustomerInfo = extractCustomerInfoFromMessage(currentInput, customerInfo);
+    if (updatedCustomerInfo && updatedCustomerInfo !== customerInfo) {
+      setCustomerInfo(updatedCustomerInfo);
+      sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedCustomerInfo));
+    }
+
     try {
+      // Add human-like delay (1-3 seconds)
+      const delay = Math.random() * 2000 + 1000;
+      await new Promise(resolve => setTimeout(resolve, delay));
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: userMessage.content,
+          message: currentInput,
           conversationHistory: messages,
-          customerInfo: customerInfo,
+          customerInfo: updatedCustomerInfo || customerInfo,
         }),
       });
 
@@ -165,6 +182,72 @@ export function Chatbot() {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
+
+  // Extract customer info from natural conversation
+  function extractCustomerInfoFromMessage(message: string, existingInfo: CustomerInfo | null): CustomerInfo | null {
+    const lowerMessage = message.toLowerCase();
+    let info = existingInfo ? { ...existingInfo } : null;
+
+    // Extract name
+    if (!info || !info.fullName) {
+      const namePatterns = [
+        /(?:my name is|i'm|i am|call me|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
+        /^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)(?:\s+here|\s+speaking)/i,
+      ];
+      for (const pattern of namePatterns) {
+        const match = message.match(pattern);
+        if (match && match[1]) {
+          info = info || { fullName: "", email: "", address: "", collectedAt: new Date() };
+          info.fullName = match[1].trim();
+          break;
+        }
+      }
+    }
+
+    // Extract email
+    if (!info || !info.email) {
+      const emailPattern = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i;
+      const emailMatch = message.match(emailPattern);
+      if (emailMatch && emailMatch[1]) {
+        info = info || { fullName: info?.fullName || "", email: "", address: "", collectedAt: new Date() };
+        info.email = emailMatch[1].trim();
+      }
+    }
+
+    // Extract phone
+    if (!info || !info.phone) {
+      const phonePattern = /(\+?61|0)[2-478](?:[ -]?[0-9]){8}/;
+      const phoneMatch = message.match(phonePattern);
+      if (phoneMatch && phoneMatch[0]) {
+        info = info || { fullName: info?.fullName || "", email: info?.email || "", address: "", collectedAt: new Date() };
+        info.phone = phoneMatch[0].trim();
+      }
+    }
+
+    // Extract address (look for VIC, Victoria, Melbourne, postcodes, etc.)
+    if (!info || !info.address) {
+      const addressPatterns = [
+        /(?:i live in|i'm in|i'm from|address is|located in|based in)\s+([^,]+(?:,\s*VIC|,\s*Victoria)?[^.]*)/i,
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,?\s*(?:VIC|Victoria|Melbourne)[^.]*)/i,
+        /(\d+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,?\s*(?:VIC|Victoria)[^.]*)/i,
+      ];
+      for (const pattern of addressPatterns) {
+        const match = message.match(pattern);
+        if (match && match[1]) {
+          info = info || { fullName: info?.fullName || "", email: info?.email || "", address: "", collectedAt: new Date() };
+          info.address = match[1].trim();
+          break;
+        }
+      }
+    }
+
+    // Only return if we have at least name or email
+    if (info && (info.fullName || info.email)) {
+      return info as CustomerInfo;
+    }
+
+    return existingInfo;
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -227,8 +310,10 @@ export function Chatbot() {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed bottom-6 right-6 z-50 w-[90vw] sm:w-[400px] max-w-[calc(100vw-3rem)]"
           >
-            <Card className="shadow-2xl border-2 border-emerald-100 dark:border-emerald-900 flex flex-col h-[600px] max-h-[calc(100vh-8rem)]">
-              <CardHeader className="flex-shrink-0 bg-emerald-600 text-white rounded-t-lg">
+            <Card className={`shadow-2xl border-2 border-emerald-100 dark:border-emerald-900 flex flex-col overflow-hidden ${
+              isMinimized ? 'h-auto' : 'h-[600px] max-h-[calc(100vh-8rem)]'
+            }`}>
+              <CardHeader className="flex-shrink-0 bg-emerald-600 text-white rounded-t-lg p-4 border-0">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg font-semibold flex items-center gap-2">
                     <MessageCircle className="w-5 h-5" />
@@ -264,25 +349,10 @@ export function Chatbot() {
                 </div>
               </CardHeader>
 
-              {!isMinimized && (
+              {!isMinimized ? (
                 <>
                   <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
-                    {showCustomerForm ? (
-                      <div className="py-4">
-                        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                          Let's Get Started
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                          To provide you with the best assistance, please share a few details about yourself.
-                        </p>
-                        <CustomerForm 
-                          onSubmit={handleCustomerSubmit}
-                          onSkip={handleCustomerSkip}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        {messages.map((message, index) => (
+                    {messages.map((message, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 10 }}
@@ -304,49 +374,51 @@ export function Chatbot() {
                           </p>
                         </div>
                       </motion.div>
-                        ))}
-                        {isLoading && (
-                          <div className="flex justify-start">
-                            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2">
-                              <div className="flex gap-1">
-                                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                              </div>
-                            </div>
+                    ))}
+                    {isLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2">
+                          <div className="flex gap-1">
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                           </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                      </>
+                        </div>
+                      </div>
                     )}
+                    <div ref={messagesEndRef} />
                   </CardContent>
 
-                  {!showCustomerForm && (
-                    <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                      <div className="flex gap-2">
-                        <Input
-                          ref={inputRef}
-                          value={input}
-                          onChange={(e) => setInput(e.target.value)}
-                          onKeyPress={handleKeyPress}
-                          placeholder="Type your message..."
-                          disabled={isLoading}
-                          className="flex-1"
-                        />
-                        <Button
-                          onClick={handleSend}
-                          disabled={!input.trim() || isLoading}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                        >
-                          <Send className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                        Powered by xTechs Renewables • Victoria, Australia
-                      </p>
+                  <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                    <div className="flex gap-2">
+                      <Input
+                        ref={inputRef}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Type your message..."
+                        disabled={isLoading}
+                        className="flex-1"
+                      />
+                      <Button
+                        onClick={handleSend}
+                        disabled={!input.trim() || isLoading}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
                     </div>
-                  )}
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                      Powered by xTechs Renewables • Victoria, Australia
+                    </p>
+                  </div>
                 </>
+              ) : (
+                <div className="p-4 bg-gray-50 dark:bg-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                    Chat minimized. Click maximize to continue.
+                  </p>
+                </div>
               )}
             </Card>
           </motion.div>
