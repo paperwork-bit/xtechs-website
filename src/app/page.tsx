@@ -31,16 +31,6 @@ export default function Home() {
 
       <HomeInteractiveWidgets />
 
-      {/* Sticky Help Bubble */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button 
-          size="lg" 
-          className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
-        >
-          Need Help?
-        </Button>
-      </div>
-
     </div>
   );
 }

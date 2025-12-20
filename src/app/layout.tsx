@@ -7,6 +7,7 @@ import Footer from "@/components/ui/footer";
 import CookieBanner from "@/components/compliance/cookie-banner";
 import ConsentPreferences from "@/components/compliance/consent-preferences";
 import ConsentScripts from "@/components/compliance/consent-scripts";
+import { Chatbot } from "@/components/chatbot/chatbot";
 import Script from "next/script";
 
 const geistSans = Geist({
@@ -87,6 +88,7 @@ export default function RootLayout({
         {children}
         <ShortlistTray />
         <Footer />
+        <Chatbot />
         
         {/* JSON-LD structured data */}
         <Script

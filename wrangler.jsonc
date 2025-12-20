@@ -11,6 +11,13 @@
       "database_name": "xtechs-website",
       "database_id": "4097a40a-a415-4643-8c67-be6d1a395171"
     }
+  ],
+  // R2 Bucket Binding Configuration for Chatbot Knowledge Base
+  "r2_buckets": [
+    {
+      "binding": "CHATBOT_KB",
+      "bucket_name": "xtechs-chatbot-kb"
+    }
   ]
 }
 

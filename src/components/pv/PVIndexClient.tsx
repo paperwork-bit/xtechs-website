@@ -6,7 +6,7 @@ import { HeroSection } from "@/components/ui/hero-section";
 import { TrustRow } from "@/components/ui/trust-row";
 import { ComparisonStrip } from "@/components/ui/comparison-strip";
 import { FaqSection } from "@/components/faq/FaqSection";
-import { StickyHelp } from "@/components/ui/sticky-help";
+// StickyHelp removed - using chatbot instead
 import { disableAnim, isDev } from "@/lib/flags";
 import { useIsMounted } from "@/lib/use-is-mounted";
 
@@ -143,8 +143,7 @@ export function PVIndexClient() {
         {/* FAQ Section */}
         <FaqSection />
 
-        {/* Sticky Help Button */}
-        <StickyHelp />
+        {/* Chatbot is now in the layout - no need for StickyHelp */}
       </div>
     </>
   );

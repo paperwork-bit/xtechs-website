@@ -13,8 +13,9 @@
     "lint": "eslint",
     "analyze": "tsx scripts/report-bundle.ts",
     "find-dead-exports": "tsx scripts/find-dead-exports.ts",
-    "deploy:cloudflare": "npm run build:cloudflare && wrangler pages deploy .vercel/output/static --project-name=xtechs-website --commit-dirty=true",
-    "cf:deploy": "npm run build:cloudflare && wrangler pages deploy .vercel/output/static --project-name=xtechs-website --commit-dirty=true"
+    "deploy:cloudflare": "npm run build:cloudflare && npx wrangler pages deploy .vercel/output/static --project-name=xtechs-website --commit-dirty=true",
+    "cf:deploy": "npm run build:cloudflare && npx wrangler pages deploy .vercel/output/static --project-name=xtechs-website --commit-dirty=true",
+    "deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -23,6 +23,21 @@ binding = "DB"
 database_name = "xtechs-website"
 database_id = "4097a40a-a415-4643-8c67-be6d1a395171"
 
+# R2 Bucket Configuration for Chatbot Knowledge Base
+[[r2_buckets]]
+binding = "CHATBOT_KB"
+bucket_name = "xtechs-chatbot-kb"
+
+# R2 Bucket Binding for Pages Environments
+[[env.production.r2_buckets]]
+binding = "CHATBOT_KB"
+bucket_name = "xtechs-chatbot-kb"
+
+[[env.preview.r2_buckets]]
+binding = "CHATBOT_KB"
+bucket_name = "xtechs-chatbot-kb"
+
 # Note: Custom domain (xtechsrenewables.com.au) should be configured
 # in Cloudflare Pages dashboard under "Custom domains" section
+# Note: R2 bucket must be created in Cloudflare dashboard before deployment
 
