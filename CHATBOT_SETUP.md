@@ -43,13 +43,28 @@ The binding name is `CHATBOT_KB` and bucket name is `xtechs-chatbot-kb`.
 Add to your Cloudflare Pages environment variables:
 
 ```bash
+# Admin token for knowledge base updates
 ADMIN_API_TOKEN=your-secret-admin-token-here
+
+# OpenAI API Configuration
+OPENAI_API_KEY=your-openai-api-key-here
+OPENAI_CHAT_MODEL=gpt-4o-mini  # Optional: gpt-4o-mini (default, cost-effective), gpt-3.5-turbo (cheapest), or gpt-4o (more capable)
 ```
 
 Generate a secure random token:
 ```bash
 openssl rand -hex 32
 ```
+
+### OpenAI Model Options
+
+The chatbot uses OpenAI for generating responses. You can configure which model to use via the `OPENAI_CHAT_MODEL` environment variable:
+
+- **`gpt-4o-mini`** (default, recommended): Best balance of cost and quality. Very cost-effective while maintaining good response quality.
+- **`gpt-3.5-turbo`**: Cheapest option, still provides good responses for most queries.
+- **`gpt-4o`**: More capable but more expensive. Use if you need higher quality responses.
+
+**Note:** If `OPENAI_CHAT_MODEL` is not set, the system defaults to `gpt-4o-mini` which is already very cost-effective.
 
 ## Step 4: Upload Knowledge Base to R2
 

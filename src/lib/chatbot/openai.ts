@@ -1,6 +1,6 @@
 /**
  * OpenAI Integration for xTechs Renewables Chatbot
- * Uses GPT-4o-mini for natural, conversational responses
+ * Uses configurable model (default: gpt-4o-mini) for cost-effective, natural responses
  */
 
 import OpenAI from 'openai';
@@ -8,22 +8,38 @@ import type { ChatMessage } from './chatbot';
 import type { CustomerInfo } from './customer-info';
 import { formatCustomerInfoForContext, extractLocationContext } from './customer-info';
 
-const SYSTEM_PROMPT = `You are a helpful, confident solar energy consultant for xTechs Renewables.
+// Get model from environment variable, default to gpt-4o-mini (cost-effective)
+// Options: 'gpt-4o-mini' (recommended), 'gpt-3.5-turbo' (cheapest), 'gpt-4o' (more capable)
+const CHAT_MODEL = process.env.OPENAI_CHAT_MODEL || 'gpt-4o-mini';
 
-You speak like a real person — clear, professional, and practical.
-You do NOT sound robotic, scripted, or like a helpdesk bot.
+const SYSTEM_PROMPT = `You are a helpful, knowledgeable solar energy consultant for xTechs Renewables, a leading provider of clean energy solutions in Victoria, Australia.
+
+CRITICAL: You MUST use the provided knowledge base information to answer questions accurately. The knowledge base contains detailed information about:
+- Company services (solar PV, batteries, EV charging, off-grid systems, electrical services)
+- Installation process and timelines
+- Products and brands (Tesla, Alpha ESS, BYD, Sungrow, etc.)
+- Pricing and rebates (Solar Victoria rebates)
+- Contact information (1300 983 247)
+- Service areas (Victoria, Melbourne, Rowville)
+
+Your communication style:
+- Speak like a real person — clear, professional, and practical
+- Be confident and helpful, not robotic or scripted
+- Answer questions directly using the knowledge base information
+- If the knowledge base has relevant information, USE IT to provide accurate answers
+- Only suggest calling or booking if the question truly cannot be answered from the knowledge base
 
 Rules:
-- Answer directly and clearly.
-- Do not mention "according to our website" unless asked.
-- If information is missing, ask a short follow-up question.
-- If the user sounds unsure, guide them.
-- If the user sounds ready to act, move them toward a next step.
-- Keep answers concise unless the user asks for detail.
-- Never hallucinate technical specs or rebates.
-- If you're unsure, say so and suggest how to confirm.
+- ALWAYS use the knowledge base context provided to answer questions accurately
+- Answer directly and clearly based on the knowledge base information
+- Do not say "I'm having trouble" or "I don't know" if the knowledge base contains relevant information
+- If the user asks about solar, batteries, EV charging, pricing, rebates, or services, provide detailed information from the knowledge base
+- Only suggest calling 1300 983 247 or booking a consultation if the question is about something not in the knowledge base
+- Keep answers concise but informative
+- Never hallucinate or make up information - only use what's in the knowledge base
+- If you're truly unsure about something not in the knowledge base, then suggest speaking with the team
 
-Your goal is to help the user, not dump information.`;
+Your goal is to help customers by providing accurate information from the knowledge base, not to redirect them unnecessarily.`;
 
 /**
  * Generate response using OpenAI GPT-4o-mini
@@ -50,8 +66,10 @@ export async function generateOpenAIResponse(
   // Add system message with context
   let systemMessage = SYSTEM_PROMPT;
   
-  if (knowledgeBaseContext) {
-    systemMessage += `\n\nHere's information about xTechs Renewables:\n${knowledgeBaseContext}`;
+  if (knowledgeBaseContext && knowledgeBaseContext.trim().length > 0) {
+    systemMessage += `\n\n=== KNOWLEDGE BASE CONTEXT (USE THIS TO ANSWER QUESTIONS) ===\n${knowledgeBaseContext}\n=== END KNOWLEDGE BASE ===\n\nIMPORTANT: Use the knowledge base information above to answer the user's question. Do not say you're having trouble if the knowledge base contains relevant information.`;
+  } else {
+    systemMessage += `\n\nNote: Limited knowledge base context available. Use general knowledge about xTechs Renewables services.`;
   }
   
   if (customerInfo) {
@@ -94,13 +112,13 @@ export async function generateOpenAIResponse(
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: CHAT_MODEL,
       messages: contextMessages,
-      temperature: 0.7,
-      max_tokens: 500,
+      temperature: 0.7, // Balanced creativity and accuracy
+      max_tokens: 600, // Increased slightly for more detailed responses
       top_p: 1,
-      frequency_penalty: 0.3,
-      presence_penalty: 0.3,
+      frequency_penalty: 0.2, // Reduced to allow more natural repetition when needed
+      presence_penalty: 0.2, // Reduced to allow more natural responses
     });
 
     const response = completion.choices[0]?.message?.content;

@@ -282,10 +282,40 @@ export const knowledgeBase: KnowledgeChunk[] = [
 
 /**
  * Search the knowledge base for relevant chunks
+ * Enhanced with better matching for common queries
  */
 export function searchKnowledgeBase(query: string, limit: number = 5): KnowledgeChunk[] {
-  const lowerQuery = query.toLowerCase();
-  const queryWords = lowerQuery.split(/\s+/).filter(w => w.length > 2);
+  const lowerQuery = query.toLowerCase().trim();
+  
+  // Expand query with synonyms and related terms
+  const queryExpansions: { [key: string]: string[] } = {
+    'solar': ['solar', 'pv', 'photovoltaic', 'panels', 'panel', 'solar system'],
+    'battery': ['battery', 'batteries', 'storage', 'powerwall', 'energy storage'],
+    'ev': ['ev', 'electric vehicle', 'electric car', 'charging', 'charger'],
+    'price': ['price', 'pricing', 'cost', 'costs', 'how much', 'quote', 'quotes'],
+    'rebate': ['rebate', 'rebates', 'incentive', 'incentives', 'subsidy', 'solar victoria'],
+    'contact': ['contact', 'phone', 'call', 'email', 'address', 'location', 'reach'],
+    'installation': ['installation', 'install', 'process', 'how long', 'timeline'],
+  };
+  
+  // Find expanded terms
+  const expandedTerms: string[] = [lowerQuery];
+  for (const [key, synonyms] of Object.entries(queryExpansions)) {
+    if (lowerQuery.includes(key) || synonyms.some(s => lowerQuery.includes(s))) {
+      expandedTerms.push(...synonyms);
+    }
+  }
+  
+  // Extract meaningful words (length > 2, filter common stop words)
+  const stopWords = new Set(['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'her', 'was', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'its', 'may', 'new', 'now', 'old', 'see', 'two', 'way', 'who', 'boy', 'did', 'its', 'let', 'put', 'say', 'she', 'too', 'use']);
+  const queryWords = lowerQuery
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !stopWords.has(w));
+  
+  // If no meaningful words, use the whole query
+  if (queryWords.length === 0) {
+    queryWords.push(lowerQuery);
+  }
   
   // Score each chunk based on keyword matches
   const scored = knowledgeBase.map(chunk => {
@@ -293,19 +323,32 @@ export function searchKnowledgeBase(query: string, limit: number = 5): Knowledge
     const lowerContent = chunk.content.toLowerCase();
     const lowerTitle = chunk.title.toLowerCase();
     const lowerKeywords = chunk.keywords.map(k => k.toLowerCase()).join(' ');
+    const allText = `${lowerTitle} ${lowerContent} ${lowerKeywords}`;
     
-    // Title matches are worth more
-    if (lowerTitle.includes(lowerQuery)) score += 10;
+    // Exact query match in title (highest priority)
+    if (lowerTitle.includes(lowerQuery)) score += 20;
     
-    // Keyword matches
-    queryWords.forEach(word => {
-      if (lowerKeywords.includes(word)) score += 5;
-      if (lowerTitle.includes(word)) score += 3;
-      if (lowerContent.includes(word)) score += 1;
+    // Exact query match in content
+    if (lowerContent.includes(lowerQuery)) score += 15;
+    
+    // Expanded terms matching
+    expandedTerms.forEach(term => {
+      if (lowerTitle.includes(term)) score += 8;
+      if (lowerKeywords.includes(term)) score += 6;
+      if (lowerContent.includes(term)) score += 3;
     });
     
-    // Exact phrase match
-    if (lowerContent.includes(lowerQuery)) score += 5;
+    // Individual keyword matches
+    queryWords.forEach(word => {
+      if (lowerKeywords.includes(word)) score += 5;
+      if (lowerTitle.includes(word)) score += 4;
+      if (lowerContent.includes(word)) score += 2;
+    });
+    
+    // Category matching (if query mentions service categories)
+    if (lowerQuery.includes('residential') && chunk.category === 'services' && lowerContent.includes('residential')) score += 10;
+    if (lowerQuery.includes('commercial') && chunk.category === 'services' && lowerContent.includes('commercial')) score += 10;
+    if (lowerQuery.includes('off-grid') && chunk.category === 'services' && lowerContent.includes('off-grid')) score += 10;
     
     return { chunk, score };
   });
@@ -320,15 +363,33 @@ export function searchKnowledgeBase(query: string, limit: number = 5): Knowledge
 
 /**
  * Get context for a query by combining relevant knowledge chunks
+ * Returns more comprehensive context for better AI responses
  */
 export function getContextForQuery(query: string): string {
-  const relevantChunks = searchKnowledgeBase(query, 3);
+  // Get more chunks (5 instead of 3) for better context
+  const relevantChunks = searchKnowledgeBase(query, 5);
   if (relevantChunks.length === 0) {
-    return "xTechs Renewables provides solar PV, battery storage, EV charging, and electrical services across Victoria, Australia.";
+    // Return general company info if no matches
+    return `xTechs Renewables is a leading provider of clean energy solutions across Victoria, Australia. We specialize in:
+- Solar PV systems (residential and commercial)
+- Battery storage solutions (Tesla Powerwall, Alpha ESS, BYD, Sungrow)
+- EV charging stations (Tesla, Zappi, SigEnergy, Wattpilot)
+- Off-grid and hybrid systems
+- Electrical services
+- SolarFold rapid-deploy power systems
+
+We are CEC-accredited installers based in Rowville, Melbourne, serving customers throughout Victoria. Contact us at 1300 983 247 or book a site assessment through our contact page.`;
   }
   
-  return relevantChunks
-    .map(chunk => `${chunk.title}: ${chunk.content}`)
-    .join('\n\n');
+  // Format chunks with clear structure
+  const contextParts = relevantChunks.map((chunk, index) => {
+    let formatted = `${chunk.title}:\n${chunk.content}`;
+    if (chunk.url) {
+      formatted += `\n(More info available at: ${chunk.url})`;
+    }
+    return formatted;
+  });
+  
+  return contextParts.join('\n\n---\n\n');
 }
 
