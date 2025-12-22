@@ -11,6 +11,45 @@ import type { ChatMessage } from "@/lib/chatbot/chatbot";
 import type { CustomerInfo } from "@/lib/chatbot/customer-info";
 import { WelcomePrompt } from "./welcome-prompt";
 import { motion, AnimatePresence } from "framer-motion";
+import { marked } from "marked";
+
+// Configure marked for better formatting
+marked.setOptions({
+  breaks: false, // Don't convert single line breaks to <br> (better for lists)
+  gfm: true, // GitHub Flavored Markdown
+});
+
+// Helper function to parse markdown safely
+function parseMarkdown(content: string): string {
+  try {
+    if (!content || typeof content !== 'string') {
+      return '';
+    }
+    
+    const trimmedContent = content.trim();
+    
+    // Parse markdown - marked.parse() returns a string in v16
+    const parsed = marked.parse(trimmedContent, {
+      breaks: false,
+      gfm: true,
+    });
+    
+    // marked.parse() in v16 returns a string directly
+    const result = typeof parsed === 'string' ? parsed : String(parsed || trimmedContent);
+    
+    // Verify that markdown was actually parsed (check for <strong> tags)
+    if (trimmedContent.includes('**') && !result.includes('<strong>')) {
+      console.warn('Markdown parsing may have failed. Input:', trimmedContent.substring(0, 100));
+      console.warn('Output:', result.substring(0, 100));
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Markdown parsing error:', error, 'Content:', content.substring(0, 50));
+    // Fallback: escape HTML and return as plain text
+    return content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+}
 
 // Get time-based greeting for Victoria, Australia
 function getTimeBasedGreeting(customerInfo: CustomerInfo | null): string {
@@ -34,6 +73,7 @@ function getTimeBasedGreeting(customerInfo: CustomerInfo | null): string {
     const name = customerInfo.fullName.split(' ')[0];
     return `${timeGreeting} ${name}! I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`;
   } else {
+    // If no customer info, the AI will naturally ask for it in the conversation
     const greetings = [
       `${timeGreeting}! Welcome to xTechs Renewables. I'm here to help you with any questions about our solar, battery, and renewable energy solutions. How can I assist you today?`,
       `${timeGreeting}! Thanks for visiting xTechs Renewables. I'm your friendly assistant here to answer questions about our clean energy services across Victoria. What would you like to know?`,
@@ -51,6 +91,8 @@ export function Chatbot() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
+  const [dataSaved, setDataSaved] = useState(false); // Track if data has been saved
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -135,12 +177,18 @@ export function Chatbot() {
     const currentInput = input.trim();
     setInput("");
     setIsLoading(true);
+    setSuggestedQuestions([]); // Clear suggestions when user sends a message
 
     // Check if user is providing customer info naturally
     const updatedCustomerInfo = extractCustomerInfoFromMessage(currentInput, customerInfo);
     if (updatedCustomerInfo && updatedCustomerInfo !== customerInfo) {
       setCustomerInfo(updatedCustomerInfo);
       sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedCustomerInfo));
+      
+      // Check if we have all required info and save to database
+      if (!dataSaved && hasRequiredInfo(updatedCustomerInfo)) {
+        saveCustomerData(updatedCustomerInfo);
+      }
     }
 
     try {
@@ -169,6 +217,17 @@ export function Chatbot() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+      
+      // Generate suggested follow-up questions based on the response
+      const suggestions = generateSuggestedQuestions(data.response, currentInput, messages);
+      setSuggestedQuestions(suggestions);
+      
+      // Check again if customer info was updated and save if complete
+      // (in case info was extracted from the response or updated during conversation)
+      const finalCustomerInfo = updatedCustomerInfo || customerInfo;
+      if (finalCustomerInfo && !dataSaved && hasRequiredInfo(finalCustomerInfo)) {
+        saveCustomerData(finalCustomerInfo);
+      }
     } catch (error) {
       console.error("Chat error:", error);
       const errorMessage: ChatMessage = {
@@ -183,23 +242,74 @@ export function Chatbot() {
     }
   };
 
+  // Check if customer info has all required fields
+  function hasRequiredInfo(info: CustomerInfo): boolean {
+    return !!(
+      info.fullName && 
+      info.fullName.trim().length >= 2 &&
+      info.email && 
+      info.email.includes('@') &&
+      info.address && 
+      info.address.trim().length >= 5
+    );
+  }
+
+  // Save customer data to database
+  async function saveCustomerData(info: CustomerInfo) {
+    if (dataSaved) return; // Already saved
+    
+    try {
+      const response = await fetch("/api/chatbot/lead", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: info.fullName,
+          email: info.email,
+          address: info.address,
+          phone: info.phone || null,
+          source: "chatbot",
+        }),
+      });
+
+      const data = await response.json();
+      if (data.ok) {
+        setDataSaved(true);
+        console.log("Customer data saved successfully");
+      } else {
+        console.error("Failed to save customer data:", data.error);
+      }
+    } catch (error) {
+      console.error("Error saving customer data:", error);
+      // Don't show error to user - fail silently
+    }
+  }
+
   // Extract customer info from natural conversation
   function extractCustomerInfoFromMessage(message: string, existingInfo: CustomerInfo | null): CustomerInfo | null {
     const lowerMessage = message.toLowerCase();
     let info = existingInfo ? { ...existingInfo } : null;
 
-    // Extract name
+    // Extract name - enhanced patterns
     if (!info || !info.fullName) {
       const namePatterns = [
-        /(?:my name is|i'm|i am|call me|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
+        /(?:my name is|i'm|i am|call me|this is|it's|it is|name's|name is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
         /^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)(?:\s+here|\s+speaking)/i,
+        /(?:i'm|i am)\s+([A-Z][a-z]+)/i,
+        /(?:name|call me)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
+        /^([A-Z][a-z]+)\s*[,.]/i, // "John," or "John."
       ];
       for (const pattern of namePatterns) {
         const match = message.match(pattern);
         if (match && match[1]) {
-          info = info || { fullName: "", email: "", address: "", collectedAt: new Date() };
-          info.fullName = match[1].trim();
-          break;
+          const extractedName = match[1].trim();
+          // Basic validation - at least 2 characters, starts with letter
+          if (extractedName.length >= 2 && /^[A-Za-z]/.test(extractedName)) {
+            info = info || { fullName: "", email: "", address: "", collectedAt: new Date() };
+            info.fullName = extractedName;
+            break;
+          }
         }
       }
     }
@@ -209,7 +319,9 @@ export function Chatbot() {
       const emailPattern = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i;
       const emailMatch = message.match(emailPattern);
       if (emailMatch && emailMatch[1]) {
-        info = info || { fullName: info?.fullName || "", email: "", address: "", collectedAt: new Date() };
+        if (!info) {
+          info = { fullName: "", email: "", address: "", collectedAt: new Date() };
+        }
         info.email = emailMatch[1].trim();
       }
     }
@@ -219,24 +331,46 @@ export function Chatbot() {
       const phonePattern = /(\+?61|0)[2-478](?:[ -]?[0-9]){8}/;
       const phoneMatch = message.match(phonePattern);
       if (phoneMatch && phoneMatch[0]) {
-        info = info || { fullName: info?.fullName || "", email: info?.email || "", address: "", collectedAt: new Date() };
+        if (!info) {
+          info = { fullName: "", email: "", address: "", collectedAt: new Date() };
+        }
         info.phone = phoneMatch[0].trim();
       }
     }
 
-    // Extract address (look for VIC, Victoria, Melbourne, postcodes, etc.)
+    // Extract address - enhanced patterns
     if (!info || !info.address) {
       const addressPatterns = [
-        /(?:i live in|i'm in|i'm from|address is|located in|based in)\s+([^,]+(?:,\s*VIC|,\s*Victoria)?[^.]*)/i,
+        /(?:i live in|i'm in|i'm from|address is|located in|based in|i'm at|i live at|my address is|we're in|we're from)\s+([^,]+(?:,\s*VIC|,\s*Victoria|,\s*Melbourne)?[^.]*)/i,
         /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,?\s*(?:VIC|Victoria|Melbourne)[^.]*)/i,
-        /(\d+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,?\s*(?:VIC|Victoria)[^.]*)/i,
+        /(\d+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,?\s*(?:VIC|Victoria|Melbourne)[^.]*)/i,
+        /(?:in|at|from)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*(?:VIC|Victoria|Melbourne)?/i,
+        /([A-Z][a-z]+)\s+(?:VIC|Victoria|Melbourne)/i, // "Rowville VIC" or "Melbourne Victoria"
+        /\b(\d{4})\b/, // Australian postcode (4 digits)
       ];
       for (const pattern of addressPatterns) {
         const match = message.match(pattern);
         if (match && match[1]) {
-          info = info || { fullName: info?.fullName || "", email: info?.email || "", address: "", collectedAt: new Date() };
-          info.address = match[1].trim();
-          break;
+          const extractedAddress = match[1].trim();
+          // Basic validation - at least 3 characters
+          if (extractedAddress.length >= 3) {
+            if (!info) {
+              info = { fullName: "", email: "", address: "", collectedAt: new Date() };
+            }
+            // If it's just a postcode, try to get more context
+            if (/^\d{4}$/.test(extractedAddress)) {
+              // Look for suburb name before postcode
+              const suburbMatch = message.match(/([A-Z][a-z]+)\s+\d{4}/i);
+              if (suburbMatch && suburbMatch[1]) {
+                info.address = `${suburbMatch[1]} ${extractedAddress} VIC`;
+              } else {
+                info.address = extractedAddress;
+              }
+            } else {
+              info.address = extractedAddress;
+            }
+            break;
+          }
         }
       }
     }
@@ -255,6 +389,147 @@ export function Chatbot() {
       handleSend();
     }
   };
+
+  const handleSuggestedQuestion = async (question: string) => {
+    setSuggestedQuestions([]);
+    
+    // Create user message directly
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: question,
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    // Check if user is providing customer info naturally
+    const updatedCustomerInfo = extractCustomerInfoFromMessage(question, customerInfo);
+    if (updatedCustomerInfo && updatedCustomerInfo !== customerInfo) {
+      setCustomerInfo(updatedCustomerInfo);
+      sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedCustomerInfo));
+    }
+
+    try {
+      // Add human-like delay (1-3 seconds)
+      const delay = Math.random() * 2000 + 1000;
+      await new Promise(resolve => setTimeout(resolve, delay));
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: question,
+          conversationHistory: messages,
+          customerInfo: updatedCustomerInfo || customerInfo,
+        }),
+      });
+
+      const data = await response.json();
+
+      const assistantMessage: ChatMessage = {
+        role: "assistant",
+        content: data.response || "I'm sorry, I didn't understand that. Could you rephrase?",
+        timestamp: new Date(data.timestamp || Date.now()),
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+      
+      // Generate suggested follow-up questions based on the response
+      const suggestions = generateSuggestedQuestions(data.response, question, messages);
+      setSuggestedQuestions(suggestions);
+      
+      // Check if customer info was updated in the response and save if complete
+      const updatedInfo = extractCustomerInfoFromMessage(question, customerInfo);
+      if (updatedInfo && updatedInfo !== customerInfo) {
+        setCustomerInfo(updatedInfo);
+        sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedInfo));
+        if (!dataSaved && hasRequiredInfo(updatedInfo)) {
+          saveCustomerData(updatedInfo);
+        }
+      }
+    } catch (error) {
+      console.error("Chat error:", error);
+      const errorMessage: ChatMessage = {
+        role: "assistant",
+        content: "Sorry, I'm having trouble connecting right now. Please try again in a moment, or call us on 1300 983 247.",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  };
+
+  // Generate suggested questions based on conversation context
+  function generateSuggestedQuestions(
+    lastResponse: string,
+    lastUserMessage: string,
+    conversationHistory: ChatMessage[]
+  ): string[] {
+    const lowerResponse = lastResponse.toLowerCase();
+    const lowerUserMessage = lastUserMessage.toLowerCase();
+    const suggestions: string[] = [];
+
+    // If user asked about solar, suggest related topics
+    if (lowerUserMessage.includes('solar') || lowerResponse.includes('solar')) {
+      if (!lowerResponse.includes('battery')) {
+        suggestions.push("What about battery storage?");
+      }
+      if (!lowerResponse.includes('rebate')) {
+        suggestions.push("Are there any rebates available?");
+      }
+      if (!lowerResponse.includes('price') && !lowerResponse.includes('cost')) {
+        suggestions.push("How much does a solar system cost?");
+      }
+    }
+
+    // If user asked about batteries, suggest related topics
+    if (lowerUserMessage.includes('battery') || lowerResponse.includes('battery')) {
+      if (!lowerResponse.includes('tesla')) {
+        suggestions.push("What battery brands do you offer?");
+      }
+      if (!lowerResponse.includes('price') && !lowerResponse.includes('cost')) {
+        suggestions.push("How much do batteries cost?");
+      }
+    }
+
+    // If user asked about pricing, suggest next steps
+    if (lowerUserMessage.includes('price') || lowerUserMessage.includes('cost') || lowerResponse.includes('quote')) {
+      suggestions.push("How do I get a quote?");
+      suggestions.push("What's the installation process?");
+    }
+
+    // If user asked about installation, suggest related topics
+    if (lowerUserMessage.includes('install') || lowerResponse.includes('installation')) {
+      suggestions.push("How long does installation take?");
+      suggestions.push("What's included in the installation?");
+    }
+
+    // General suggestions if conversation is just starting
+    if (conversationHistory.length <= 2) {
+      suggestions.push("What services do you offer?");
+      suggestions.push("Do you serve my area?");
+      suggestions.push("How do I get started?");
+    }
+
+    // If no specific suggestions, provide helpful general ones
+    if (suggestions.length === 0) {
+      if (!lowerResponse.includes('contact') && !lowerResponse.includes('1300')) {
+        suggestions.push("How can I contact you?");
+      }
+      if (!lowerResponse.includes('process') && !lowerResponse.includes('installation')) {
+        suggestions.push("What's the installation process?");
+      }
+      suggestions.push("Tell me more about your services");
+    }
+
+    // Return top 3 suggestions
+    return suggestions.slice(0, 3);
+  }
 
   return (
     <>
@@ -369,9 +644,21 @@ export function Chatbot() {
                               : "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700"
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap break-words">
-                            {message.content}
-                          </p>
+                          {message.role === "assistant" ? (
+                            <div 
+                              className="text-sm break-words [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 [&_strong]:font-semibold [&_strong]:font-weight-600 [&_ul]:my-2 [&_ul]:ml-5 [&_ul]:list-disc [&_ol]:my-2 [&_ol]:ml-5 [&_ol]:list-decimal [&_ol>li]:leading-relaxed [&_ul>li]:leading-relaxed [&_h1]:font-semibold [&_h1]:my-3 [&_h1]:text-base [&_h1:first-child]:mt-0 [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:text-sm [&_h2:first-child]:mt-0 [&_h3]:font-semibold [&_h3]:my-2 [&_h3]:text-sm [&_h3:first-child]:mt-0 [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs"
+                              style={{
+                                lineHeight: '1.6',
+                              }}
+                              dangerouslySetInnerHTML={{ 
+                                __html: parseMarkdown(message.content || '')
+                              }}
+                            />
+                          ) : (
+                            <p className="text-sm whitespace-pre-wrap break-words">
+                              {message.content}
+                            </p>
+                          )}
                         </div>
                       </motion.div>
                     ))}
@@ -386,6 +673,26 @@ export function Chatbot() {
                         </div>
                       </div>
                     )}
+                    
+                    {/* Suggested Questions */}
+                    {!isLoading && suggestedQuestions.length > 0 && messages.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-wrap gap-2 mt-2"
+                      >
+                        {suggestedQuestions.map((question, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleSuggestedQuestion(question)}
+                            className="text-xs px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-full border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors cursor-pointer"
+                          >
+                            {question}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                    
                     <div ref={messagesEndRef} />
                   </CardContent>
 

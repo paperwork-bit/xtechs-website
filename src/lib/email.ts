@@ -24,7 +24,9 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   
   if (!apiKey) {
-    console.warn('RESEND_API_KEY not configured - email not sent');
+    console.error('RESEND_API_KEY not configured - email not sent');
+    console.error('To: ', options.to);
+    console.error('Subject: ', options.subject);
     return false;
   }
 
@@ -72,6 +74,9 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
         status: response.status,
         statusText: response.statusText,
         error: responseData,
+        to: options.to,
+        from: FROM_EMAIL,
+        subject: options.subject,
         attachmentsCount: emailPayload.attachments?.length || 0,
       });
       return false;
@@ -79,6 +84,9 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
 
     console.log('Email sent successfully:', {
       id: responseData.id,
+      to: options.to,
+      from: FROM_EMAIL,
+      subject: options.subject,
       attachmentsCount: emailPayload.attachments?.length || 0,
     });
 
@@ -275,6 +283,88 @@ export async function sendContactNotification(contactData: {
     subject: `Contact Form: ${contactData.subject}`,
     html,
     attachments: contactData.attachments,
+  });
+}
+
+/**
+ * Send chatbot inquiry notification email to admin
+ * Triggered when a user provides name, email, and address in the chatbot
+ */
+export async function sendChatbotInquiryNotification(customerData: {
+  fullName: string;
+  email: string;
+  address: string;
+  phone?: string;
+}): Promise<boolean> {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #059669; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+        .content { background-color: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+        .field { margin: 15px 0; }
+        .field-label { font-weight: bold; color: #374151; }
+        .field-value { margin-top: 5px; color: #6b7280; }
+        .source-badge { display: inline-block; background-color: #059669; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; margin-left: 10px; }
+        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h2 style="margin: 0;">New Chatbot Inquiry <span class="source-badge">Chatbot</span></h2>
+        </div>
+        <div class="content">
+          <h3 style="color: #059669; margin-top: 0;">Customer Information</h3>
+          
+          <div class="field">
+            <div class="field-label">Name:</div>
+            <div class="field-value">${customerData.fullName}</div>
+          </div>
+          
+          <div class="field">
+            <div class="field-label">Email:</div>
+            <div class="field-value"><a href="mailto:${customerData.email}">${customerData.email}</a></div>
+          </div>
+          
+          <div class="field">
+            <div class="field-label">Address:</div>
+            <div class="field-value">${customerData.address}</div>
+          </div>
+          
+          ${customerData.phone ? `
+          <div class="field">
+            <div class="field-label">Phone:</div>
+            <div class="field-value"><a href="tel:${customerData.phone}">${customerData.phone}</a></div>
+          </div>
+          ` : ''}
+          
+          <div class="footer">
+            <p>This is an automated notification from xTechs Renewables chatbot.</p>
+            <p>Customer information collected at: ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Melbourne' })}</p>
+            <p><a href="mailto:${customerData.email}">Reply to ${customerData.fullName}</a></p>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  console.log('Sending chatbot inquiry email to:', ADMIN_EMAIL);
+  console.log('Customer data:', {
+    fullName: customerData.fullName,
+    email: customerData.email,
+    address: customerData.address,
+    phone: customerData.phone || 'not provided',
+  });
+  
+  return await sendEmail({
+    to: ADMIN_EMAIL,
+    subject: `New Chatbot Inquiry - ${customerData.fullName}`,
+    html,
   });
 }
 

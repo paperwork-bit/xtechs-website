@@ -111,11 +111,18 @@ export function BookingCalendar() {
     return `${hh.toString().padStart(2, "0")}:${mm.toString().padStart(2, "0")}`;
   };
 
-  // Generate available dates (next 30 days, excluding weekends)
+  // Generate available dates (today if weekday, then next 30 days, excluding weekends)
   const generateAvailableDates = () => {
     const dates = [];
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
     
+    // Include today if it's a weekday
+    if (today.getDay() !== 0 && today.getDay() !== 6) {
+      dates.push(today.toISOString().split('T')[0]);
+    }
+    
+    // Add next 30 weekdays
     for (let i = 1; i <= 30; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
@@ -285,9 +292,10 @@ export function BookingCalendar() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {availableDates.slice(0, 18).map((date) => {
-                const dateObj = new Date(date);
+              {availableDates.slice(0, 24).map((date) => {
+                const dateObj = new Date(date + 'T00:00:00'); // Ensure consistent timezone
                 const isSelected = selectedDate === date;
+                const isToday = date === new Date().toISOString().split('T')[0];
                 
                 return (
                   <button
@@ -297,6 +305,8 @@ export function BookingCalendar() {
                     className={`p-3 rounded-lg border text-sm transition-colors ${
                       isSelected
                         ? 'bg-blue-600 text-white border-blue-600'
+                        : isToday
+                        ? 'bg-blue-50 text-blue-700 border-blue-300 font-semibold'
                         : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300'
                     }`}
                   >
@@ -306,6 +316,9 @@ export function BookingCalendar() {
                     <div className="text-xs">
                       {dateObj.getDate()}/{dateObj.getMonth() + 1}
                     </div>
+                    {isToday && (
+                      <div className="text-[10px] text-blue-600 mt-0.5">Today</div>
+                    )}
                   </button>
                 );
               })}

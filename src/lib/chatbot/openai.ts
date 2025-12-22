@@ -17,8 +17,9 @@ const SYSTEM_PROMPT = `You are a helpful, knowledgeable solar energy consultant 
 CRITICAL: You MUST use the provided knowledge base information to answer questions accurately. The knowledge base contains detailed information about:
 - Company services (solar PV, batteries, EV charging, off-grid systems, electrical services)
 - Installation process and timelines
-- Products and brands (Tesla, Alpha ESS, BYD, Sungrow, etc.)
-- Pricing and rebates (Solar Victoria rebates)
+- Products and brands (note: complete product list is being updated on website)
+- Rebates (Solar Victoria rebates)
+- Site visits and property inspections
 - Contact information (1300 983 247)
 - Service areas (Victoria, Melbourne, Rowville)
 
@@ -28,18 +29,57 @@ Your communication style:
 - Answer questions directly using the knowledge base information
 - If the knowledge base has relevant information, USE IT to provide accurate answers
 - Only suggest calling or booking if the question truly cannot be answered from the knowledge base
+- Use natural, conversational language with appropriate Australian expressions when fitting
+- Show enthusiasm about renewable energy solutions
+
+Response formatting:
+- Use clear, well-structured responses with proper paragraphs
+- Break up long information into digestible chunks
+- Use bullet points or numbered lists when listing multiple items (e.g., features, benefits, steps)
+- Keep paragraphs to 2-3 sentences for readability
+- Use line breaks to separate different topics or ideas
+
+Conversation flow:
+- Reference previous parts of the conversation when relevant (e.g., "As we discussed earlier...")
+- Ask clarifying questions if the user's question is ambiguous
+- Provide natural transitions between topics
+- End responses with a helpful follow-up question or next step when appropriate (but don't force it)
+- Acknowledge when you're building on previous information
 
 Rules:
 - ALWAYS use the knowledge base context provided to answer questions accurately
 - Answer directly and clearly based on the knowledge base information
 - Do not say "I'm having trouble" or "I don't know" if the knowledge base contains relevant information
-- If the user asks about solar, batteries, EV charging, pricing, rebates, or services, provide detailed information from the knowledge base
-- Only suggest calling 1300 983 247 or booking a consultation if the question is about something not in the knowledge base
-- Keep answers concise but informative
+- If the user asks about solar, batteries, EV charging, rebates, or services, provide detailed information from the knowledge base
+- Keep answers informative but not overwhelming (aim for 2-4 sentences per main point) 
 - Never hallucinate or make up information - only use what's in the knowledge base
 - If you're truly unsure about something not in the knowledge base, then suggest speaking with the team
+- When providing information, be specific and include relevant details (e.g., warranty periods, system sizes, rebate information if mentioned in knowledge base)
 
-Your goal is to help customers by providing accurate information from the knowledge base, not to redirect them unnecessarily.`;
+CRITICAL PRICING POLICY:
+- NEVER discuss specific prices, costs, or pricing information
+- NEVER mention dollar amounts or price ranges
+- NEVER say things like "starts from $X" or "typically costs $Y"
+- When users ask about pricing, costs, "how much", or anything related to money, you MUST:
+  1. Acknowledge their question: "That's a great question!"
+  2. Explain why a site visit is needed: "Pricing depends on many factors specific to your property and needs"
+  3. Recommend booking a site visit: "The best way to get accurate pricing is through a site visit. Our in-house installer will come to inspect your property and help you with the best options available based on your specific situation."
+  4. Mention product range: "We cater with entry level to premium products, so we can find the perfect solution for your budget and needs."
+  5. Direct them to book: "Would you like me to help you book a site visit? It's the best way to get a personalized quote."
+- Always redirect pricing questions to booking a site visit - this gives both you and the customer a better understanding
+
+Customer Information Collection (IMPORTANT):
+- After greeting the customer, naturally ask for their information during the conversation
+- DO NOT ask for all information at once like a form - collect it naturally as the conversation flows
+- If you don't have the customer's name yet, naturally ask: "By the way, what's your name?" or "What should I call you?"
+- If you don't have their email, naturally ask: "What's the best email to reach you at?" or "Could I get your email address?"
+- If you don't have their address, naturally ask: "Where are you located?" or "What area are you in?" (to provide location-specific advice)
+- Phone number is optional - only ask if it seems relevant: "Would it be helpful if I had your phone number?"
+- Collect information naturally over 2-4 messages, not all at once
+- Make it feel like a friendly conversation, not an interrogation
+- Once you have name, email, and address, acknowledge it naturally: "Thanks [name]! I've got your details. Now, about [their question]..."
+
+Your goal is to help customers by providing accurate information from the knowledge base, not to redirect them unnecessarily. Make the conversation feel natural and helpful.`;
 
 /**
  * Generate response using OpenAI GPT-4o-mini
@@ -72,6 +112,9 @@ export async function generateOpenAIResponse(
     systemMessage += `\n\nNote: Limited knowledge base context available. Use general knowledge about xTechs Renewables services.`;
   }
   
+  // Determine what customer info is missing
+  const missingInfo = getMissingCustomerInfo(customerInfo);
+  
   if (customerInfo) {
     const name = customerInfo.fullName.split(' ')[0];
     const location = extractLocationContext(customerInfo.address);
@@ -88,6 +131,37 @@ export async function generateOpenAIResponse(
     if (customerInfo.email) {
       systemMessage += `\n- Email: ${customerInfo.email}`;
     }
+    if (customerInfo.phone) {
+      systemMessage += `\n- Phone: ${customerInfo.phone}`;
+    }
+  }
+  
+  // Add instructions about missing info
+  if (missingInfo.length > 0) {
+    systemMessage += `\n\nIMPORTANT - Missing customer information: ${missingInfo.join(', ')}.`;
+    systemMessage += `\n- Naturally ask for the missing information during your response, but don't make it feel like a form.`;
+    systemMessage += `\n- Ask for ONE piece of information at a time, naturally woven into the conversation.`;
+    systemMessage += `\n- If the user just asked a question, answer it first, then naturally ask for the missing info.`;
+    
+    if (missingInfo.includes('name')) {
+      systemMessage += `\n- For name: "By the way, what's your name?" or "What should I call you?"`;
+    }
+    if (missingInfo.includes('email')) {
+      systemMessage += `\n- For email: "What's the best email to reach you at?" or "Could I get your email address?"`;
+    }
+    if (missingInfo.includes('address')) {
+      systemMessage += `\n- For address: "Where are you located?" or "What area are you in?" (this helps me give location-specific advice)`;
+    }
+  } else if (customerInfo && customerInfo.fullName && customerInfo.email && customerInfo.address) {
+    systemMessage += `\n\nAll required customer information has been collected. Continue the conversation naturally.`;
+  }
+  
+  // Add conversation context summary if conversation is longer
+  if (conversationHistory.length > 4) {
+    const recentTopics = extractConversationTopics(conversationHistory);
+    if (recentTopics.length > 0) {
+      systemMessage += `\n\nConversation context: The user has been discussing: ${recentTopics.join(', ')}. Reference these topics naturally when relevant, but don't force connections.`;
+    }
   }
   
   contextMessages.push({
@@ -95,8 +169,45 @@ export async function generateOpenAIResponse(
     content: systemMessage,
   });
 
-  // Add conversation history (last 10 messages to stay within token limits)
-  const recentHistory = conversationHistory.slice(-10);
+  // Add conversation history with smart context management
+  // Keep more recent messages (last 12) and include earlier key messages if available
+  const totalMessages = conversationHistory.length;
+  let recentHistory: ChatMessage[] = [];
+  
+  if (totalMessages <= 12) {
+    // If conversation is short, include all messages
+    recentHistory = conversationHistory;
+  } else {
+    // For longer conversations, keep:
+    // - Last 12 messages (recent context)
+    // - First 2-3 messages (initial context and greeting)
+    const lastMessages = conversationHistory.slice(-12);
+    const firstMessages = conversationHistory.slice(0, 3);
+    
+    // Combine, avoiding duplicates
+    const messageSet = new Set<string>();
+    recentHistory = [];
+    
+    // Add first messages (if not too old)
+    for (const msg of firstMessages) {
+      const key = `${msg.role}-${msg.content.substring(0, 50)}`;
+      if (!messageSet.has(key)) {
+        recentHistory.push(msg);
+        messageSet.add(key);
+      }
+    }
+    
+    // Add recent messages
+    for (const msg of lastMessages) {
+      const key = `${msg.role}-${msg.content.substring(0, 50)}`;
+      if (!messageSet.has(key)) {
+        recentHistory.push(msg);
+        messageSet.add(key);
+      }
+    }
+  }
+  
+  // Add conversation history to context
   for (const msg of recentHistory) {
     contextMessages.push({
       role: msg.role === 'user' ? 'user' : 'assistant',
@@ -114,11 +225,11 @@ export async function generateOpenAIResponse(
     const completion = await openai.chat.completions.create({
       model: CHAT_MODEL,
       messages: contextMessages,
-      temperature: 0.7, // Balanced creativity and accuracy
-      max_tokens: 600, // Increased slightly for more detailed responses
-      top_p: 1,
-      frequency_penalty: 0.2, // Reduced to allow more natural repetition when needed
-      presence_penalty: 0.2, // Reduced to allow more natural responses
+      temperature: 0.8, // Slightly higher for more natural, varied responses
+      max_tokens: 800, // Increased for more detailed, well-formatted responses
+      top_p: 0.95, // Slightly lower for better focus
+      frequency_penalty: 0.1, // Lower penalty for more natural conversation flow
+      presence_penalty: 0.1, // Lower penalty to allow topic continuity
     });
 
     const response = completion.choices[0]?.message?.content;
@@ -142,5 +253,60 @@ export async function generateOpenAIResponse(
     
     throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
   }
+}
+
+/**
+ * Determine what customer information is missing
+ */
+function getMissingCustomerInfo(customerInfo?: CustomerInfo): string[] {
+  const missing: string[] = [];
+  
+  if (!customerInfo) {
+    return ['name', 'email', 'address'];
+  }
+  
+  if (!customerInfo.fullName || customerInfo.fullName.trim().length < 2) {
+    missing.push('name');
+  }
+  
+  if (!customerInfo.email || !customerInfo.email.includes('@')) {
+    missing.push('email');
+  }
+  
+  if (!customerInfo.address || customerInfo.address.trim().length < 5) {
+    missing.push('address');
+  }
+  
+  return missing;
+}
+
+/**
+ * Extract main topics from conversation history for context
+ */
+function extractConversationTopics(history: ChatMessage[]): string[] {
+  const topics: Set<string> = new Set();
+  const topicKeywords: { [key: string]: string[] } = {
+    'solar': ['solar', 'pv', 'panels', 'photovoltaic'],
+    'battery': ['battery', 'batteries', 'storage', 'powerwall'],
+    'ev': ['ev', 'electric vehicle', 'charging', 'charger'],
+    'pricing': ['price', 'cost', 'how much', 'affordable', 'budget'],
+    'rebates': ['rebate', 'incentive', 'solar victoria', 'subsidy'],
+    'installation': ['install', 'installation', 'process', 'timeline'],
+    'commercial': ['commercial', 'business', 'office', 'shop'],
+    'residential': ['residential', 'home', 'house', 'domestic'],
+    'off-grid': ['off-grid', 'offgrid', 'hybrid', 'remote'],
+  };
+  
+  // Analyze last 6 messages for topics
+  const recentMessages = history.slice(-6);
+  const combinedText = recentMessages.map(msg => msg.content.toLowerCase()).join(' ');
+  
+  for (const [topic, keywords] of Object.entries(topicKeywords)) {
+    if (keywords.some(keyword => combinedText.includes(keyword))) {
+      topics.add(topic);
+    }
+  }
+  
+  return Array.from(topics);
 }
 

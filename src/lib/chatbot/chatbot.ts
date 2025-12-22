@@ -95,14 +95,17 @@ export function generateResponse(
     return response;
   }
   
-  // Handle pricing questions
+  // Handle pricing questions - redirect to site visit
   if (isPricingQuestion(lowerMessage)) {
-    let response = "Great question! Solar system pricing varies based on your specific needs - things like system size, roof type, and location all factor in.";
+    let response = "That's a great question! Pricing depends on many factors specific to your property and needs - things like system size, roof type, installation complexity, and your energy requirements all factor in.";
+    response += " The best way to get accurate pricing is through a site visit. Our in-house installer will come to inspect your property and help you with the best options available based on your specific situation.";
+    response += " We cater with entry level to premium products, so we can find the perfect solution for your budget and needs.";
     if (customerInfo) {
-      const location = extractLocationContext(customerInfo.address);
-      response += ` Since you're in ${location.location || customerInfo.address}, we can provide a more accurate quote.`;
+      const name = customerInfo.fullName.split(' ')[0];
+      response += ` Would you like me to help you book a site visit, ${name}?`;
+    } else {
+      response += " Would you like me to help you book a site visit?";
     }
-    response += " The best way to get an accurate quote is through a site assessment, which we can book for you. We also provide guidance on Solar Victoria rebates that may reduce your costs. Would you like to know more about the rebates, or would you prefer to book an assessment?";
     return response;
   }
   

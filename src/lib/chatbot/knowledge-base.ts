@@ -194,7 +194,7 @@ export const knowledgeBase: KnowledgeChunk[] = [
     id: "rebates",
     title: "Solar Victoria Rebates",
     category: "rebates",
-    content: `We provide expert guidance on Solar Victoria rebates and incentives available to Victorian residents. These rebates can significantly reduce the cost of your solar installation. Eligibility depends on factors like household income, property location, and existing solar systems. We help you understand what rebates you may qualify for and assist with the application process.`,
+    content: `We provide expert guidance on Solar Victoria rebates and incentives available to Victorian residents. These rebates can help reduce the upfront cost of your solar installation. Eligibility depends on factors like household income, property location, and existing solar systems. During a site visit, our installer can help you understand what rebates you may qualify for and assist with the application process. You can learn more about rebates during your site visit or by calling 1300 983 247.`,
     keywords: ["rebate", "incentive", "solar victoria", "government", "subsidy", "discount", "financial assistance"],
   },
 
@@ -243,8 +243,8 @@ export const knowledgeBase: KnowledgeChunk[] = [
     id: "products-other",
     title: "Other Products",
     category: "products",
-    content: `We also install BYD and Sungrow battery systems, Zappi EV chargers, SigEnergy chargers, and Wattpilot chargers. We work with tier-one manufacturers to ensure quality and reliability. All products are selected based on your specific needs, budget, and system requirements.`,
-    keywords: ["byd", "sungrow", "zappi", "sigenergy", "wattpilot", "products", "brands"],
+    content: `We work with tier-one manufacturers to ensure quality and reliability across all our product ranges. We offer products from entry level to premium options. Our complete product list and company names are currently being updated on our website and will be available soon. During a site visit, our in-house installer will discuss all available product options that best suit your specific needs, budget, and system requirements.`,
+    keywords: ["byd", "sungrow", "zappi", "sigenergy", "wattpilot", "products", "brands", "manufacturers", "entry level", "premium"],
   },
 
   // Pricing & Costs
@@ -252,8 +252,23 @@ export const knowledgeBase: KnowledgeChunk[] = [
     id: "pricing",
     title: "Pricing Information",
     category: "pricing",
-    content: `Solar system pricing varies based on system size, components, installation complexity, and specific requirements. We provide detailed quotes after a site assessment. Battery systems typically start from around $8,000 for smaller systems. We offer competitive pricing and can help you understand financing options and rebates that may reduce your upfront costs.`,
-    keywords: ["price", "cost", "pricing", "quote", "affordable", "expensive", "how much", "budget"],
+    content: `We don't provide specific pricing online as every installation is unique and depends on many factors including your property's specific requirements, roof type, energy needs, and location. To get accurate pricing tailored to your situation, we recommend booking a site visit. Our in-house installer will come to inspect your property, assess your needs, and provide you with the best options available. We cater with entry level to premium products, so we can find the perfect solution for your budget and needs. The site visit gives both you and us a better understanding of what will work best for your property. You can book a site visit through our contact page or by calling 1300 983 247.`,
+    keywords: ["price", "cost", "pricing", "quote", "affordable", "expensive", "how much", "budget", "site visit", "inspection"],
+  },
+  {
+    id: "site-visit",
+    title: "Site Visit & Property Inspection",
+    category: "process",
+    content: `A site visit is the best way to get accurate pricing and recommendations for your solar system. During the site visit, our in-house installer will come to your property to inspect your roof, assess your energy needs, evaluate your electrical setup, and discuss your goals. This allows us to provide you with personalized recommendations and accurate pricing based on your specific situation. We offer products from entry level to premium, so we can find the perfect solution for your budget and needs. The site visit gives both you and us a better understanding of what will work best for your property. Book a site visit through our contact page or call 1300 983 247.`,
+    keywords: ["site visit", "inspection", "property inspection", "site assessment", "installer visit", "on-site", "quote", "pricing"],
+    url: "/contact",
+  },
+  {
+    id: "products-range",
+    title: "Product Range",
+    category: "products",
+    content: `We offer a wide range of products from entry level to premium options, allowing us to find the perfect solution for every budget and need. Our product list and company names are currently being updated on our website and will be available soon. During a site visit, our in-house installer will discuss the best product options for your specific situation, taking into account your budget, energy needs, and property requirements. We work with tier-one manufacturers to ensure quality and reliability across all our product ranges.`,
+    keywords: ["products", "product range", "entry level", "premium", "budget", "options", "manufacturers", "brands"],
   },
 
   // General FAQ
@@ -364,10 +379,11 @@ export function searchKnowledgeBase(query: string, limit: number = 5): Knowledge
 /**
  * Get context for a query by combining relevant knowledge chunks
  * Returns more comprehensive context for better AI responses
+ * Enhanced with better organization and relevance scoring
  */
-export function getContextForQuery(query: string): string {
-  // Get more chunks (5 instead of 3) for better context
-  const relevantChunks = searchKnowledgeBase(query, 5);
+export function getContextForQuery(query: string, conversationHistory?: any[]): string {
+  // Get more chunks (6 instead of 5) for better context
+  const relevantChunks = searchKnowledgeBase(query, 6);
   if (relevantChunks.length === 0) {
     // Return general company info if no matches
     return `xTechs Renewables is a leading provider of clean energy solutions across Victoria, Australia. We specialize in:
@@ -381,8 +397,32 @@ export function getContextForQuery(query: string): string {
 We are CEC-accredited installers based in Rowville, Melbourne, serving customers throughout Victoria. Contact us at 1300 983 247 or book a site assessment through our contact page.`;
   }
   
-  // Format chunks with clear structure
-  const contextParts = relevantChunks.map((chunk, index) => {
+  // Analyze conversation history to identify topics discussed
+  let discussedTopics: string[] = [];
+  if (conversationHistory && conversationHistory.length > 0) {
+    const recentMessages = conversationHistory.slice(-4).map((msg: any) => msg.content?.toLowerCase() || '').join(' ');
+    const topicKeywords = ['solar', 'battery', 'ev', 'charging', 'off-grid', 'commercial', 'residential', 'pricing', 'rebate', 'installation', 'process'];
+    discussedTopics = topicKeywords.filter(keyword => recentMessages.includes(keyword));
+  }
+  
+  // Prioritize chunks that match both current query and conversation context
+  const prioritizedChunks = relevantChunks.map(chunk => {
+    let relevanceScore = 0;
+    const chunkText = `${chunk.title} ${chunk.content} ${chunk.keywords.join(' ')}`.toLowerCase();
+    
+    // Boost relevance if chunk matches discussed topics
+    discussedTopics.forEach(topic => {
+      if (chunkText.includes(topic)) {
+        relevanceScore += 2;
+      }
+    });
+    
+    return { chunk, relevanceScore };
+  }).sort((a, b) => b.relevanceScore - a.relevanceScore)
+    .map(item => item.chunk);
+  
+  // Format chunks with clear structure and better organization
+  const contextParts = prioritizedChunks.map((chunk, index) => {
     let formatted = `${chunk.title}:\n${chunk.content}`;
     if (chunk.url) {
       formatted += `\n(More info available at: ${chunk.url})`;

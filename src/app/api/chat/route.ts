@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get relevant context from knowledge base for the user's query
-    const knowledgeBaseContext = getContextForQuery(message);
+    // Pass conversation history to improve context relevance
+    const knowledgeBaseContext = getContextForQuery(message, history);
 
     // Generate response using OpenAI
     let response: string;
