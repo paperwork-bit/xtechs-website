@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const corsHeaders = getCORSHeaders(origin);
     const body = await request.json();
     
-    const { fullName, email, address, phone, source = "chatbot" } = body;
+    const { fullName, email, address, phone, siteVisitDate, siteVisitTime, source = "chatbot" } = body;
 
     // Validate required fields
     if (!fullName || !email || !address) {
@@ -109,6 +109,8 @@ export async function POST(request: NextRequest) {
         email: sanitizedEmail,
         address: sanitizedAddress, // Now guaranteed to be string after null check
         phone: sanitizedPhone || undefined,
+        siteVisitDate: siteVisitDate || undefined,
+        siteVisitTime: siteVisitTime || undefined,
       });
       
       if (emailSent) {

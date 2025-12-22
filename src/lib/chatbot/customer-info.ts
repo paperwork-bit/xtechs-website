@@ -7,6 +7,8 @@ export interface CustomerInfo {
   email: string;
   address: string;
   phone?: string;
+  siteVisitDate?: string;
+  siteVisitTime?: string;
   collectedAt: Date;
 }
 

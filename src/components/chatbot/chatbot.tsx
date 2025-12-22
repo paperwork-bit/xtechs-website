@@ -269,6 +269,8 @@ export function Chatbot() {
           email: info.email,
           address: info.address,
           phone: info.phone || null,
+          siteVisitDate: info.siteVisitDate || null,
+          siteVisitTime: info.siteVisitTime || null,
           source: "chatbot",
         }),
       });
@@ -310,6 +312,59 @@ export function Chatbot() {
             info.fullName = extractedName;
             break;
           }
+        }
+      }
+    }
+
+    // Extract site visit date and time
+    if (!info || !info.siteVisitDate || !info.siteVisitTime) {
+      // Patterns for dates: "23rd December 2025", "December 23, 2025", "23/12/2025", etc.
+      const datePatterns = [
+        /(?:visit|appointment|site visit|booking|booked|scheduled)\s+(?:for|on|at)?\s*(\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})/i,
+        /(\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})/i,
+        /(\d{1,2}\/\d{1,2}\/\d{4})/,
+        /(\d{4}-\d{2}-\d{2})/,
+      ];
+      
+      // Patterns for times: "12 PM", "12:00 PM", "12pm", "12:00", etc.
+      const timePatterns = [
+        /(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))/i,
+        /(\d{1,2}\s*(?:AM|PM|am|pm))/i,
+        /(\d{1,2}:\d{2})/,
+        /(?:at|@)\s*(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)/i,
+      ];
+      
+      let extractedDate: string | undefined;
+      let extractedTime: string | undefined;
+      
+      // Try to find date
+      for (const pattern of datePatterns) {
+        const match = message.match(pattern);
+        if (match && match[1]) {
+          extractedDate = match[1].trim();
+          break;
+        }
+      }
+      
+      // Try to find time
+      for (const pattern of timePatterns) {
+        const match = message.match(pattern);
+        if (match && match[1]) {
+          extractedTime = match[1].trim();
+          break;
+        }
+      }
+      
+      // If we found date or time, update info
+      if (extractedDate || extractedTime) {
+        if (!info) {
+          info = { fullName: "", email: "", address: "", collectedAt: new Date() };
+        }
+        if (extractedDate && !info.siteVisitDate) {
+          info.siteVisitDate = extractedDate;
+        }
+        if (extractedTime && !info.siteVisitTime) {
+          info.siteVisitTime = extractedTime;
         }
       }
     }
