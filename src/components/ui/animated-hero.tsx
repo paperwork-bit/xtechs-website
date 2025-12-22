@@ -44,7 +44,7 @@ function Hero() {
 								exit={{ opacity: 0, x: "100%" }}
                     transition={{ type: "tween", duration: 0.6, ease: "easeInOut" }}
                   >
-                    {titles[titleNumber]}
+                    {titles[titleNumber].toUpperCase()}
                   </motion.span>
                 </AnimatePresence>
               </span>
