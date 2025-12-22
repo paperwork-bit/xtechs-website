@@ -52,6 +52,16 @@ function parseMarkdown(content: string): string {
   }
 }
 
+// Check if message should show booking link
+function shouldShowBookingLink(content: string): boolean {
+  const lowerContent = content.toLowerCase();
+  const bookingKeywords = [
+    'book', 'booking', 'site visit', 'site assessment', 'quote', 'pricing', 
+    'get started', 'appointment', 'schedule', 'contact page', '/contact'
+  ];
+  return bookingKeywords.some(keyword => lowerContent.includes(keyword));
+}
+
 // Get time-based greeting for Victoria, Australia
 function getTimeBasedGreeting(customerInfo: CustomerInfo | null): string {
   // Get current time in Victoria, Australia (AEST/AEDT)
@@ -677,15 +687,32 @@ export function Chatbot() {
                           }`}
                         >
                           {message.role === "assistant" ? (
-                            <div 
-                              className="text-sm break-words [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 [&_strong]:font-semibold [&_strong]:font-weight-600 [&_ul]:my-2 [&_ul]:ml-5 [&_ul]:list-disc [&_ol]:my-2 [&_ol]:ml-5 [&_ol]:list-decimal [&_ol>li]:leading-relaxed [&_ul>li]:leading-relaxed [&_h1]:font-semibold [&_h1]:my-3 [&_h1]:text-base [&_h1:first-child]:mt-0 [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:text-sm [&_h2:first-child]:mt-0 [&_h3]:font-semibold [&_h3]:my-2 [&_h3]:text-sm [&_h3:first-child]:mt-0 [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs"
-                              style={{
-                                lineHeight: '1.6',
-                              }}
-                              dangerouslySetInnerHTML={{ 
-                                __html: parseMarkdown(message.content || '')
-                              }}
-                            />
+                            <>
+                              <div 
+                                className="text-sm break-words [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 [&_strong]:font-semibold [&_strong]:font-weight-600 [&_ul]:my-2 [&_ul]:ml-5 [&_ul]:list-disc [&_ol]:my-2 [&_ol]:ml-5 [&_ol]:list-decimal [&_ol>li]:leading-relaxed [&_ul>li]:leading-relaxed [&_h1]:font-semibold [&_h1]:my-3 [&_h1]:text-base [&_h1:first-child]:mt-0 [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:text-sm [&_h2:first-child]:mt-0 [&_h3]:font-semibold [&_h3]:my-2 [&_h3]:text-sm [&_h3:first-child]:mt-0 [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_a]:text-emerald-600 [&_a]:dark:text-emerald-400 [&_a]:underline [&_a]:hover:text-emerald-700 [&_a]:dark:hover:text-emerald-300"
+                                style={{
+                                  lineHeight: '1.6',
+                                }}
+                                dangerouslySetInnerHTML={{ 
+                                  __html: parseMarkdown(message.content || '')
+                                }}
+                              />
+                              {shouldShowBookingLink(message.content || '') && (
+                                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                  <a
+                                    href="/contact"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      redirectToBooking();
+                                    }}
+                                    className="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                                  >
+                                    <Calendar className="w-4 h-4" />
+                                    Book Site Visit →
+                                  </a>
+                                </div>
+                              )}
+                            </>
                           ) : (
                             <p className="text-sm whitespace-pre-wrap break-words">
                               {message.content}
