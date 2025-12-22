@@ -52,7 +52,7 @@ function parseMarkdown(content: string): string {
   }
 }
 
-// Check if message should show booking link
+// Check if message should show booking link (for assistant messages)
 function shouldShowBookingLink(content: string): boolean {
   const lowerContent = content.toLowerCase();
   const bookingKeywords = [
@@ -60,6 +60,21 @@ function shouldShowBookingLink(content: string): boolean {
     'get started', 'appointment', 'schedule', 'contact page', '/contact'
   ];
   return bookingKeywords.some(keyword => lowerContent.includes(keyword));
+}
+
+// Check if customer expressed intent to book a site visit
+function customerWantsToBook(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+  const bookingIntentKeywords = [
+    'i want to book', 'i\'d like to book', 'i need to book', 'can i book',
+    'book a site visit', 'book site visit', 'book an appointment',
+    'schedule a visit', 'schedule site visit', 'i want a site visit',
+    'i need a site visit', 'book me', 'schedule me', 'i\'m ready to book',
+    'let\'s book', 'book now', 'book it', 'book this', 'book that',
+    'i want to schedule', 'i\'d like to schedule', 'can we book',
+    'help me book', 'book appointment', 'schedule appointment'
+  ];
+  return bookingIntentKeywords.some(keyword => lowerMessage.includes(keyword));
 }
 
 // Get time-based greeting for Victoria, Australia
@@ -104,6 +119,7 @@ export function Chatbot() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
+  const [showBookingButton, setShowBookingButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -135,6 +151,7 @@ export function Chatbot() {
     } else {
       // Reset when closed
       setMessages([]);
+      setShowBookingButton(false);
     }
   }, [isOpen]);
 
@@ -189,6 +206,11 @@ export function Chatbot() {
     setInput("");
     setIsLoading(true);
     setSuggestedQuestions([]); // Clear suggestions when user sends a message
+
+    // Check if customer wants to book a site visit
+    if (customerWantsToBook(currentInput)) {
+      setShowBookingButton(true);
+    }
 
     // Check if user is providing customer info naturally (for conversation context only)
     const updatedCustomerInfo = extractCustomerInfoFromMessage(currentInput, customerInfo);
@@ -438,7 +460,8 @@ export function Chatbot() {
 
   const handleSuggestedQuestion = async (question: string) => {
     // Check if user wants to book a site visit
-    if (question.toLowerCase().includes('book') && question.toLowerCase().includes('site visit')) {
+    if (customerWantsToBook(question)) {
+      setShowBookingButton(true);
       redirectToBooking();
       return;
     }
@@ -733,8 +756,8 @@ export function Chatbot() {
                       </div>
                     )}
                     
-                    {/* Book Site Visit Button */}
-                    {messages.length > 0 && (
+                    {/* Book Site Visit Button - Only show when customer expresses intent to book */}
+                    {showBookingButton && (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
