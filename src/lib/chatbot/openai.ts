@@ -68,18 +68,15 @@ CRITICAL PRICING POLICY:
   5. Direct them to book: "Would you like me to help you book a site visit? It's the best way to get a personalized quote."
 - Always redirect pricing questions to booking a site visit - this gives both you and the customer a better understanding
 
-Customer Information Collection (IMPORTANT):
-- After greeting the customer, naturally ask for their information during the conversation
-- DO NOT ask for all information at once like a form - collect it naturally as the conversation flows
-- If you don't have the customer's name yet, naturally ask: "By the way, what's your name?" or "What should I call you?"
-- If you don't have their email, naturally ask: "What's the best email to reach you at?" or "Could I get your email address?"
-- If you don't have their address, naturally ask: "Where are you located?" or "What area are you in?" (to provide location-specific advice)
-- Phone number is optional - only ask if it seems relevant: "Would it be helpful if I had your phone number?"
-- Collect information naturally over 2-4 messages, not all at once
-- Make it feel like a friendly conversation, not an interrogation
-- Once you have name, email, and address, acknowledge it naturally: "Thanks [name]! I've got your details. Now, about [their question]..."
+Site Visit Booking (IMPORTANT):
+- When customers ask about pricing, quotes, site visits, or want to get started, redirect them to book a site visit
+- Instead of collecting customer details, encourage them to use the "Book Site Visit" button or visit the contact page
+- You can still ask for their name naturally during conversation for a personalized experience, but don't collect email/address
+- When they're ready to proceed, say something like: "Great! You can book a site visit by clicking the 'Book Site Visit' button below, or visit our contact page. Our team will collect your details during the booking process."
+- If they mention wanting a quote or site visit, acknowledge it and direct them to the booking page: "Perfect! To get started, I'd recommend booking a site visit. You can do that by clicking the 'Book Site Visit' button below or visiting our contact page at /contact"
+- The booking page has a calendar where they can select their preferred date and time for a site assessment
 
-Your goal is to help customers by providing accurate information from the knowledge base, not to redirect them unnecessarily. Make the conversation feel natural and helpful.`;
+Your goal is to help customers by providing accurate information from the knowledge base and guide them to book a site visit when they're ready. Make the conversation feel natural and helpful.`;
 
 /**
  * Generate response using OpenAI GPT-4o-mini
@@ -129,48 +126,22 @@ export async function generateOpenAIResponse(
     systemMessage += `\n\nNote: Limited knowledge base context available. Use general knowledge about xTechs Renewables services.`;
   }
   
-  // Determine what customer info is missing
-  const missingInfo = getMissingCustomerInfo(customerInfo);
-  
-  if (customerInfo) {
+  // Customer info (name only) for personalization - we don't collect email/address anymore
+  if (customerInfo && customerInfo.fullName) {
     const name = customerInfo.fullName.split(' ')[0];
-    const location = extractLocationContext(customerInfo.address);
     systemMessage += `\n\nCustomer context:`;
-    systemMessage += `\n- Name: ${name}`;
+    systemMessage += `\n- Name: ${name} (use for personalization)`;
     if (customerInfo.address) {
+      const location = extractLocationContext(customerInfo.address);
       systemMessage += `\n- Location: ${customerInfo.address}`;
       if (location.isMelbourne) {
         systemMessage += ` (Melbourne area)`;
       } else if (location.isVictoria) {
         systemMessage += ` (Victoria)`;
       }
+      systemMessage += ` (for context only - don't collect this)`;
     }
-    if (customerInfo.email) {
-      systemMessage += `\n- Email: ${customerInfo.email}`;
-    }
-    if (customerInfo.phone) {
-      systemMessage += `\n- Phone: ${customerInfo.phone}`;
-    }
-  }
-  
-  // Add instructions about missing info
-  if (missingInfo.length > 0) {
-    systemMessage += `\n\nIMPORTANT - Missing customer information: ${missingInfo.join(', ')}.`;
-    systemMessage += `\n- Naturally ask for the missing information during your response, but don't make it feel like a form.`;
-    systemMessage += `\n- Ask for ONE piece of information at a time, naturally woven into the conversation.`;
-    systemMessage += `\n- If the user just asked a question, answer it first, then naturally ask for the missing info.`;
-    
-    if (missingInfo.includes('name')) {
-      systemMessage += `\n- For name: "By the way, what's your name?" or "What should I call you?"`;
-    }
-    if (missingInfo.includes('email')) {
-      systemMessage += `\n- For email: "What's the best email to reach you at?" or "Could I get your email address?"`;
-    }
-    if (missingInfo.includes('address')) {
-      systemMessage += `\n- For address: "Where are you located?" or "What area are you in?" (this helps me give location-specific advice)`;
-    }
-  } else if (customerInfo && customerInfo.fullName && customerInfo.email && customerInfo.address) {
-    systemMessage += `\n\nAll required customer information has been collected. Continue the conversation naturally.`;
+    systemMessage += `\n\nIMPORTANT: Do NOT collect email/address/phone. Instead, redirect customers to book a site visit using the "Book Site Visit" button or /contact page.`;
   }
   
   // Add conversation context summary if conversation is longer

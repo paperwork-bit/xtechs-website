@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, X, Send, Minimize2, Maximize2 } from "lucide-react";
+import { MessageCircle, X, Send, Minimize2, Maximize2, Calendar } from "lucide-react";
 import { getInitialGreeting } from "@/lib/chatbot/chatbot";
 import type { ChatMessage } from "@/lib/chatbot/chatbot";
 import type { CustomerInfo } from "@/lib/chatbot/customer-info";
@@ -84,6 +85,7 @@ function getTimeBasedGreeting(customerInfo: CustomerInfo | null): string {
 }
 
 export function Chatbot() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showWelcomePrompt, setShowWelcomePrompt] = useState(false);
@@ -92,8 +94,6 @@ export function Chatbot() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
-  const [dataSaved, setDataSaved] = useState(false); // Track if data has been saved
-  const isSavingDataRef = useRef(false); // Use ref for synchronous check to prevent race conditions
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -180,16 +180,11 @@ export function Chatbot() {
     setIsLoading(true);
     setSuggestedQuestions([]); // Clear suggestions when user sends a message
 
-    // Check if user is providing customer info naturally
+    // Check if user is providing customer info naturally (for conversation context only)
     const updatedCustomerInfo = extractCustomerInfoFromMessage(currentInput, customerInfo);
     if (updatedCustomerInfo && updatedCustomerInfo !== customerInfo) {
       setCustomerInfo(updatedCustomerInfo);
       sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedCustomerInfo));
-      
-      // Check if we have all required info and save to database
-      if (!dataSaved && !isSavingDataRef.current && hasRequiredInfo(updatedCustomerInfo)) {
-        saveCustomerData(updatedCustomerInfo);
-      }
     }
 
     try {
@@ -239,60 +234,9 @@ export function Chatbot() {
     }
   };
 
-  // Check if customer info has all required fields
-  function hasRequiredInfo(info: CustomerInfo): boolean {
-    return !!(
-      info.fullName && 
-      info.fullName.trim().length >= 2 &&
-      info.email && 
-      info.email.includes('@') &&
-      info.address && 
-      info.address.trim().length >= 5
-    );
-  }
-
-  // Save customer data to database
-  async function saveCustomerData(info: CustomerInfo) {
-    // Prevent duplicate saves using ref for synchronous check
-    if (dataSaved || isSavingDataRef.current) {
-      console.log("Customer data already saved or currently saving, skipping...");
-      return;
-    }
-    
-    // Set flag synchronously to prevent race conditions
-    isSavingDataRef.current = true;
-    
-    try {
-      const response = await fetch("/api/chatbot/lead", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: info.fullName,
-          email: info.email,
-          address: info.address,
-          phone: info.phone || null,
-          siteVisitDate: info.siteVisitDate || null,
-          siteVisitTime: info.siteVisitTime || null,
-          systemType: info.systemType || null,
-          source: "chatbot",
-        }),
-      });
-
-      const data = await response.json();
-      if (data.ok) {
-        setDataSaved(true);
-        console.log("Customer data saved successfully");
-      } else {
-        console.error("Failed to save customer data:", data.error);
-        isSavingDataRef.current = false; // Reset on failure so it can be retried
-      }
-    } catch (error) {
-      console.error("Error saving customer data:", error);
-      isSavingDataRef.current = false; // Reset on error so it can be retried
-      // Don't show error to user - fail silently
-    }
+  // Redirect to booking page
+  function redirectToBooking() {
+    router.push('/contact');
   }
 
   // Extract customer info from natural conversation
@@ -483,6 +427,12 @@ export function Chatbot() {
   };
 
   const handleSuggestedQuestion = async (question: string) => {
+    // Check if user wants to book a site visit
+    if (question.toLowerCase().includes('book') && question.toLowerCase().includes('site visit')) {
+      redirectToBooking();
+      return;
+    }
+
     setSuggestedQuestions([]);
     
     // Create user message directly
@@ -495,7 +445,7 @@ export function Chatbot() {
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Check if user is providing customer info naturally
+    // Check if user is providing customer info naturally (for conversation context only)
     const updatedCustomerInfo = extractCustomerInfoFromMessage(question, customerInfo);
     if (updatedCustomerInfo && updatedCustomerInfo !== customerInfo) {
       setCustomerInfo(updatedCustomerInfo);
@@ -532,16 +482,6 @@ export function Chatbot() {
       // Generate suggested follow-up questions based on the response
       const suggestions = generateSuggestedQuestions(data.response, question, messages);
       setSuggestedQuestions(suggestions);
-      
-      // Check if customer info was updated in the response and save if complete
-      const updatedInfo = extractCustomerInfoFromMessage(question, customerInfo);
-      if (updatedInfo && updatedInfo !== customerInfo) {
-        setCustomerInfo(updatedInfo);
-        sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedInfo));
-        if (!dataSaved && !isSavingDataRef.current && hasRequiredInfo(updatedInfo)) {
-          saveCustomerData(updatedInfo);
-        }
-      }
     } catch (error) {
       console.error("Chat error:", error);
       const errorMessage: ChatMessage = {
@@ -592,7 +532,7 @@ export function Chatbot() {
     // If user asked about pricing, suggest next steps
     if (lowerUserMessage.includes('price') || lowerUserMessage.includes('cost') || lowerResponse.includes('quote')) {
       suggestions.push("How do I get a quote?");
-      suggestions.push("What's the installation process?");
+      suggestions.push("Book a site visit");
     }
 
     // If user asked about installation, suggest related topics
@@ -605,7 +545,7 @@ export function Chatbot() {
     if (conversationHistory.length <= 2) {
       suggestions.push("What services do you offer?");
       suggestions.push("Do you serve my area?");
-      suggestions.push("How do I get started?");
+      suggestions.push("Book a site visit");
     }
 
     // If no specific suggestions, provide helpful general ones
@@ -766,6 +706,23 @@ export function Chatbot() {
                       </div>
                     )}
                     
+                    {/* Book Site Visit Button */}
+                    {messages.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-4 flex justify-center"
+                      >
+                        <Button
+                          onClick={redirectToBooking}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-2"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          Book Site Visit
+                        </Button>
+                      </motion.div>
+                    )}
+
                     {/* Suggested Questions */}
                     {!isLoading && suggestedQuestions.length > 0 && messages.length > 0 && (
                       <motion.div
