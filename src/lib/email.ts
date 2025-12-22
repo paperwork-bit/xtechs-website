@@ -345,30 +345,22 @@ export async function sendChatbotInquiryNotification(customerData: {
           </div>
           ` : ''}
           
-          ${customerData.systemType ? `
           <div class="field">
             <div class="field-label">System Type:</div>
-            <div class="field-value">${customerData.systemType}</div>
+            <div class="field-value">${customerData.systemType || 'Not specified'}</div>
           </div>
-          ` : ''}
           
-          ${customerData.siteVisitDate || customerData.siteVisitTime ? `
           <h3 style="color: #059669; margin-top: 30px;">Site Visit Information</h3>
           
-          ${customerData.siteVisitDate ? `
           <div class="field">
             <div class="field-label">Visit Date:</div>
-            <div class="field-value">${customerData.siteVisitDate}</div>
+            <div class="field-value">${customerData.siteVisitDate || 'Not specified'}</div>
           </div>
-          ` : ''}
           
-          ${customerData.siteVisitTime ? `
           <div class="field">
             <div class="field-label">Visit Time:</div>
-            <div class="field-value">${customerData.siteVisitTime}</div>
+            <div class="field-value">${customerData.siteVisitTime || 'Not specified'}</div>
           </div>
-          ` : ''}
-          ` : ''}
           
           <div class="footer">
             <p>This is an automated notification from xTechs Renewables chatbot.</p>

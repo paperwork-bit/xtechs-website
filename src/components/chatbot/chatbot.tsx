@@ -93,7 +93,7 @@ export function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [dataSaved, setDataSaved] = useState(false); // Track if data has been saved
-  const [isSavingData, setIsSavingData] = useState(false); // Track if currently saving to prevent duplicates
+  const isSavingDataRef = useRef(false); // Use ref for synchronous check to prevent race conditions
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -187,7 +187,7 @@ export function Chatbot() {
       sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedCustomerInfo));
       
       // Check if we have all required info and save to database
-      if (!dataSaved && !isSavingData && hasRequiredInfo(updatedCustomerInfo)) {
+      if (!dataSaved && !isSavingDataRef.current && hasRequiredInfo(updatedCustomerInfo)) {
         saveCustomerData(updatedCustomerInfo);
       }
     }
@@ -223,12 +223,8 @@ export function Chatbot() {
       const suggestions = generateSuggestedQuestions(data.response, currentInput, messages);
       setSuggestedQuestions(suggestions);
       
-      // Check again if customer info was updated and save if complete
-      // (in case info was extracted from the response or updated during conversation)
-      const finalCustomerInfo = updatedCustomerInfo || customerInfo;
-      if (finalCustomerInfo && !dataSaved && !isSavingData && hasRequiredInfo(finalCustomerInfo)) {
-        saveCustomerData(finalCustomerInfo);
-      }
+      // Note: We don't check again here to prevent duplicate saves
+      // Customer info is already checked and saved above if needed
     } catch (error) {
       console.error("Chat error:", error);
       const errorMessage: ChatMessage = {
@@ -257,13 +253,14 @@ export function Chatbot() {
 
   // Save customer data to database
   async function saveCustomerData(info: CustomerInfo) {
-    // Prevent duplicate saves
-    if (dataSaved || isSavingData) {
+    // Prevent duplicate saves using ref for synchronous check
+    if (dataSaved || isSavingDataRef.current) {
       console.log("Customer data already saved or currently saving, skipping...");
       return;
     }
     
-    setIsSavingData(true);
+    // Set flag synchronously to prevent race conditions
+    isSavingDataRef.current = true;
     
     try {
       const response = await fetch("/api/chatbot/lead", {
@@ -289,11 +286,11 @@ export function Chatbot() {
         console.log("Customer data saved successfully");
       } else {
         console.error("Failed to save customer data:", data.error);
-        setIsSavingData(false); // Reset on failure so it can be retried
+        isSavingDataRef.current = false; // Reset on failure so it can be retried
       }
     } catch (error) {
       console.error("Error saving customer data:", error);
-      setIsSavingData(false); // Reset on error so it can be retried
+      isSavingDataRef.current = false; // Reset on error so it can be retried
       // Don't show error to user - fail silently
     }
   }
@@ -541,7 +538,7 @@ export function Chatbot() {
       if (updatedInfo && updatedInfo !== customerInfo) {
         setCustomerInfo(updatedInfo);
         sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedInfo));
-        if (!dataSaved && !isSavingData && hasRequiredInfo(updatedInfo)) {
+        if (!dataSaved && !isSavingDataRef.current && hasRequiredInfo(updatedInfo)) {
           saveCustomerData(updatedInfo);
         }
       }
