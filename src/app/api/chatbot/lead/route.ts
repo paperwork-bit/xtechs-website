@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const corsHeaders = getCORSHeaders(origin);
     const body = await request.json();
     
-    const { fullName, email, address, phone, siteVisitDate, siteVisitTime, source = "chatbot" } = body;
+    const { fullName, email, address, phone, siteVisitDate, siteVisitTime, systemType, source = "chatbot" } = body;
 
     // Validate required fields
     if (!fullName || !email || !address) {
@@ -53,6 +53,9 @@ export async function POST(request: NextRequest) {
     const sanitizedEmail = email.trim().toLowerCase();
     const sanitizedAddress = sanitizeMessage(address);
     const sanitizedPhone = phone ? phone.trim() : null;
+    const sanitizedSiteVisitDate = siteVisitDate ? siteVisitDate.trim() : null;
+    const sanitizedSiteVisitTime = siteVisitTime ? siteVisitTime.trim() : null;
+    const sanitizedSystemType = systemType ? sanitizeMessage(systemType) : null;
 
     // Ensure address is not null (shouldn't happen due to validation, but TypeScript needs this)
     if (!sanitizedAddress) {
@@ -109,8 +112,9 @@ export async function POST(request: NextRequest) {
         email: sanitizedEmail,
         address: sanitizedAddress, // Now guaranteed to be string after null check
         phone: sanitizedPhone || undefined,
-        siteVisitDate: siteVisitDate || undefined,
-        siteVisitTime: siteVisitTime || undefined,
+        siteVisitDate: sanitizedSiteVisitDate || undefined,
+        siteVisitTime: sanitizedSiteVisitTime || undefined,
+        systemType: sanitizedSystemType || undefined,
       });
       
       if (emailSent) {

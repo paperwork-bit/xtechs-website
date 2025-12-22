@@ -93,6 +93,7 @@ export function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [dataSaved, setDataSaved] = useState(false); // Track if data has been saved
+  const [isSavingData, setIsSavingData] = useState(false); // Track if currently saving to prevent duplicates
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -186,7 +187,7 @@ export function Chatbot() {
       sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedCustomerInfo));
       
       // Check if we have all required info and save to database
-      if (!dataSaved && hasRequiredInfo(updatedCustomerInfo)) {
+      if (!dataSaved && !isSavingData && hasRequiredInfo(updatedCustomerInfo)) {
         saveCustomerData(updatedCustomerInfo);
       }
     }
@@ -225,7 +226,7 @@ export function Chatbot() {
       // Check again if customer info was updated and save if complete
       // (in case info was extracted from the response or updated during conversation)
       const finalCustomerInfo = updatedCustomerInfo || customerInfo;
-      if (finalCustomerInfo && !dataSaved && hasRequiredInfo(finalCustomerInfo)) {
+      if (finalCustomerInfo && !dataSaved && !isSavingData && hasRequiredInfo(finalCustomerInfo)) {
         saveCustomerData(finalCustomerInfo);
       }
     } catch (error) {
@@ -256,7 +257,13 @@ export function Chatbot() {
 
   // Save customer data to database
   async function saveCustomerData(info: CustomerInfo) {
-    if (dataSaved) return; // Already saved
+    // Prevent duplicate saves
+    if (dataSaved || isSavingData) {
+      console.log("Customer data already saved or currently saving, skipping...");
+      return;
+    }
+    
+    setIsSavingData(true);
     
     try {
       const response = await fetch("/api/chatbot/lead", {
@@ -271,6 +278,7 @@ export function Chatbot() {
           phone: info.phone || null,
           siteVisitDate: info.siteVisitDate || null,
           siteVisitTime: info.siteVisitTime || null,
+          systemType: info.systemType || null,
           source: "chatbot",
         }),
       });
@@ -281,9 +289,11 @@ export function Chatbot() {
         console.log("Customer data saved successfully");
       } else {
         console.error("Failed to save customer data:", data.error);
+        setIsSavingData(false); // Reset on failure so it can be retried
       }
     } catch (error) {
       console.error("Error saving customer data:", error);
+      setIsSavingData(false); // Reset on error so it can be retried
       // Don't show error to user - fail silently
     }
   }
@@ -430,6 +440,36 @@ export function Chatbot() {
       }
     }
 
+    // Extract system type
+    const systemTypePatterns = [
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:a\s+)?(?:solar\s+)?(?:pv\s+)?(?:system\s+)?(?:\+|\s+and\s+)?(?:battery|batteries|storage)/i, type: "Solar PV + Battery" },
+      { pattern: /(?:solar\s+)?(?:pv\s+)?(?:system\s+)?(?:\+|\s+and\s+)?(?:battery|batteries|storage)/i, type: "Solar PV + Battery" },
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:a\s+)?(?:solar\s+)?(?:pv\s+)?system/i, type: "Solar PV System" },
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:a\s+)?(?:battery|batteries|storage)(?:\s+system)?/i, type: "Battery Storage" },
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:an\s+)?(?:ev\s+)?(?:electric\s+vehicle\s+)?(?:car\s+)?charg(?:er|ing)/i, type: "EV Charging" },
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:an?\s+)?(?:off[- ]?grid|offgrid)(?:\s+system)?/i, type: "Off-Grid System" },
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:electrical\s+)?(?:services|work)/i, type: "Electrical Services" },
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:commercial\s+)?(?:solar|pv)/i, type: "Commercial Solar" },
+      { pattern: /(?:interested in|want|need|looking for|considering|getting|installing|getting a quote for)\s+(?:residential\s+)?(?:solar|pv)/i, type: "Residential Solar" },
+      // Simple patterns
+      { pattern: /\b(solar\s+pv\s*\+\s*battery|solar\s*\+\s*battery|pv\s*\+\s*battery)\b/i, type: "Solar PV + Battery" },
+      { pattern: /\b(solar\s+pv|pv\s+system)\b/i, type: "Solar PV System" },
+      { pattern: /\b(battery\s+storage|battery\s+system)\b/i, type: "Battery Storage" },
+      { pattern: /\b(ev\s+charger|ev\s+charging|electric\s+vehicle\s+charger)\b/i, type: "EV Charging" },
+      { pattern: /\b(off[- ]?grid|offgrid)\b/i, type: "Off-Grid System" },
+    ];
+
+    for (const { pattern, type } of systemTypePatterns) {
+      const match = message.match(pattern);
+      if (match) {
+        if (!info) {
+          info = { fullName: "", email: "", address: "", collectedAt: new Date() };
+        }
+        info.systemType = type;
+        break; // Use first match
+      }
+    }
+
     // Only return if we have at least name or email
     if (info && (info.fullName || info.email)) {
       return info as CustomerInfo;
@@ -501,7 +541,7 @@ export function Chatbot() {
       if (updatedInfo && updatedInfo !== customerInfo) {
         setCustomerInfo(updatedInfo);
         sessionStorage.setItem('chatbot-customer-info', JSON.stringify(updatedInfo));
-        if (!dataSaved && hasRequiredInfo(updatedInfo)) {
+        if (!dataSaved && !isSavingData && hasRequiredInfo(updatedInfo)) {
           saveCustomerData(updatedInfo);
         }
       }

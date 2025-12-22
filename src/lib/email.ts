@@ -297,6 +297,7 @@ export async function sendChatbotInquiryNotification(customerData: {
   phone?: string;
   siteVisitDate?: string;
   siteVisitTime?: string;
+  systemType?: string;
 }): Promise<boolean> {
   const html = `
     <!DOCTYPE html>
@@ -344,6 +345,13 @@ export async function sendChatbotInquiryNotification(customerData: {
           </div>
           ` : ''}
           
+          ${customerData.systemType ? `
+          <div class="field">
+            <div class="field-label">System Type:</div>
+            <div class="field-value">${customerData.systemType}</div>
+          </div>
+          ` : ''}
+          
           ${customerData.siteVisitDate || customerData.siteVisitTime ? `
           <h3 style="color: #059669; margin-top: 30px;">Site Visit Information</h3>
           
@@ -379,6 +387,9 @@ export async function sendChatbotInquiryNotification(customerData: {
     email: customerData.email,
     address: customerData.address,
     phone: customerData.phone || 'not provided',
+    systemType: customerData.systemType || 'not provided',
+    siteVisitDate: customerData.siteVisitDate || 'not provided',
+    siteVisitTime: customerData.siteVisitTime || 'not provided',
   });
   
   return await sendEmail({

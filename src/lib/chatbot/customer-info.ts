@@ -9,6 +9,7 @@ export interface CustomerInfo {
   phone?: string;
   siteVisitDate?: string;
   siteVisitTime?: string;
+  systemType?: string; // e.g., "Solar PV + Battery", "EV Charging", etc.
   collectedAt: Date;
 }
 
