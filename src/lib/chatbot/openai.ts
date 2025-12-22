@@ -103,8 +103,25 @@ export async function generateOpenAIResponse(
   // Build context from knowledge base
   let contextMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [];
   
+  // Get current date in Australia/Melbourne timezone for date validation
+  const now = new Date();
+  const australiaDate = new Date(now.toLocaleString('en-US', { timeZone: 'Australia/Melbourne' }));
+  const currentDateStr = australiaDate.toLocaleDateString('en-AU', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    timeZone: 'Australia/Melbourne'
+  });
+  const currentYear = australiaDate.getFullYear();
+  const currentMonth = australiaDate.getMonth() + 1; // 1-12
+  const currentDay = australiaDate.getDate();
+  
   // Add system message with context
   let systemMessage = SYSTEM_PROMPT;
+  
+  // Add current date context for proper date validation
+  systemMessage += `\n\n=== CURRENT DATE CONTEXT ===\nToday's date: ${currentDateStr} (Australia/Melbourne timezone)\nCurrent year: ${currentYear}\nCurrent month: ${currentMonth}\nCurrent day: ${currentDay}\n\nIMPORTANT: When users mention dates for site visits or appointments:\n- Use the current date above to validate if dates are reasonable\n- Dates within the next 3-6 months are perfectly normal and should be accepted\n- Only question dates if they are clearly in the past or more than 6-12 months in the future\n- If a user says "27th December 2025" and we're in December 2024, that's only about a month away - accept it normally\n- Do NOT assume dates are typos unless they're clearly unreasonable (e.g., dates from years ago or decades in the future)\n=== END DATE CONTEXT ===\n`;
   
   if (knowledgeBaseContext && knowledgeBaseContext.trim().length > 0) {
     systemMessage += `\n\n=== KNOWLEDGE BASE CONTEXT (USE THIS TO ANSWER QUESTIONS) ===\n${knowledgeBaseContext}\n=== END KNOWLEDGE BASE ===\n\nIMPORTANT: Use the knowledge base information above to answer the user's question. Do not say you're having trouble if the knowledge base contains relevant information.`;
