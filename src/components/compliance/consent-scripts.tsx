@@ -2,7 +2,6 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
-import { initializeAnalytics } from "@/lib/analytics";
 
 const CONSENT_COOKIE = "xtechs_consent_v1";
 
@@ -20,11 +19,6 @@ export default function ConsentScripts() {
     const onUpdate = () => {
       const newConsent = getConsent();
       setConsent(newConsent);
-      
-      // Initialize analytics when consent is given
-      if (newConsent?.analytics || newConsent?.marketing) {
-        initializeAnalytics();
-      }
     };
     
     window.addEventListener("xtechs:consent-updated", onUpdate);
@@ -35,6 +29,7 @@ export default function ConsentScripts() {
   const ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
   const FACEBOOK_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
   const HOTJAR_ID = process.env.NEXT_PUBLIC_HOTJAR_ID;
+  const CF_WEB_ANALYTICS_TOKEN = process.env.NEXT_PUBLIC_CF_WEB_ANALYTICS_TOKEN;
 
   return (
     <>
@@ -54,6 +49,15 @@ export default function ConsentScripts() {
             `}
           </Script>
         </>
+      )}
+
+      {/* Analytics (Cloudflare Web Analytics - cookieless) */}
+      {CF_WEB_ANALYTICS_TOKEN && consent?.analytics && (
+        <Script
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          strategy="afterInteractive"
+          data-cf-beacon={JSON.stringify({ token: CF_WEB_ANALYTICS_TOKEN })}
+        />
       )}
 
       {/* Marketing (Google Ads) */}

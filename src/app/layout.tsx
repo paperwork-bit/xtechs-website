@@ -9,6 +9,7 @@ import ConsentPreferences from "@/components/compliance/consent-preferences";
 import ConsentScripts from "@/components/compliance/consent-scripts";
 import { Chatbot } from "@/components/chatbot/chatbot";
 import Script from "next/script";
+import { PageViewTracker } from "@/components/analytics/pageview-tracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,9 @@ export const metadata: Metadata = {
   description:
     "Solar PV, batteries, EV chargers, off-grid solutions, and electrical by xTechs Renewables across Victoria. Builder-ready workflows and compliant installations.",
   alternates: { canonical: "/" },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
   openGraph: {
     type: "website",
     siteName: "xTechs Renewables",
@@ -79,6 +83,7 @@ export default function RootLayout({
       >
         {/* Load scripts only after user consent */}
         <ConsentScripts />
+        <PageViewTracker />
         
         {/* Cookie banner & preferences */}
         <CookieBanner />
