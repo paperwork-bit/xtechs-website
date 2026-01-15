@@ -76,7 +76,7 @@ export function ServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="/services/residential-solar.jpg"
+                    src="/services/residential-solar-install-and-supply.jpeg"
                     alt="Solar panels on residential roof"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
