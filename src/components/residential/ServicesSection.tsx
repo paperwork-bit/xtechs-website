@@ -135,7 +135,7 @@ export function ServicesSection() {
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                 <div className="relative h-64 lg:h-80">
                   <Image
-                    src="/services/residential-battery.jpg"
+                    src="/services/Residential%20battery%20install%20and%20supply.jpeg"
                     alt="Home battery storage system"
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
