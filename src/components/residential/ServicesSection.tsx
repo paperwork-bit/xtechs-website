@@ -133,18 +133,14 @@ export function ServicesSection() {
             {/* Image Section */}
             <div className="lg:col-span-5 lg:order-2">
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80 bg-gray-50">
-                  <div className="absolute inset-4">
-                    <div className="relative h-full w-full">
-                      <Image
-                        src="/services/residential-battery-install-and-supply.jpeg"
-                        alt="Home battery storage system"
-                        fill
-                        className="object-contain transition-transform duration-700 group-hover:scale-[1.02]"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  </div>
+                <div className="relative w-full aspect-[3/4] bg-gray-50">
+                  <Image
+                    src="/services/residential-battery-install-and-supply.jpeg"
+                    alt="Home battery storage system"
+                    fill
+                    className="object-contain transition-transform duration-700 group-hover:scale-[1.02]"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
                 </div>
               </div>
