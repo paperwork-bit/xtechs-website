@@ -164,12 +164,20 @@ export function ServicesSection() {
             {/* Image Section */}
             <div className="lg:col-span-5 lg:order-1">
               <div className="relative group overflow-hidden rounded-2xl shadow-lg">
-                <div className="relative h-64 lg:h-80">
+                <div className="relative h-64 lg:h-80 overflow-hidden bg-gray-100">
+                  {/* Blurred backdrop so portrait images still look great in a landscape card */}
+                  <div
+                    className="absolute inset-0 scale-110 bg-cover bg-center blur-xl opacity-40"
+                    style={{ backgroundImage: "url(/services/ev-charger-installation-and-supply.jpeg)" }}
+                    aria-hidden="true"
+                  />
+
+                  {/* Foreground image (full image, no crop) */}
                   <Image
-                    src="/services/residential-ev-charger.jpg"
+                    src="/services/ev-charger-installation-and-supply.jpeg"
                     alt="EV charger installation"
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                    className="object-contain p-4 transition-transform duration-700 group-hover:scale-[1.02]"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
