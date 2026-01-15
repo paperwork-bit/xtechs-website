@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { trackPageView } from "@/lib/analytics";
 
 const CONSENT_COOKIE = "xtechs_consent_v1";
@@ -24,7 +24,6 @@ function hasAnalyticsConsent(): boolean {
 
 export function PageViewTracker() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const send = () => {
@@ -40,8 +39,7 @@ export function PageViewTracker() {
     const onConsentUpdate = () => send();
     window.addEventListener("xtechs:consent-updated", onConsentUpdate);
     return () => window.removeEventListener("xtechs:consent-updated", onConsentUpdate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, searchParams?.toString()]);
+  }, [pathname]);
 
   return null;
 }
