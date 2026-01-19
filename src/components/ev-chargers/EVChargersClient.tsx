@@ -128,7 +128,7 @@ export function EVChargersClient() {
                 </Button>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
-                Site inspection fees apply. We'll provide a detailed quote after assessing your property.
+                Site inspection fees apply. xTechs Renewables will provide a detailed quote & site inspection report after assessing your property.
               </p>
             </motion.div>
 
@@ -245,7 +245,7 @@ export function EVChargersClient() {
         textColor="text-blue-100"
         buttonColor="text-blue-600"
         phoneNumber="1300 983 247"
-        disclaimer="Site inspection fees apply. We'll provide a detailed quote after assessing your property."
+        disclaimer="Site inspection fees apply. xTechs Renewables will provide a detailed quote & site inspection report after assessing your property."
         onCalendlyClick={() => trackCalendlyBooking('ev-chargers-cta', 'ev-charger-consultation')}
       />
     </motion.div>

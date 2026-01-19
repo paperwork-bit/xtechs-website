@@ -130,7 +130,7 @@ export function BatteryClient() {
                 </Button>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
-                Site inspection fees apply. We'll provide a detailed quote after assessing your property.
+                Site inspection fees apply. xTechs Renewables will provide a detailed quote & site inspection report after assessing your property.
               </p>
             </motion.div>
 
@@ -253,7 +253,7 @@ export function BatteryClient() {
         backgroundColor="bg-gradient-to-r from-green-600 to-blue-600"
         textColor="text-green-100"
         buttonColor="text-green-600"
-        disclaimer="Site inspection fees apply. We'll provide a detailed quote after assessing your property."
+        disclaimer="Site inspection fees apply. xTechs Renewables will provide a detailed quote & site inspection report after assessing your property."
         onCalendlyClick={() => trackCalendlyBooking('battery-cta', 'battery-consultation')}
       />
     </motion.div>

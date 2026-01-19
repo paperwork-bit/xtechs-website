@@ -274,7 +274,7 @@ export function ElectricalServicesSection() {
                 </Button>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
-                Site inspection fees apply. We'll provide a detailed quote after assessing your property.
+                Site inspection fees apply. xTechs Renewables will provide a detailed quote & site inspection report after assessing your property.
               </p>
             </div>
           </motion.div>

@@ -51,7 +51,7 @@ function Hero() {
             </h1>
 
 				<p className="mt-16 md:mt-24 lg:mt-32 text-lg md:text-xl leading-relaxed tracking-tight text-gray-900 dark:text-gray-100 max-w-2xl text-center font-medium drop-shadow-lg">
-              Power your home or business with clean, reliable solar energy. At xTechs Renewables, we design and install smart PV and battery systems across Victoria helping families, builders, and businesses cut costs, gain independence, and embrace a sustainable future.
+              Power your home or business with clean, cheap & green solar energy. At xTechs Renewables, we design and install smart PV and Battery systems across Victoria helping families, builders, and businesses nullify energy costs, gain energy independence, and embrace a sustainable future.
             </p>
           </div>
 
@@ -69,7 +69,7 @@ function Hero() {
           
           {/* Site Inspection Notice */}
           <p className="text-sm text-gray-800 dark:text-gray-200 text-center max-w-md font-medium drop-shadow-md">
-            Site inspection fees apply. We'll provide a detailed quote after assessing your property.
+            Site inspection fees apply. xTechs Renewables will provide a detailed quote & site inspection report after assessing your property.
           </p>
         </div>
       </div>

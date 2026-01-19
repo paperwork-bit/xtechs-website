@@ -74,7 +74,7 @@ export default function RootLayout({
           as="image"
           href="/xlogo.png"
           type="image/png"
-          fetchpriority="high"
+          fetchPriority="high"
         />
       </head>
       <body

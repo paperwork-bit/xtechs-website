@@ -100,14 +100,14 @@ export function ProcessSteps() {
 
         {/* Content panel with better spacing */}
         <section className="rounded-2xl border bg-background shadow-sm">
-          <div className="min-h-[min(60vh,700px)] overflow-hidden">
+          <div className="h-[min(60vh,700px)] overflow-hidden">
             <StepPanel
               activeKey={activeId}
               items={Object.entries(CONTENT).map(([key, v]) => ({
                 key,
                 node: (
                   <article className="h-full flex flex-col p-6 md:p-8">
-                    <div className="flex-1">
+                    <div className="flex-1 min-h-0 overflow-y-auto pr-1">
                       <h3 className="text-xl md:text-2xl font-semibold mb-3">{v.title}</h3>
                       <p className="text-muted-foreground mb-6 text-lg">{v.description}</p>
                       <div className="rounded-lg border bg-gradient-to-br from-secondary/40 to-secondary/20 p-6 md:p-8 text-sm md:text-base leading-relaxed shadow-sm">
@@ -116,7 +116,7 @@ export function ProcessSteps() {
                     </div>
                     
                     {/* Visual enhancement at bottom */}
-                    <div className="mt-8 pt-6 border-t border-border/50">
+                    <div className="mt-6 pt-6 border-t border-border/50 shrink-0">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <div className="w-2 h-2 rounded-full bg-primary/60"></div>

@@ -127,7 +127,7 @@ export default function ServicesSection() {
               Our Services
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 font-light">
-              Grid & off-grid solar, batteries, EV charging, and rapid-deploy SolarFold—built the xTechs way.
+              Grid & Oﬀ-Grid Solar, Batteries, EV Charging And Rapid-Deploy SolarFold—Built The xTechs Way.
             </p>
           </div>
 
