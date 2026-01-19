@@ -15,6 +15,8 @@ const footerConfig = {
     tagline:
       "Clean energy systems, smart storage, and reliable electrical — for homes, builders, and businesses across Victoria.",
     abn: "ABN: 30 673 983 572",
+    acn: "ACN: 673 983 572",
+    rec: "REC: 36065",
   },
   contact: {
     email: "inquiries@xtechsrenewables.com.au",
@@ -94,9 +96,11 @@ export default function Footer() {
           <p className="text-sm text-gray-600 dark:text-gray-300 max-w-3xl">
             {footerConfig.brand.tagline}
           </p>
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            {footerConfig.brand.abn}
-          </p>
+          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+            <p>{footerConfig.brand.abn}</p>
+            <p>{footerConfig.brand.acn}</p>
+            <p>{footerConfig.brand.rec}</p>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-10">
