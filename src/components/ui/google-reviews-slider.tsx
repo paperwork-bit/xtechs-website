@@ -54,14 +54,8 @@ export function GoogleReviewsSlider() {
       setIsVisible(true);
     }, 5000);
 
-    // Auto-advance reviews every 8 seconds (slower)
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % fiveStarReviews.length);
-    }, 8000);
-
     return () => {
       clearTimeout(initialDelay);
-      clearInterval(interval);
     };
   }, [fiveStarReviews.length]);
 
@@ -116,15 +110,15 @@ export function GoogleReviewsSlider() {
           </button>
 
           <div className="overflow-hidden">
-            {/* Fast transitions on manual navigation */}
-            <AnimatePresence mode="sync" initial={false}>
+            {/* Manual navigation only (no auto-advance) */}
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={currentIndex}
                 initial={{ x: 140, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -140, opacity: 0 }}
                 transition={{ 
-                  duration: 0.35,
+                  duration: 0.25,
                   ease: "easeOut",
                 }}
                 className="w-full"
