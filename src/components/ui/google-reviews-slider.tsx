@@ -116,18 +116,16 @@ export function GoogleReviewsSlider() {
           </button>
 
           <div className="overflow-hidden">
-            <AnimatePresence mode="wait">
+            {/* Fast transitions on manual navigation */}
+            <AnimatePresence mode="sync" initial={false}>
               <motion.div
                 key={currentIndex}
-                initial={{ x: 300, opacity: 0 }}
+                initial={{ x: 140, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -300, opacity: 0 }}
+                exit={{ x: -140, opacity: 0 }}
                 transition={{ 
-                  duration: 1.2, 
-                  ease: "easeInOut",
-                  type: "spring",
-                  stiffness: 50,
-                  damping: 20
+                  duration: 0.35,
+                  ease: "easeOut",
                 }}
                 className="w-full"
               >
