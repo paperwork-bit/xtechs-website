@@ -92,7 +92,7 @@ export function GoogleReviewsSlider() {
 
         <div className="relative">
           {/* Slider frame (fixed height so arrows never shift) */}
-          <div className="relative h-[260px] md:h-[240px]">
+          <div className="relative h-[360px] sm:h-[340px] md:h-[300px] lg:h-[280px]">
             {/* Left/Right controls */}
             <button
               type="button"
@@ -126,7 +126,7 @@ export function GoogleReviewsSlider() {
                   className="h-full w-full"
                 >
                   <Card className="h-full bg-white dark:bg-gray-800 shadow-lg border-0">
-                    <CardContent className="p-8 h-full">
+                    <CardContent className="p-6 md:p-8 h-full">
                       <div className="flex items-start gap-6 h-full">
                         <div className="flex-shrink-0">
                           <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center">
