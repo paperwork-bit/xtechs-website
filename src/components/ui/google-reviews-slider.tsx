@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useIsMounted } from "@/lib/use-is-mounted";
 import { disableAnim } from "@/lib/flags";
@@ -48,6 +48,7 @@ export function GoogleReviewsSlider() {
   const fiveStarReviews = reviews.filter(review => review.rating === 5);
 
   React.useEffect(() => {
+    if (fiveStarReviews.length === 0) return;
     // Wait 5 seconds before starting the animation
     const initialDelay = setTimeout(() => {
       setIsVisible(true);
@@ -70,6 +71,14 @@ export function GoogleReviewsSlider() {
 
   const currentReview = fiveStarReviews[currentIndex];
 
+  const goPrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + fiveStarReviews.length) % fiveStarReviews.length);
+  };
+
+  const goNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % fiveStarReviews.length);
+  };
+
   return (
     <section className="py-16 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20">
       <div className="max-w-4xl mx-auto px-6">
@@ -87,68 +96,88 @@ export function GoogleReviewsSlider() {
           </p>
         </motion.div>
 
-        <div className="relative overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ x: 300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -300, opacity: 0 }}
-              transition={{ 
-                duration: 1.2, 
-                ease: "easeInOut",
-                type: "spring",
-                stiffness: 50,
-                damping: 20
-              }}
-              className="w-full"
-            >
-              <Card className="bg-white dark:bg-gray-800 shadow-lg border-0">
-                <CardContent className="p-8">
-                  <div className="flex items-start gap-6">
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center">
-                        <Quote className="w-8 h-8 text-white" />
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                          ))}
+        <div className="relative">
+          {/* Left/Right controls */}
+          <button
+            type="button"
+            onClick={goPrev}
+            className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-gray-900 shadow-lg ring-1 ring-black/5 backdrop-blur transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-gray-900/80 dark:text-gray-100 dark:ring-white/10"
+            aria-label="Previous review"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={goNext}
+            className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-gray-900 shadow-lg ring-1 ring-black/5 backdrop-blur transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-gray-900/80 dark:text-gray-100 dark:ring-white/10"
+            aria-label="Next review"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+
+          <div className="overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -300, opacity: 0 }}
+                transition={{ 
+                  duration: 1.2, 
+                  ease: "easeInOut",
+                  type: "spring",
+                  stiffness: 50,
+                  damping: 20
+                }}
+                className="w-full"
+              >
+                <Card className="bg-white dark:bg-gray-800 shadow-lg border-0">
+                  <CardContent className="p-8">
+                    <div className="flex items-start gap-6">
+                      <div className="flex-shrink-0">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center">
+                          <Quote className="w-8 h-8 text-white" />
                         </div>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {currentReview.relative_time_description || formatReviewDate(currentReview.time)}
-                        </span>
                       </div>
                       
-                      <blockquote className="text-lg text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                        "{currentReview.text}"
-                      </blockquote>
-                      
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-                            {currentReview.author_name.charAt(0)}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                            ))}
+                          </div>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {currentReview.relative_time_description || formatReviewDate(currentReview.time)}
                           </span>
                         </div>
-                        <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">
-                            {currentReview.author_name}
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Google Review
-                          </p>
+                        
+                        <blockquote className="text-lg text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+                          "{currentReview.text}"
+                        </blockquote>
+                        
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                              {currentReview.author_name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-white">
+                              {currentReview.author_name}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Google Review
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </AnimatePresence>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           {/* Review indicators */}
           <div className="flex justify-center gap-2 mt-8">
