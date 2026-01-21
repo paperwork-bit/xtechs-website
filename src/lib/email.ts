@@ -1,8 +1,10 @@
 // Email utility for sending notifications via Resend
 // Works with Cloudflare Edge runtime
 
-const ADMIN_EMAIL = "inquiries@xtechsrenewables.com.au";
-const FROM_EMAIL = "noreply@xtechsrenewables.com.au";
+// Allow overriding via Cloudflare Pages env vars.
+// Useful for initial setup (e.g. using Resend verified sender) and future changes.
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "inquiries@xtechsrenewables.com.au";
+const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@xtechsrenewables.com.au";
 
 interface SendEmailOptions {
   to: string;

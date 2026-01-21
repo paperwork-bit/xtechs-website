@@ -106,8 +106,9 @@ export async function POST(req: Request) {
 
     // Send email notification to inquiries@xtechsrenewables.com.au
     // Don't fail the request if email fails.
+    let emailSent = false;
     try {
-      const emailSent = await sendLeadNotification({
+      emailSent = await sendLeadNotification({
         leadId,
         name: sanitizedName,
         email: sanitizedEmail,
@@ -129,7 +130,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { ok: true, leadId }, 
+      { ok: true, leadId, emailSent }, 
       { status: 200, headers: corsHeaders }
     );
   } catch (err: any) {
