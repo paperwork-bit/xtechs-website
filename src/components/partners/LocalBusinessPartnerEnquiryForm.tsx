@@ -136,14 +136,8 @@ export function LocalBusinessPartnerEnquiryForm({ partner }: { partner: LocalBus
       <CardContent>
         {status === "success" ? (
           <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-900 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-100">
-            <p className="font-semibold">Thanks — we’ve received your referral enquiry.</p>
-            <p className="text-sm mt-1">
-              We’ll review your details and come back with a properly sized solar and/or battery recommendation.
-            </p>
-            <p className="text-xs mt-3 text-emerald-900/80 dark:text-emerald-100/80">
-              Gift cards (if eligible) are issued within {partner.giftCard.issuedWithinDays} days after installation completion.
-              Offer terms apply.
-            </p>
+            <p className="font-semibold">Thank You for your details.</p>
+            <p className="text-sm mt-1">Our Solar Expert will get in touch with you.</p>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="space-y-5" onFocus={onStart}>

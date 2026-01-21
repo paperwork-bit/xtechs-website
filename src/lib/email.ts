@@ -482,3 +482,106 @@ export async function sendChatbotInquiryNotification(customerData: {
   });
 }
 
+/**
+ * Send generic lead notification email to admin
+ * Used by /api/leads (including partner quote forms)
+ */
+export async function sendLeadNotification(leadData: {
+  leadId: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  message?: string | null;
+  source?: string | null;
+  tenantId?: string | null;
+  ip?: string | null;
+}): Promise<boolean> {
+  const submittedAt = new Date().toLocaleString("en-AU", { timeZone: "Australia/Melbourne" });
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #111827; }
+        .container { max-width: 680px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #0ea5e9; color: white; padding: 18px 20px; border-radius: 10px 10px 0 0; }
+        .content { background-color: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; border-top: 0; border-radius: 0 0 10px 10px; }
+        .field { margin: 14px 0; }
+        .field-label { font-weight: 700; color: #374151; }
+        .field-value { margin-top: 4px; color: #111827; }
+        .muted { color: #6b7280; }
+        .message { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; white-space: pre-wrap; }
+        .meta { font-size: 12px; color: #6b7280; margin-top: 18px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h2 style="margin:0;">New Lead Submission</h2>
+        </div>
+        <div class="content">
+          <div class="field">
+            <div class="field-label">Lead ID</div>
+            <div class="field-value">${leadData.leadId}</div>
+          </div>
+          <div class="field">
+            <div class="field-label">Name</div>
+            <div class="field-value">${leadData.name}</div>
+          </div>
+          <div class="field">
+            <div class="field-label">Email</div>
+            <div class="field-value"><a href="mailto:${leadData.email}">${leadData.email}</a></div>
+          </div>
+          ${
+            leadData.phone
+              ? `
+          <div class="field">
+            <div class="field-label">Phone</div>
+            <div class="field-value"><a href="tel:${leadData.phone}">${leadData.phone}</a></div>
+          </div>`
+              : ""
+          }
+          <div class="field">
+            <div class="field-label">Source</div>
+            <div class="field-value">${leadData.source || "<span class='muted'>(not provided)</span>"}</div>
+          </div>
+          <div class="field">
+            <div class="field-label">Tenant</div>
+            <div class="field-value">${leadData.tenantId || "<span class='muted'>(not provided)</span>"}</div>
+          </div>
+          ${
+            leadData.ip
+              ? `
+          <div class="field">
+            <div class="field-label">IP</div>
+            <div class="field-value">${leadData.ip}</div>
+          </div>`
+              : ""
+          }
+          ${
+            leadData.message
+              ? `
+          <div class="field">
+            <div class="field-label">Message</div>
+            <div class="field-value">
+              <div class="message">${leadData.message}</div>
+            </div>
+          </div>`
+              : ""
+          }
+          <div class="meta">
+            Submitted at: ${submittedAt}
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail({
+    to: ADMIN_EMAIL,
+    subject: `New Lead - ${leadData.name}${leadData.source ? ` (${leadData.source})` : ""}`,
+    html,
+  });
+}
+

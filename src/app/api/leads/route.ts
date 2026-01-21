@@ -8,6 +8,7 @@ import {
   sanitizeName,
   sanitizeMessage 
 } from "@/lib/security";
+import { sendLeadNotification } from "@/lib/email";
 
 export const runtime = 'edge';
 
@@ -101,6 +102,30 @@ export async function POST(req: Request) {
         { error: "Failed to save lead" }, 
         { status: 500, headers: corsHeaders }
       );
+    }
+
+    // Send email notification to inquiries@xtechsrenewables.com.au
+    // Don't fail the request if email fails.
+    try {
+      const emailSent = await sendLeadNotification({
+        leadId,
+        name: sanitizedName,
+        email: sanitizedEmail,
+        phone: sanitizedPhone,
+        message: sanitizedMessage,
+        source: source || null,
+        tenantId: tenantId || null,
+        ip: ip || null,
+      });
+
+      if (emailSent) {
+        console.log("Lead notification email sent successfully");
+      } else {
+        console.warn("Lead notification email failed to send - check RESEND_API_KEY configuration");
+      }
+    } catch (emailError) {
+      console.error("Failed to send lead notification email:", emailError);
+      // Continue even if email fails - lead is saved
     }
 
     return NextResponse.json(
