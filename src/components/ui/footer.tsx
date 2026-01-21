@@ -34,6 +34,7 @@ const footerConfig = {
       title: "Company",
       links: [
         { label: "About Us", href: "/about" },
+        { label: "xTechs Local Business Partners", href: "/local-business-partners" },
         { label: "Careers", href: "/careers" },
         { label: "Contact", href: "/contact" },
       ],
