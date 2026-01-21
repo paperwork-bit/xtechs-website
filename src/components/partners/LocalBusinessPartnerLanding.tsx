@@ -94,17 +94,16 @@ export function LocalBusinessPartnerLanding({ partner }: { partner: LocalBusines
                 <Button asChild size="lg">
                   <a href="#get-a-quote">Get My Quote</a>
                 </Button>
-                <Button asChild variant="outline" size="lg">
-                  <a href="#rewards">
-                    See Gift Card Rewards
-                  </a>
-                </Button>
               </div>
 
               <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
                 Offer terms apply.{" "}
                 <a className="underline underline-offset-4" href="#offer-terms">
                   View terms
+                </a>
+                {" • "}
+                <a className="underline underline-offset-4" href="#rewards">
+                  See gift card rewards
                 </a>
                 .
               </div>
