@@ -189,11 +189,26 @@ export function BookingCalendar() {
     setFormData(prev => ({ ...prev, captchaToken: token || "" }));
   };
 
-  const PAYMENT_URL = "https://book.stripe.com/9B6bIU8ILesR8r94xZ8Ra01";
+  const PAYMENT_URL = "https://buy.stripe.com/00weV61gj1G5gXF5C38Ra03";
 
-  const redirectToPayment = () => {
+  const buildPaymentUrl = (bookingId?: string) => {
+    try {
+      const url = new URL(PAYMENT_URL);
+      if (bookingId) {
+        url.searchParams.set("client_reference_id", bookingId);
+      }
+      if (formData.email) {
+        url.searchParams.set("prefilled_email", formData.email);
+      }
+      return url.toString();
+    } catch {
+      return PAYMENT_URL;
+    }
+  };
+
+  const redirectToPayment = (paymentUrl: string) => {
     if (typeof window !== "undefined") {
-      window.location.assign(PAYMENT_URL);
+      window.location.assign(paymentUrl);
     }
   };
 
@@ -222,33 +237,41 @@ export function BookingCalendar() {
         }),
       });
 
+      const json = await response.json().catch(() => null);
+      const bookingIdFromApi = (json && typeof json.bookingId === "string") ? json.bookingId : undefined;
+      const paymentUrl = buildPaymentUrl(bookingIdFromApi);
+
+      // Fire-and-forget booking notification so it doesn't block redirect
+      fetch('/api/notify-booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          selectedDate,
+          selectedTime,
+          type: 'site-assessment',
+          bookingId: bookingIdFromApi,
+          bookingSaved: response.ok,
+          paymentStatus: 'pending',
+          paymentUrl,
+        }),
+      }).catch((notifyErr) => {
+        console.warn('notify-booking request failed:', notifyErr);
+      });
+
       if (response.ok) {
         // Persist booked slot locally to simulate backend availability
         if (selectedDate && selectedTime) {
           saveBookedTime(selectedDate, selectedTime);
         }
 
-        // Fire-and-forget booking notification so it doesn't block redirect
-        fetch('/api/notify-booking', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...formData,
-            selectedDate,
-            selectedTime,
-            type: 'site-assessment'
-          }),
-        }).catch((notifyErr) => {
-          console.warn('notify-booking request failed:', notifyErr);
-        });
-
         // Redirect customer to Stripe payment page for site visit fee
-        redirectToPayment();
+        redirectToPayment(paymentUrl);
         return;
       } else {
-        const errorData = await response.json().catch(() => null);
+        const errorData = json;
         console.error('Booking API returned an error:', {
           status: response.status,
           statusText: response.statusText,
@@ -259,13 +282,13 @@ export function BookingCalendar() {
             errorData?.error || response.statusText || "Unknown error"
           }). You'll now be redirected to the payment page and our team will follow up.`
         );
-        redirectToPayment();
+        redirectToPayment(paymentUrl);
         return;
       }
     } catch (error) {
       console.error('Booking error:', error);
       alert('Failed to book appointment. Please try again or call us directly.');
-      redirectToPayment();
+      redirectToPayment(buildPaymentUrl(undefined));
       return;
     } finally {
       setIsSubmitting(false);

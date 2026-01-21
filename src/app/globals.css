@@ -10,6 +10,23 @@
   scrollbar-width: none;
 }
 
+/* Local business partners: reveal rewards via #rewards hash */
+#rewards .rewards-shell {
+  display: none;
+}
+#rewards:target .rewards-shell {
+  display: block;
+}
+#rewards .rewards-expanded {
+  display: none;
+}
+#rewards:target .rewards-expanded {
+  display: block;
+}
+#rewards:target .rewards-collapsed {
+  display: none;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -62,6 +79,12 @@
   --brand-secondary-light: #fbbf24; /* Light Amber */
   --brand-accent: #10b981;        /* Emerald Green */
   --brand-accent-light: #34d399;  /* Light Green */
+
+  /* Logo palette (from `public/xlogo.png`) */
+  --logo-teal: #1aa39b;
+  --logo-teal-light: #45c8bf;
+  --logo-deep: #0b3a4a;
+  --logo-charcoal: #111827;
   
   /* Neutral Colors */
   --background: oklch(1 0 0);
@@ -151,6 +174,18 @@
   .text-brand-secondary-light { color: var(--brand-secondary-light); }
   .text-brand-accent { color: var(--brand-accent); }
   .text-brand-accent-light { color: var(--brand-accent-light); }
+
+  /* Logo Color Utilities */
+  .text-logo-teal { color: var(--logo-teal); }
+  .text-logo-teal-light { color: var(--logo-teal-light); }
+  .text-logo-deep { color: var(--logo-deep); }
+  .text-logo-charcoal { color: var(--logo-charcoal); }
+  .text-gradient-logo {
+    background: linear-gradient(90deg, var(--logo-deep) 0%, var(--logo-teal) 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   
   .bg-brand-primary { background-color: var(--brand-primary); }
   .bg-brand-primary-light { background-color: var(--brand-primary-light); }

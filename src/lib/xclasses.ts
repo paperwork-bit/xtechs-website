@@ -7,9 +7,6 @@ import { sampleAnnouncements } from '@/data/xclasses/announcements'
 // These can be easily swapped out for CMS integration later
 
 export const getVideos = async (category?: string): Promise<VideoItem[]> => {
-  // Simulate async data fetching
-  await new Promise(resolve => setTimeout(resolve, 100))
-  
   if (category && category !== 'All') {
     return sampleVideos.filter(video => video.category === category)
   }
@@ -18,22 +15,18 @@ export const getVideos = async (category?: string): Promise<VideoItem[]> => {
 }
 
 export const getVideoById = async (id: string): Promise<VideoItem | null> => {
-  await new Promise(resolve => setTimeout(resolve, 50))
   return sampleVideos.find(video => video.id === id) || null
 }
 
 export const getNewsPosts = async (): Promise<NewsPost[]> => {
-  await new Promise(resolve => setTimeout(resolve, 100))
   return sampleNews.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 
 export const getNewsPostBySlug = async (slug: string): Promise<NewsPost | null> => {
-  await new Promise(resolve => setTimeout(resolve, 50))
   return sampleNews.find(post => post.slug === slug) || null
 }
 
 export const getAnnouncements = async (): Promise<Announcement[]> => {
-  await new Promise(resolve => setTimeout(resolve, 50))
   return sampleAnnouncements.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 

@@ -35,7 +35,7 @@ echo "📤 Step 2: Deploying to Cloudflare Pages..."
 echo ""
 
 # Deploy using wrangler
-npx wrangler pages deploy .vercel/output/static \
+./node_modules/.bin/wrangler pages deploy .vercel/output/static \
     --project-name=xtechs-website \
     --commit-dirty=true
 

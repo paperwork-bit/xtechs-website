@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  // Force Next.js to trace from this project root (fixes multi-lockfile monorepo inference)
+  outputFileTracingRoot: path.resolve(__dirname),
   // Skip ESLint during production builds to avoid blocking deploys
   eslint: {
     ignoreDuringBuilds: true,

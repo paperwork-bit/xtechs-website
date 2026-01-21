@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { partnersBySlug } from "@/lib/partners/localBusinessPartners";
 
 const base = process.env.NEXT_PUBLIC_SITE_URL || "https://www.xtechsrenewables.com.au";
 
@@ -28,9 +29,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
     { path: "/cookies", priority: 0.3, changeFrequency: "yearly" },
     { path: "/terms", priority: 0.3, changeFrequency: "yearly" },
+
+    // Partner landing pages (default)
+    { path: "/local-business-partners", priority: 0.5, changeFrequency: "monthly" },
   ];
 
-  return staticRoutes.map((route) => ({
+  const partnerRoutes = Object.keys(partnersBySlug).map((slug) => ({
+    path: `/local-business-partners/${slug}`,
+    priority: 0.4,
+    changeFrequency: "monthly" as const,
+  }));
+
+  return [...staticRoutes, ...partnerRoutes].map((route) => ({
     url: new URL(route.path, base).toString(),
     lastModified: new Date(),
     changeFrequency: route.changeFrequency as "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never",

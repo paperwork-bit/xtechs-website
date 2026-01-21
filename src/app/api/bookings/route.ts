@@ -10,7 +10,6 @@ import {
   sanitizeName,
   sanitizeMessage 
 } from "@/lib/security";
-import { sendBookingNotification } from "@/lib/email";
 
 export const runtime = 'edge';
 
@@ -195,7 +194,7 @@ export async function POST(request: NextRequest) {
       bookingData.selectedTime,
       bookingData.type || null,
       sanitizedNotes,
-      'new',
+      'payment_pending',
       Math.floor(Date.now() / 1000) // Unix timestamp
     ).run();
 
@@ -205,24 +204,6 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to create booking' }, 
         { status: 500, headers: corsHeaders }
       );
-    }
-
-    // Send email notification (don't fail if email fails)
-    try {
-      await sendBookingNotification({
-        firstName: sanitizedFirstName,
-        lastName: sanitizedLastName,
-        email: bookingData.email.trim().toLowerCase(),
-        phone: bookingData.phone.trim(),
-        address: sanitizedAddress || '',
-        serviceType: bookingData.serviceType,
-        selectedDate: bookingData.selectedDate,
-        selectedTime: bookingData.selectedTime,
-        notes: sanitizedNotes || undefined,
-      });
-    } catch (emailError) {
-      console.error('Failed to send booking notification email:', emailError);
-      // Continue even if email fails - booking is saved
     }
 
     return NextResponse.json(

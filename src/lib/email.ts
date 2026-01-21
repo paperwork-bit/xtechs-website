@@ -101,6 +101,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
  * Send booking notification email to admin
  */
 export async function sendBookingNotification(bookingData: {
+  bookingId?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -110,7 +111,13 @@ export async function sendBookingNotification(bookingData: {
   selectedDate: string;
   selectedTime: string;
   notes?: string;
+  paymentStatus?: "pending" | "paid" | "unknown";
+  paymentUrl?: string;
+  bookingSaved?: boolean;
 }): Promise<boolean> {
+  const paymentStatus = bookingData.paymentStatus ?? "unknown";
+  const bookingSaved = bookingData.bookingSaved ?? true;
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -124,6 +131,11 @@ export async function sendBookingNotification(bookingData: {
         .field-label { font-weight: bold; color: #374151; }
         .field-value { margin-top: 5px; color: #6b7280; }
         .notes { background-color: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .status { background-color: #eef2ff; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #c7d2fe; }
+        .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+        .pill-pending { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+        .pill-paid { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+        .pill-unknown { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
         .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af; }
       </style>
     </head>
@@ -133,6 +145,46 @@ export async function sendBookingNotification(bookingData: {
           <h2 style="margin: 0;">New Site Assessment Booking</h2>
         </div>
         <div class="content">
+          <h3 style="color: #059669; margin-top: 0;">Payment Status</h3>
+          <div class="status">
+            <div class="field">
+              <div class="field-label">Status:</div>
+              <div class="field-value">
+                ${
+                  paymentStatus === "paid"
+                    ? `<span class="pill pill-paid">PAID</span>`
+                    : paymentStatus === "pending"
+                      ? `<span class="pill pill-pending">PENDING</span>`
+                      : `<span class="pill pill-unknown">UNKNOWN</span>`
+                }
+              </div>
+            </div>
+            ${
+              bookingData.paymentUrl
+                ? `
+              <div class="field">
+                <div class="field-label">Payment link:</div>
+                <div class="field-value"><a href="${bookingData.paymentUrl}">${bookingData.paymentUrl}</a></div>
+              </div>
+              `
+                : ""
+            }
+            <div class="field">
+              <div class="field-label">Booking saved in database:</div>
+              <div class="field-value">${bookingSaved ? "Yes" : "No (follow up manually)"}</div>
+            </div>
+            ${
+              bookingData.bookingId
+                ? `
+              <div class="field">
+                <div class="field-label">Booking ID:</div>
+                <div class="field-value">${bookingData.bookingId}</div>
+              </div>
+              `
+                : ""
+            }
+          </div>
+
           <h3 style="color: #059669; margin-top: 0;">Customer Details</h3>
           
           <div class="field">
@@ -191,7 +243,46 @@ export async function sendBookingNotification(bookingData: {
 
   return await sendEmail({
     to: ADMIN_EMAIL,
-    subject: `New Site Assessment Booking - ${bookingData.firstName} ${bookingData.lastName}`,
+    subject: `Site Assessment Booking (${paymentStatus.toUpperCase()}) - ${bookingData.firstName} ${bookingData.lastName}`,
+    html,
+  });
+}
+
+/**
+ * Send payment status update (e.g. when Stripe webhook confirms payment)
+ */
+export async function sendBookingPaymentUpdate(options: {
+  bookingId: string;
+  paymentStatus: "paid" | "failed" | "pending";
+  amount?: number | null;
+  currency?: string | null;
+  customerEmail?: string | null;
+  stripeSessionId?: string | null;
+}) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
+      <div style="max-width: 640px; margin: 0 auto; padding: 20px;">
+        <div style="background:#0ea5e9; color:#fff; padding:16px 20px; border-radius:10px 10px 0 0;">
+          <h2 style="margin:0;">Stripe Payment Update</h2>
+        </div>
+        <div style="border:1px solid #e5e7eb; border-top:0; padding:18px 20px; border-radius:0 0 10px 10px; background:#f9fafb;">
+          <p style="margin-top:0;"><strong>Booking ID:</strong> ${options.bookingId}</p>
+          <p><strong>Status:</strong> ${options.paymentStatus.toUpperCase()}</p>
+          ${options.amount != null && options.currency ? `<p><strong>Amount:</strong> ${(options.amount / 100).toFixed(2)} ${String(options.currency).toUpperCase()}</p>` : ""}
+          ${options.customerEmail ? `<p><strong>Customer email:</strong> ${options.customerEmail}</p>` : ""}
+          ${options.stripeSessionId ? `<p><strong>Stripe session:</strong> ${options.stripeSessionId}</p>` : ""}
+          <p style="font-size:12px; color:#6b7280; margin-bottom:0;">Sent at: ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Melbourne' })}</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail({
+    to: ADMIN_EMAIL,
+    subject: `Stripe Payment ${options.paymentStatus.toUpperCase()} - Booking ${options.bookingId}`,
     html,
   });
 }
