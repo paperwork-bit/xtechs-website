@@ -30,22 +30,22 @@ function Hero() {
         <div className="flex gap-6 py-24 lg:py-40 items-center justify-center flex-col">
           {/* Main Hero Content */}
           <div className="flex gap-4 flex-col items-center">
-            <h1 className="text-5xl md:text-7xl max-w-8xl tracking-tighter text-center font-regular">
+            <h1 className="mt-0 md:-mt-2 lg:-mt-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-5xl leading-[0.95] max-w-8xl tracking-tighter text-center font-regular">
               <span className="block font-semibold text-logo-deep dark:text-logo-teal-light">
                 Solar Was Step One.
               </span>
-              <span className="block font-semibold text-gradient-logo">
+              <span className="block mt-1 md:mt-2 lg:mt-3 font-semibold text-gradient-logo">
                 This Is the Upgrade
               </span>
             </h1>
 
             {/* Rotating line */}
-            <div className="relative mt-3 w-full max-w-3xl text-center">
+            <div className="relative mt-28 md:mt-32 lg:mt-36 w-full max-w-3xl text-center">
               <div className="relative min-h-[2.6em] md:min-h-[2.4em]">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={titleNumber}
-                    className="absolute inset-0 flex items-center justify-center px-4 text-xl md:text-2xl font-semibold tracking-tight text-logo-charcoal dark:text-gray-100"
+                    className="absolute inset-0 flex items-center justify-center px-4 text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight text-logo-charcoal dark:text-gray-100 drop-shadow-sm"
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -16 }}
@@ -57,7 +57,7 @@ function Hero() {
               </div>
             </div>
 
-            <p className="mt-16 md:mt-24 lg:mt-32 text-lg md:text-xl leading-relaxed tracking-tight text-gray-900 dark:text-gray-100 max-w-2xl text-center font-medium drop-shadow-lg">
+            <p className="mt-20 md:mt-24 lg:mt-28 text-lg md:text-xl leading-relaxed tracking-tight text-gray-900 dark:text-gray-100 max-w-2xl text-center font-medium drop-shadow-lg">
               Power your home or business with clean, cheap & green solar energy. At
               xTechs Renewables, we design and install smart PV and Battery systems
               across Victoria helping families, builders, and businesses nullify energy
