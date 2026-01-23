@@ -120,3 +120,19 @@ export function formatReviewDate(timestamp: number): string {
   if (diffDays < 365) return `${Math.ceil(diffDays / 30)} months ago`;
   return `${Math.ceil(diffDays / 365)} years ago`;
 }
+
+function normalizeTimestampMs(timestamp: number): number {
+  // Some sources use seconds, some use milliseconds.
+  // If it's clearly in seconds, convert to ms.
+  return timestamp < 1_000_000_000_000 ? timestamp * 1000 : timestamp;
+}
+
+// Utility function to format review date as a visible calendar date (e.g. "14 January 2026")
+export function formatReviewDateLong(timestamp: number): string {
+  const ms = normalizeTimestampMs(timestamp);
+  return new Date(ms).toLocaleDateString("en-AU", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}

@@ -6,7 +6,7 @@ import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useIsMounted } from "@/lib/use-is-mounted";
 import { disableAnim } from "@/lib/flags";
-import { fetchGoogleReviews, formatReviewDate } from "@/lib/google-reviews";
+import { fetchGoogleReviews, formatReviewDateLong } from "@/lib/google-reviews";
 import { solarQuotesReviews } from "@/lib/solar-quotes-reviews";
 
 interface GoogleReview {
@@ -147,7 +147,7 @@ export function GoogleReviewsSlider() {
                               ))}
                             </div>
                             <span className="text-sm text-gray-500 dark:text-gray-400">
-                              {currentReview.relative_time_description || formatReviewDate(currentReview.time)}
+                              {formatReviewDateLong(currentReview.time)}
                             </span>
                           </div>
 
