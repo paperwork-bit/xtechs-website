@@ -30,6 +30,11 @@ const nextConfig: NextConfig = {
   
   // Enable compression
   compress: true,
+
+  // Serve company logo at /favicon.ico so Google and browsers get the correct icon
+  async rewrites() {
+    return [{ source: '/favicon.ico', destination: '/xlogo.png?v=2' }];
+  },
   
   // Performance optimizations
   experimental: {

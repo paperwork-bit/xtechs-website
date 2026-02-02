@@ -54,10 +54,12 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: '/xlogo.png', sizes: '32x32', type: 'image/png' },
-      { url: '/xlogo.png', sizes: 'any', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' }, // Google often requests this URL
+      { url: '/xlogo.png?v=2', sizes: '32x32', type: 'image/png' },
+      { url: '/xlogo.png?v=2', sizes: '48x48', type: 'image/png' },
+      { url: '/xlogo.png?v=2', sizes: 'any', type: 'image/png' },
     ],
-    apple: { url: '/xlogo.png', sizes: '180x180', type: 'image/png' },
+    apple: { url: '/xlogo.png?v=2', sizes: '180x180', type: 'image/png' },
   },
 };
 
@@ -72,7 +74,7 @@ export default function RootLayout({
         <link
           rel="preload"
           as="image"
-          href="/xlogo.png"
+          href="/xlogo.png?v=2"
           type="image/png"
           fetchPriority="high"
         />
