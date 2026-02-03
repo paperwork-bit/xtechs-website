@@ -210,7 +210,7 @@ export const Contact2 = ({
             {/* Company Logo */}
             <div className="flex flex-col items-center text-center">
               <img 
-                src="/xlogo.png" 
+                src="/xlogo.webp" 
                 alt="xTechs Renewables Logo" 
                 className="h-24 w-auto object-contain mb-4"
               />

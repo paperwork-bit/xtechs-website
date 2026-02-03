@@ -102,7 +102,7 @@ export function BackgroundCircles({ className, variant = "sun", fadeOnScroll = t
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
           <img 
-            src="/xlogo.png" 
+            src="/xlogo.webp" 
             alt="xTechs Logo" 
             className="w-64 h-64 md:w-80 md:h-80 object-contain"
             width={320}

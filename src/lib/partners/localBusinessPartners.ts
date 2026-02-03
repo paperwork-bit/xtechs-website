@@ -85,7 +85,7 @@ export const partnersBySlug: Record<string, LocalBusinessPartner> = {
         height: 72,
       },
       xtechs: {
-        src: "/xlogo.png",
+        src: "/xlogo.webp",
         alt: "xTechs Renewables logo",
         width: 180,
         height: 64,
