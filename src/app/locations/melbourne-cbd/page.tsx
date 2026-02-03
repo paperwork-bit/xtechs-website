@@ -34,7 +34,7 @@ export default function MelbourneCBDPage() {
     name: "xTechs Renewables — Melbourne CBD",
     url: "https://www.xtechsrenewables.com.au/locations/melbourne-cbd",
     image: "https://www.xtechsrenewables.com.au/og.jpg",
-    logo: "https://www.xtechsrenewables.com.au/xlogo.png",
+    logo: "https://www.xtechsrenewables.com.au/xlogo.webp",
     telephone: "+61 3 0000 0000",
     priceRange: "$$",
     address: {
