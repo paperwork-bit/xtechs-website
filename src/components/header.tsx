@@ -199,8 +199,8 @@ export function Header() {
     { name: "X-Classes", href: "/x-classes" },
     { name: "Amber VPP", href: "/amber-electric" },
     { name: "X-Vrything Platform", href: "/x-vrthing", comingSoon: true },
-    { name: "About", href: "/about-us" },
-    { name: "Contact", href: "/contact-us" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ];
 
   if (!isMounted) {
