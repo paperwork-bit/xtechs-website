@@ -14,38 +14,38 @@ type ServiceCard = {
 const services: ServiceCard[] = [
   {
     title: "Residential Solar",
-    image: "/services/residential-1.jpg",
-    overlayImage: "/services/residential-2.jpg",
+    image: "/services/residential-1.webp",
+    overlayImage: "/services/residential-2.webp",
     href: "/pv-battery/residential", // PV&Battery Residential
   },
   {
     title: "Commercial Solar",
-    image: "/services/commercial-1.jpg",
-    overlayImage: "/services/commercial-2.jpg",
+    image: "/services/commercial-1.webp",
+    overlayImage: "/services/commercial-2.webp",
     href: "/pv-battery/business", // PV&Battery Business
   },
   {
     title: "SolarFold",
-    image: "/services/solarfold-1.jpg",
-    overlayImage: "/services/solarfold-2.jpg",
+    image: "/services/solarfold-1.webp",
+    overlayImage: "/services/solarfold-2.webp",
     href: "/solarfold", // SolarFold Landing Page
   },
   {
     title: "Off-grid Systems",
-    image: "/services/offgrid-1.jpg",
-    overlayImage: "/services/offgrid-2.jpg",
+    image: "/services/offgrid-1.webp",
+    overlayImage: "/services/offgrid-2.webp",
     href: "/pv-battery/off-grid", // PV&Battery Off-grid
   },
   {
     title: "Solar Batteries",
-    image: "/services/batteries-1.jpg",
-    overlayImage: "/services/batteries-2.jpg",
+    image: "/services/batteries-1.webp",
+    overlayImage: "/services/batteries-2.webp",
     href: "/pv-battery/residential", // PV&Battery Residential (includes batteries)
   },
   {
     title: "EV Chargers",
-    image: "/services/ev-chargers-1.jpg",
-    overlayImage: "/services/ev-chargers-2.jpg",
+    image: "/services/ev-chargers-1.webp",
+    overlayImage: "/services/ev-chargers-2.webp",
     href: "/pv-battery/residential", // PV&Battery Residential (includes EV chargers)
   },
 ];
