@@ -119,12 +119,12 @@ function MobileNavOverlay({
           
           <div className="pt-4 space-y-2">
             <Button variant="outline" size="sm" className="w-full" asChild>
-              <Link href="/contact" onClick={onClose}>
+              <Link href="/contact-us" onClick={onClose}>
                 Get a quote
               </Link>
             </Button>
             <Button size="sm" className="w-full" asChild>
-              <Link href="/contact" onClick={onClose}>
+              <Link href="/contact-us" onClick={onClose}>
                 Request call back
               </Link>
             </Button>
