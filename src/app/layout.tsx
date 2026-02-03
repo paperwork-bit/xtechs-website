@@ -70,7 +70,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
+      {/*<head>
         <link
           rel="preload"
           as="image"
@@ -78,7 +78,7 @@ export default function RootLayout({
           type="image/png"
           fetchPriority="high"
         />
-      </head>
+      </head>*/}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
@@ -106,6 +106,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
+              "@id": "https://www.xtechsrenewables.com.au/",
               name: "xTechs Renewables",
               url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.xtechsrenewables.com.au",
               logo: "/xlogo.png",
@@ -125,8 +126,8 @@ export default function RootLayout({
               },
               geo: {
                 "@type": "GeoCoordinates",
-                latitude: "-37.9000",
-                longitude: "145.2333"
+                latitude: -38.2781,
+                longitude:  145.0927
               },
               contactPoint: [{
                 "@type": "ContactPoint",
@@ -136,7 +137,7 @@ export default function RootLayout({
                 areaServed: "AU",
                 availableLanguage: "English"
               }],
-              openingHours: "Mo-Fr 08:00-17:00",
+              openingHoursSpecification: "Mo-Fr 08:00-17:00",
               priceRange: "$$",
               serviceArea: {
                 "@type": "GeoCircle",
