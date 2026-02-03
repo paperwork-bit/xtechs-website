@@ -25,7 +25,6 @@ function MobileNavOverlay({
 }) {
   const [mounted, setMounted] = useState(false);
 
-  // Khóa scroll nền khi mở
   useEffect(() => {
     setMounted(true);
     const prev = document.body.style.overflow;
@@ -48,7 +47,6 @@ function MobileNavOverlay({
       role="dialog"
       aria-modal="true"
     >
-      {/* TopBar trong overlay */}
       <div className="h-14 flex items-center justify-between px-2 border-b">
         <Link
           href="/"
