@@ -107,7 +107,6 @@ export default function MelbourneCBDPage() {
               {/* Right: simple visual (optional) */}
               <div className="relative">
                 <div className="aspect-[4/3] w-full rounded-xl border bg-white/60 backdrop-blur shadow-sm overflow-hidden">
-                  {/* Bạn có thể thay bằng hình / video về CBD */}
                   <img
                     src="/images/cbd-solar-rooftops.jpg"
                     alt="Solar in Melbourne CBD"
