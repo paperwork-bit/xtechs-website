@@ -12,7 +12,7 @@ const jsonLd = {
   "@type": "WebPage",
   "name": "Business Solar & Battery Solutions",
   "description": "Professional commercial solar and battery installations for businesses",
-  "url": "https://xtechs.com.au/pv-battery/business",
+  "url": "https://xtechs.com.au/pv-battery/commercial-for-business",
   "breadcrumb": {
     "@type": "BreadcrumbList",
     "itemListElement": [
@@ -32,7 +32,7 @@ const jsonLd = {
         "@type": "ListItem",
         "position": 3,
         "name": "Business Solutions",
-        "item": "https://xtechs.com.au/pv-battery/business"
+        "item": "https://xtechs.com.au/pv-battery/commercial-for-business"
       }
     ]
   }
