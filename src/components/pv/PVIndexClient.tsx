@@ -71,7 +71,7 @@ export function PVIndexClient() {
                   "Power quality focus"
                 ]}
                 brands={["Sungrow C&I", "GoodWe", "Sigenergy"]}
-                ctaHref="/pv-battery/business"
+                ctaHref="/pv-battery/commercial-for-business"
                 ctaLabel="Explore Business"
                 imageSrc="/services/commercial-hero.jpg"
                 imageAlt="Commercial building with solar panel installation"
