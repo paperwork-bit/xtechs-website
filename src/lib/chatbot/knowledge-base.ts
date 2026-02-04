@@ -61,7 +61,7 @@ export const knowledgeBase: KnowledgeChunk[] = [
     category: "services",
     content: `We provide data-driven solar designs for shops, offices, and industrial sites across Victoria. Our commercial installations include export-limit approvals, smart monitoring systems, and comprehensive maintenance programs. We help businesses reduce operational costs, meet sustainability goals, and manage peak demand through intelligent energy systems.`,
     keywords: ["commercial", "business", "office", "shop", "industrial", "corporate", "enterprise"],
-    url: "/pv-battery/business",
+    url: "/pv-battery/commercial-for-business",
   },
   {
     id: "commercial-batteries",
