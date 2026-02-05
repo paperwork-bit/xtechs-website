@@ -7,7 +7,7 @@ export default function SolarFoldLongTermProjectsPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
         <Image
-          src="/applications/long-term-projects/hero.jpg"
+          src="/applications/long-term-projects/hero.webp"
           alt="Long‑Term Base Camps & Facilities"
           fill
           className="object-cover"
@@ -28,7 +28,7 @@ export default function SolarFoldLongTermProjectsPage() {
           {/* Image */}
           <div className="order-2 lg:order-1">
             <Image
-              src="/applications/long-term-projects/hero.jpg"
+              src="/applications/long-term-projects/hero.webp"
               alt="Long-term projects with xTechs solar solutions"
               width={600}
               height={400}
