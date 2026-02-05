@@ -22,7 +22,7 @@ const services: ServiceCard[] = [
     title: "Commercial Solar",
     image: "/services/commercial-1.webp",
     overlayImage: "/services/commercial-2.webp",
-    href: "/pv-battery/business", // PV&Battery Business
+    href: "/pv-battery/commercial-for-business", // PV&Battery Business
   },
   {
     title: "SolarFold",

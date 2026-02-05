@@ -42,7 +42,7 @@ const comparisonData = [
   {
     title: "Business", 
     features: ["Cost reduction", "Peak-shaving", "Reports"],
-    href: "/pv-battery/business",
+    href: "/pv-battery/commercial-for-business",
     color: "green"
   },
   {
