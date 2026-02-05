@@ -7,7 +7,7 @@ export default function SolarFoldShortTermProjectsPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
         <Image
-          src="/applications/short-term-projects/hero.jpg"
+          src="/applications/short-term-projects/hero.webp"
           alt="Short‑Term & Crisis Deployments"
           fill
           className="object-cover"
@@ -28,7 +28,7 @@ export default function SolarFoldShortTermProjectsPage() {
           {/* Image */}
           <div className="order-2 lg:order-1">
             <Image
-              src="/applications/short-term-projects/hero.jpg"
+              src="/applications/short-term-projects/hero.webp"
               alt="Short-term projects with xTechs solar solutions"
               width={600}
               height={400}
