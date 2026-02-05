@@ -1,3 +1,66 @@
+import { Metadata } from "next";
+import Script from "next/script";
+
+
+export const metadata: Metadata = {
+  title: "Join Our Team | Careers at xTechs Renewables",
+  description:
+    "Help build Australia’s clean energy future. Explore careers at xTechs Renewables—technical, engineering, and business roles in solar and battery solutions.",
+  alternates: { canonical: "https://xtechs.com.au/careers" },
+  keywords: [
+    "xTechs Renewables careers",
+    "solar jobs Australia",
+    "renewable energy jobs",
+    "battery storage jobs",
+    "solar installation careers",
+    "engineering roles energy",
+    "Victoria solar jobs",
+  ],
+};
+
+
+const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://xtechs.com.au/careers#webpage",
+    url: "https://xtechs.com.au/careers",
+    name: "Join Our Team | Careers at xTechs Renewables",
+    description:
+      "Help build Australia’s clean energy future. Explore careers at xTechs Renewables—technical, engineering, and business roles in solar and battery solutions.",
+    inLanguage: "en-AU",
+    isPartOf: { "@type": "WebSite", "@id": "https://xtechs.com.au/#website" },
+  };
+
+  // --- JSON-LD: BreadcrumbList (Home → Careers) ---
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "https://xtechs.com.au/careers#breadcrumb",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        item: {
+          "@type": "WebSite",
+          "@id": "https://xtechs.com.au/#website",
+          url: "https://xtechs.com.au",
+          name: "Home",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        item: {
+          "@type": "WebPage",
+          "@id": "https://xtechs.com.au/careers#webpage",
+          url: "https://xtechs.com.au/careers",
+          name: "Careers",
+        },
+      },
+    ],
+  };
+
+
 export default function Page() {
   return (
     <main className="max-w-4xl mx-auto px-6 py-12">
@@ -150,6 +213,20 @@ export default function Page() {
           </div>
         </section>
       </div>
+      
+      <Script
+        id="careers-webpage-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
+      <Script
+        id="careers-breadcrumb-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
     </main>
   );
 }
