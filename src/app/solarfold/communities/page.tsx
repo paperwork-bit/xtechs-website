@@ -7,7 +7,7 @@ export default function SolarFoldCommunitiesPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
         <Image
-          src="/applications/communities/hero.jpg"
+          src="/applications/communities/hero.webp"
           alt="Communities & Rural Electrification"
           fill
           className="object-cover"
@@ -28,7 +28,7 @@ export default function SolarFoldCommunitiesPage() {
           {/* Image */}
           <div className="order-2 lg:order-1">
             <Image
-              src="/applications/communities/hero.jpg"
+              src="/applications/communities/hero.webp"
               alt="Communities with xTechs solar solutions"
               width={600}
               height={400}
