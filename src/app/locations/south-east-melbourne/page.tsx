@@ -114,7 +114,7 @@ export default function SouthEastMelbournePage() {
               <div className="relative">
                 <div className="aspect-[4/3] w-full rounded-xl border bg-white/60 backdrop-blur shadow-sm overflow-hidden">
                   <Image
-                    src="/images/se-melbourne-solar.jpg"
+                    src="/south-melb/south-melb.webp"
                     alt="South-East Melbourne rooftops"
                     fill
                     className="object-cover"
