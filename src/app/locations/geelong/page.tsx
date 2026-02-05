@@ -103,7 +103,7 @@ export default function GeelongPage() {
               <div className="relative">
                 <div className="aspect-[4/3] w-full rounded-xl border bg-white/60 backdrop-blur shadow-sm overflow-hidden">
                   <Image
-                    src="/images/geelong-solar.jpg"
+                    src="/geelong/geelong.webp"
                     alt="Geelong rooftops"
                     fill
                     className="object-cover"
