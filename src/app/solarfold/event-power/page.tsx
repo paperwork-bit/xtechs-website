@@ -7,7 +7,7 @@ export default function SolarFoldEventPowerPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
         <Image
-          src="/applications/event-power/hero.jpg"
+          src="/applications/event-power/hero.webp"
           alt="Events & Temporary Venues"
           fill
           className="object-cover"
@@ -28,7 +28,7 @@ export default function SolarFoldEventPowerPage() {
           {/* Image */}
           <div className="order-2 lg:order-1">
             <Image
-              src="/applications/event-power/hero.jpg"
+              src="/applications/event-power/hero.webp"
               alt="Event power with xTechs solar solutions"
               width={600}
               height={400}
