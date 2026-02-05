@@ -108,7 +108,7 @@ export default function MorningtonPeninsulaPage() {
               <div className="relative">
                 <div className="aspect-[4/3] w-full rounded-xl border bg-white/60 backdrop-blur shadow-sm overflow-hidden">
                   <Image
-                    src="/images/mornington-solar.jpg"
+                    src="/mornington/mornington.webp"
                     alt="Mornington Peninsula rooftops"
                     fill
                     className="object-cover"
