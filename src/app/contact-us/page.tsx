@@ -3,6 +3,118 @@ import { BookingCalendar } from "@/components/ui/booking-calendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MessageSquare } from "lucide-react";
 import { MapFrame } from "@/components/MapFrame";
+import Script from "next/script";
+import { Metadata } from "next";
+
+const CANONICAL_URL = "https://xtechs.com.au/contact";
+
+export const metadata: Metadata = {
+  title: "Contact xTechs Renewables | Book a Site Assessment",
+  description:
+    "Get in touch with xTechs Renewables. Book a site assessment for a detailed solar and battery quote, or contact us for a consultation.",
+  alternates: { canonical: CANONICAL_URL },
+  keywords: [
+    "xTechs contact",
+    "solar quote",
+    "book site assessment",
+    "solar installer Melbourne",
+    "battery storage quote",
+    "renewable energy consultation",
+  ],
+  openGraph: {
+    title: "Contact xTechs Renewables | Book a Site Assessment",
+    description:
+      "Book a site assessment or send us a message. We’ll help you plan your solar and battery solution.",
+    url: CANONICAL_URL,
+    siteName: "xTechs Renewables",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact xTechs Renewables | Book a Site Assessment",
+    description:
+      "Book a site assessment or send us a message. We’ll help you plan your solar and battery solution.",
+  },
+};
+
+const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${CANONICAL_URL}#webpage`,
+    url: CANONICAL_URL,
+    name: "Contact xTechs Renewables",
+    description:
+      "Book a site assessment or contact xTechs Renewables for solar and battery consultations.",
+    inLanguage: "en-AU",
+    isPartOf: { "@type": "WebSite", "@id": "https://xtechs.com.au/#website" },
+  };
+
+const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${CANONICAL_URL}#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        item: {
+          "@type": "WebSite",
+          "@id": "https://xtechs.com.au/#website",
+          url: "https://xtechs.com.au",
+          name: "Home",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        item: {
+          "@type": "WebPage",
+          "@id": `${CANONICAL_URL}#webpage`,
+          url: CANONICAL_URL,
+          name: "Contact",
+        },
+      },
+    ],
+  };
+
+  
+const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://xtechs.com.au/#localbusiness",
+    name: "xTechs Renewables",
+    url: "https://xtechs.com.au",
+    telephone: "+61-1300-983-247",
+    email: "careers@xtechsrenewables.com.au",
+    image: "https://xtechs.com.au/logo.png",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "2 Corporate Ave",
+      addressLocality: "Rowville",
+      addressRegion: "VIC",
+      postalCode: "3178",
+      addressCountry: "AU",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: -38.022416, // optional: update if you have precise coords
+      longitude: 145.115,   // optional: update if you have precise coords
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+        ],
+        opens: "09:00",
+        closes: "17:00",
+      },
+    ],
+};
 
 export default function ContactPage() {
   return (
@@ -52,6 +164,28 @@ export default function ContactPage() {
           </TabsContent>
         </Tabs>
       </div>
+      
+<Script
+        id="contact-webpage-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
+      <Script
+        id="contact-breadcrumb-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <Script
+        id="contact-localbusiness-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
     </div>
+
+  
+    
   );
 }
