@@ -7,7 +7,7 @@ export default function SolarFoldMiningPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
         <Image
-          src="/applications/mining/hero.jpg"
+          src="/applications/mining/hero.webp"
           alt="Mining & Remote Operations"
           fill
           className="object-cover"
@@ -28,7 +28,7 @@ export default function SolarFoldMiningPage() {
           {/* Image */}
           <div className="order-2 lg:order-1">
             <Image
-              src="/applications/mining/hero.jpg"
+              src="/applications/mining/hero.webp"
               alt="Mining operations with xTechs solar solutions"
               width={600}
               height={400}
