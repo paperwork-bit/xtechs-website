@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ImageAutoSlider, type ImageAutoSliderImage } from "@/components/ui/image-auto-slider";
+import FaqSectionSolarFold, { solarFoldFaqItems } from "@/components/faq/FaqSectionSolarFold";
+import Script from "next/script";
 
 export default function SolarFoldProductPage() {
   const specs = [
@@ -40,6 +42,19 @@ export default function SolarFoldProductPage() {
       d: "Ground‑mounted, temporary installation that typically avoids major construction permits, helping compress project timelines."
     }
   ];
+
+const solarFoldFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": solarFoldFaqItems.map((item) => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer,
+    },
+  })),
+};
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
@@ -164,6 +179,15 @@ export default function SolarFoldProductPage() {
           </div>
         </div>
       </section>
+      <FaqSectionSolarFold></FaqSectionSolarFold>
+      
+      <Script
+        id="solar-fold-faq-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(solarFoldFaqJsonLd) }}
+      />
+
     </main>
   );
 }
