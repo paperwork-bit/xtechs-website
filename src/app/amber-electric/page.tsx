@@ -3,8 +3,97 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Zap, DollarSign, TrendingUp, Clock, Shield, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { Metadata } from "next"
+import Script from "next/script"
+
+const CANONICAL_URL = "https://xtechs.com.au/amber-electric";
+
+export const metadata: Metadata = {
+  title: "xTechs × Amber Electric Partnership | Maximise Solar ROI",
+  description:
+    "xTechs delivers premium solar & battery systems, while Amber Electric unlocks wholesale energy pricing and SmartShift automation—helping homes and businesses maximise earnings.",
+  keywords: [
+    "Amber Electric",
+    "Amber SmartShift",
+    "xTechs",
+    "solar partnership",
+    "wholesale energy",
+    "battery optimisation",
+    "feed-in tariffs",
+    "solar export",
+    "Australia",
+  ],
+  alternates: { canonical: CANONICAL_URL },}
+
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${CANONICAL_URL}#webpage`,
+    url: CANONICAL_URL,
+    name: "xTechs × Amber Electric Partnership",
+    description:
+      "xTechs delivers premium solar & battery systems, while Amber Electric unlocks wholesale pricing and SmartShift automation—helping homes and businesses maximise earnings.",
+    inLanguage: "en-AU",
+    isPartOf: { "@type": "WebSite", "@id": "https://xtechs.com.au/#website" },
+  };
+
+  // --- JSON-LD: BreadcrumbList (Home → Amber Electric) ---
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${CANONICAL_URL}#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        item: {
+          "@type": "WebSite",
+          "@id": "https://xtechs.com.au/#website",
+          url: "https://xtechs.com.au",
+          name: "Home",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        item: {
+          "@type": "WebPage",
+          "@id": `${CANONICAL_URL}#webpage`,
+          url: CANONICAL_URL,
+          name: "Amber Electric Partnership",
+        },
+      },
+    ],
+  };
+
+  // --- JSON-LD: Service (optional but useful) ---
+  // Describes the joint value proposition without duplicating Organization/WebSite graphs.
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${CANONICAL_URL}#service`,
+    name: "Solar & Battery Optimisation with Amber Electric",
+    serviceType: "Solar + battery system optimisation",
+    description:
+      "Premium solar and battery systems by xTechs with Amber Electric’s wholesale pricing and SmartShift automation to maximise export earnings.",
+    provider: {
+      "@type": "Organization",
+      "@id": "https://xtechs.com.au/#organization", // defined on your homepage
+      name: "xTechs Renewables",
+      url: "https://xtechs.com.au",
+    },
+    brand: {
+      "@type": "Brand",
+      name: "Amber Electric",
+    },
+    areaServed: "AU",
+    audience: { "@type": "Audience", audienceType: ["Homeowners", "Businesses"] },
+  };
+
 
 export default function AmberElectricPage() {
+  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
@@ -327,6 +416,26 @@ export default function AmberElectricPage() {
           </div>
         </div>
       </div>
+      
+ <Script
+        id="amber-webpage-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
+      <Script
+        id="amber-breadcrumb-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <Script
+        id="amber-service-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+
     </div>
   )
 }
