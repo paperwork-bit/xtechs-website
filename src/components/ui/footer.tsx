@@ -57,6 +57,17 @@ const footerConfig = {
         { label: "X-vrthing Platform", href: "/x-vrthing" },
       ],
     },
+    
+{
+      title: "Locations",
+      links: [
+        { label: "Melbourne", href: "/locations/melbourne-cbd" },
+        { label: "Geelong", href: "/locations/geelong" },
+        { label: "Bendigo", href: "/locations/bendigo" },
+        { label: "Mornington Peninsula", href: "/locations/mornington-penisula" },
+      ],
+    },
+
     {
       title: "Legal",
       links: [
