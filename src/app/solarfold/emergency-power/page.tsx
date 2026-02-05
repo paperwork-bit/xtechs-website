@@ -7,7 +7,7 @@ export default function SolarFoldEmergencyPowerPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
         <Image
-          src="/applications/emergency-power/hero.jpg"
+          src="/applications/emergency-power/hero.webp"
           alt="Emergency & Mobile Worksites"
           fill
           className="object-cover"
@@ -28,7 +28,7 @@ export default function SolarFoldEmergencyPowerPage() {
           {/* Image */}
           <div className="order-2 lg:order-1">
             <Image
-              src="/applications/emergency-power/hero.jpg"
+              src="/applications/emergency-power/hero.webp"
               alt="Emergency power with xTechs solar solutions"
               width={600}
               height={400}
