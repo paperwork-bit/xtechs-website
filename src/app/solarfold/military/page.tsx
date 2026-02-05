@@ -7,7 +7,7 @@ export default function SolarFoldMilitaryPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
         <Image
-          src="/applications/military/military_hero.jpg"
+          src="/applications/military/military_hero.webp"
           alt="Military & Peacekeeping Operations"
           fill
           className="object-cover"
@@ -28,7 +28,7 @@ export default function SolarFoldMilitaryPage() {
           {/* Image */}
           <div className="order-2 lg:order-1">
             <Image
-              src="/applications/military/military_hero.jpg"
+              src="/applications/military/military_hero.webp"
               alt="Military operations with xTechs solar solutions"
               width={600}
               height={400}
