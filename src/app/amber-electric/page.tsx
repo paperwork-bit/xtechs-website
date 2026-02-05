@@ -5,8 +5,10 @@ import { CheckCircle, Zap, DollarSign, TrendingUp, Clock, Shield, ArrowRight } f
 import Link from "next/link"
 import { Metadata } from "next"
 import Script from "next/script"
+import { FaqSectionAmber } from "@/components/faq/FaqSectionAmber";
 
 const CANONICAL_URL = "https://xtechs.com.au/amber-electric";
+
 
 export const metadata: Metadata = {
   title: "xTechs × Amber Electric Partnership | Maximise Solar ROI",
@@ -89,6 +91,73 @@ export const metadata: Metadata = {
     areaServed: "AU",
     audience: { "@type": "Audience", audienceType: ["Homeowners", "Businesses"] },
   };
+
+const amberFaqItems = [
+  {
+    question: "How does Amber Electric’s pricing benefit solar & battery owners?",
+    answer:
+      "Amber passes through wholesale prices. When prices spike, your battery can export at very high feed-in rates (in rare events up to ~$19/kWh). Amber’s SmartShift automates charge/discharge to maximise your returns based on market conditions.",
+  },
+  {
+    question: "Is there a lock-in contract with Amber Electric?",
+    answer:
+      "No. Amber works on a subscription model with no lock-in. You can switch at any time. Your xTechs-installed system remains retailer-agnostic.",
+  },
+  {
+    question: "Do I need a specific battery or inverter to use Amber SmartShift?",
+    answer:
+      "SmartShift supports a growing list of batteries and inverters. We’ll confirm compatibility or specify supported hardware during your xTechs design so you’re ready to automate from day one.",
+  },
+  {
+    question: "Can I keep backup power and still participate in SmartShift exports?",
+    answer:
+      "Yes. We can reserve a backup buffer so essential circuits remain powered during outages while SmartShift uses the remainder to optimise earnings when market conditions are favourable.",
+  },
+  {
+    question: "Can Amber work with my existing solar/battery system?",
+    answer:
+      "Often yes. If your hardware is supported, we can connect you to Amber and enable SmartShift. If not, we’ll outline the simplest path to compatibility (firmware, gateway, or upgrade options).",
+  },
+  {
+    question: "What earnings should I expect?",
+    answer:
+      "Earnings vary by state, system size, battery capacity, usage, and frequency of price events. We’ll model realistic scenarios for your site. Note that past performance doesn’t guarantee future results.",
+  },
+  {
+    question: "How often do price spikes happen?",
+    answer:
+      "Spikes are market-dependent and vary by season and region. Amber’s SmartShift forecasts and responds automatically; you don’t need to time the market yourself.",
+  },
+  {
+    question: "How does billing with Amber work?",
+    answer:
+      "You pay Amber’s subscription and get pass-through wholesale energy prices. Imports reflect wholesale costs, and exports earn wholesale feed-in. There’s no hidden margin on energy rates.",
+  },
+  {
+    question: "Can I override automation and run my battery manually if I want?",
+    answer:
+      "Yes. You can switch between automation and manual control when you prefer, such as reserving charge for backup or discharging at your discretion.",
+  },
+  {
+    question: "Can I leave Amber if I change my mind?",
+    answer:
+      "Yes. There’s no lock-in. If you decide to switch retailers later, your xTechs system remains fully usable.",
+  },
+];
+
+
+const amberFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": amberFaqItems.map((item) => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer,
+    },
+  })),
+};
 
 
 export default function AmberElectricPage() {
@@ -396,7 +465,8 @@ export default function AmberElectricPage() {
           </div>
         </div>
       </div>
-
+      {/*FAQ*/}
+      <FaqSectionAmber />
       {/* Footer Note */}
       <div className="bg-gray-100 py-8">
         <div className="container mx-auto px-4">
@@ -434,6 +504,14 @@ export default function AmberElectricPage() {
         type="application/ld+json"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+
+      
+      <Script
+        id="amber-faq-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(amberFaqJsonLd) }}
       />
 
     </div>
