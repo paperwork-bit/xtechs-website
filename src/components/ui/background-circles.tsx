@@ -108,7 +108,7 @@ export function BackgroundCircles({ className, variant = "sun", fadeOnScroll = t
             width={320}
             height={320}
             decoding="async"
-            fetchpriority="high"
+            fetchPriority="high"
             loading="eager"
           />
         </motion.div>
