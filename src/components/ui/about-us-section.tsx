@@ -223,7 +223,7 @@ export default function AboutUsSection() {
                         width={1920}
                         height={1080}
                         decoding="async"
-                        fetchpriority="high"
+                        fetchPriority="high"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
                           if (target.src !== "/uploads/Team.jpg") target.src = "/uploads/Team.jpg"
