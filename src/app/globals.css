@@ -224,20 +224,20 @@
   }
 
   body {
-    font-family: var(--font-body);
+    font-family: var(--font-body) !important;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    font-family: var(--font-heading);
+    font-family: var(--font-heading) !important;
   }
 
   h5,
   p,
   small {
-    font-family: var(--font-body);
+    font-family: var(--font-body) !important;
   }
 }
 
