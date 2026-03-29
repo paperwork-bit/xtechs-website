@@ -112,13 +112,6 @@ export default function ServicesSection() {
   }, [remote]);
   return (
     <div className="bg-white dark:bg-gray-900 w-full flex items-center justify-center font-sans">
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-          body { font-family: 'Inter', sans-serif; }
-        `}
-      </style>
-
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 w-full">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}

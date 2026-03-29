@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { ShortlistTray } from "@/components/shortlist-tray";
@@ -10,16 +9,6 @@ import ConsentScripts from "@/components/compliance/consent-scripts";
 import { Chatbot } from "@/components/chatbot/chatbot";
 import Script from "next/script";
 import { PageViewTracker } from "@/components/analytics/pageview-tracker";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.xtechsrenewables.com.au"),
@@ -78,7 +67,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
         suppressHydrationWarning={true}
       >
         {/* Load scripts only after user consent */}
