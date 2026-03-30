@@ -242,6 +242,11 @@
 }
 
 @layer utilities {
+  /* Force custom fonts - override Tailwind defaults */
+  .font-sans {
+    font-family: var(--font-body) !important;
+  }
+  
   /* Brand Color Utilities */
   .text-brand-primary { color: var(--brand-primary); }
   .text-brand-primary-light { color: var(--brand-primary-light); }
