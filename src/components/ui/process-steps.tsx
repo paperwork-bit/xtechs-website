@@ -99,7 +99,7 @@ export function ProcessSteps() {
         </aside>
 
         {/* Content panel with better spacing */}
-        <section className="rounded-2xl border bg-background shadow-sm">
+        <section className="rounded-2xl border bg-card shadow-sm">
           <div className="h-[min(60vh,700px)] overflow-hidden">
             <StepPanel
               activeKey={activeId}
@@ -110,7 +110,7 @@ export function ProcessSteps() {
                     <div className="flex-1 min-h-0 overflow-y-auto pr-1">
                       <h3 className="text-xl md:text-2xl font-semibold mb-3">{v.title}</h3>
                       <p className="text-muted-foreground mb-6 text-lg">{v.description}</p>
-                      <div className="rounded-lg border bg-gradient-to-br from-secondary/40 to-secondary/20 p-6 md:p-8 text-sm md:text-base leading-relaxed shadow-sm">
+                      <div className="rounded-lg border border-brand-secondary-light/35 bg-gradient-to-br from-brand-secondary-light/12 via-white to-brand-primary-light/8 p-6 md:p-8 text-sm md:text-base leading-relaxed shadow-sm">
                         {v.body}
                       </div>
                     </div>

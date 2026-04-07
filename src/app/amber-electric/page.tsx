@@ -8,7 +8,7 @@ export default function AmberElectricPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-brand-primary text-white">
+      <div className="relative overflow-hidden bg-brand-secondary text-white">
         <div className="container mx-auto px-4 py-20 lg:py-32">
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-6 bg-gradient-brand-secondary text-white hover:opacity-90 border-2 border-brand-secondary-light">
@@ -23,13 +23,13 @@ export default function AmberElectricPage() {
               wholesale pricing. Perfect for homes and businesses looking to maximize their solar investment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-brand-secondary hover:bg-brand-secondary/90 text-black font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <Button asChild size="lg" className="bg-brand-secondary-light hover:bg-brand-primary-light text-brand-secondary font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl">
                 <Link href="https://app.amber.com.au/signup/?couponCode=XTECHSRENEWAB" target="_blank">
                   Start Earning More Today
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild size="lg" className="bg-white text-brand-primary hover:bg-gray-100 font-semibold border-2 border-white transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <Button asChild size="lg" className="bg-white text-brand-secondary hover:bg-brand-secondary-light/15 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl">
                 <Link href="/contact">
                   Book Site Inspection
                 </Link>
@@ -165,7 +165,7 @@ export default function AmberElectricPage() {
       </div>
 
       {/* Q1 2024-25 Results */}
-      <div className="bg-brand-primary text-white py-16">
+      <div className="bg-brand-secondary text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-8">Amazing Q1 2024-25 Results</h2>
@@ -284,21 +284,21 @@ export default function AmberElectricPage() {
               Perfect for homeowners and businesses looking to maximize their solar investment!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-brand-secondary hover:bg-brand-secondary/90 text-black font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <Button asChild size="lg" className="bg-brand-primary hover:bg-brand-primary-light text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 <Link href="https://app.amber.com.au/signup/?couponCode=XTECHSRENEWAB" target="_blank">
                   Get xTechs Customer Benefits
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild size="lg" className="bg-white text-brand-primary hover:bg-gray-100 font-semibold border-2 border-white transition-all duration-300 hover:scale-105 hover:shadow-lg">
+              <Button asChild size="lg" className="bg-white text-brand-secondary hover:bg-brand-secondary-light/20 font-semibold border-2 border-brand-secondary-light transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 <Link href="/contact">
                   Get xTechs Solar Quote
                 </Link>
               </Button>
             </div>
-            <div className="mt-8 bg-white/10 rounded-lg p-6">
+            <div className="mt-8 bg-brand-primary/30 border border-brand-primary-light/40 rounded-lg p-6">
               <h3 className="text-lg font-semibold mb-2">🎁 Exclusive Partnership Benefits</h3>
-              <p className="text-sm text-white/80">
+              <p className="text-sm text-white/90">
                 • Use coupon code <strong>XTECHSRENEWAB</strong> for special pricing<br/>
                 • Priority support from both xTechs and Amber teams<br/>
                 • Seamless integration between your solar system and energy optimization
@@ -309,17 +309,17 @@ export default function AmberElectricPage() {
       </div>
 
       {/* Footer Note */}
-      <div className="bg-gray-100 py-8">
+      <div className="bg-background py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold mb-3 text-gray-800">About Our Partnership</h3>
-              <p className="text-gray-600 mb-4">
+            <div className="bg-card rounded-lg p-6 shadow-sm border border-border">
+              <h3 className="text-lg font-semibold mb-3 text-foreground">About Our Partnership</h3>
+              <p className="text-muted-foreground mb-4">
                 xTechs and Amber Electric have formed a strategic partnership to provide homeowners and businesses with the best 
                 residential & commercial solar systems and energy optimization. While we work together to maximize your benefits, each company 
                 operates independently within their expertise.
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 <strong>Disclaimer:</strong> Amber Electric is a separate energy retailer. xTechs provides solar systems and installation services. 
                 Earnings depend on market conditions and system performance. Past performance doesn't guarantee future results.
               </p>

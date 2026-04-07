@@ -99,7 +99,11 @@ export function BatteryClient() {
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
                 Battery
                 <br />
-                <AnimatedUnderline className="text-blue-600 dark:text-blue-400">
+                <AnimatedUnderline
+                  trigger="always"
+                  colorClass="text-brand-primary"
+                  className="text-brand-primary"
+                >
                   Storage
                 </AnimatedUnderline>
               </h1>
