@@ -227,15 +227,21 @@ export default function GeelongPage() {
           <h2 className="text-3xl font-semibold mb-6">FAQ — Geelong</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { q: "Thời gian lắp đặt?", a: "Thường 1–2 ngày cho nhà ở; thương mại tuỳ quy mô." },
-              { q: "Có hỗ trợ export limit không?", a: "Có—DNSP & cấu hình inverter đầy đủ." },
               {
-                q: "Bảo hành phần cứng?",
-                a: "Panels 25‑30 năm hiệu suất; inverter ~10 năm; battery ~10 năm (tuỳ model).",
+                q: "How long does installation take?",
+                a: "Typically 1–2 days for homes; commercial projects depend on the site size.",
               },
               {
-                q: "Có monitoring & bảo trì?",
-                a: "Có—chúng tôi thiết lập giám sát & gói hỗ trợ.",
+                q: "Do you support export limit setup?",
+                a: "Yes, we handle DNSP requirements and full inverter configuration.",
+              },
+              {
+                q: "What hardware warranty coverage do you offer?",
+                a: "Panels usually carry 25–30 year performance warranties; inverters around 10 years; batteries around 10 years, depending on the model.",
+              },
+              {
+                q: "Do you offer monitoring and maintenance?",
+                a: "Yes, we can set up monitoring and provide support plans.",
               },
             ].map((item) => (
               <div key={item.q} className="rounded-xl border bg-white p-6">
